@@ -29,10 +29,17 @@ export default async function handler(req, res) {
         else if( type === 'CRV'){
             const { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } = req.body;
             
-            let newEntry = new CashReceipt( { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } );
-            await newEntry.save();
-            
-            res.status(200).json({ success: true, message: "Entry Added !" }) 
+            let dbCRV = await CashReceipt.findOne({ refNo })
+
+            if( dbCRV ){
+                res.status(400).json({ success: false, message: "Already Found!" }) 
+            }
+            else{
+                let newEntry = new CashReceipt( { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } );
+                await newEntry.save();
+                
+                res.status(200).json({ success: true, message: "Entry Added !" }) 
+            }
         }
         else if( type === 'BPV'){
             const { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } = req.body;
