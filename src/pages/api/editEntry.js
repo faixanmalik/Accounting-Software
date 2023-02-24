@@ -9,6 +9,8 @@ import PurchaseOrder from 'models/PurchaseOrder';
 import InwardGatePass from 'models/InwardGatePass';
 import CashPayment from 'models/CashPayment';
 import CashReceipt from 'models/CashReceipt';
+import BankPayment from 'models/BankPayment';
+import BankReceipt from 'models/BankReceipt';
 
 
 export default async function handler(req, res) {
@@ -175,8 +177,6 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-
-
         else if (editPath === 'cashReceiptVoucher'){
             const { id, receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } = req.body;
 
@@ -190,6 +190,46 @@ export default async function handler(req, res) {
                 }
                 else{
                     await CashReceipt.findByIdAndUpdate(id, {  receivedIn: receivedIn, cashInHand : cashInHand, receivedFrom : receivedFrom, amount : amount, date : date, refNo : refNo, details : details, balance : balance})
+                    res.status(200).json({ success: true, message: "Update Successfully!" }) 
+                }
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if (editPath === 'bankPaymentVoucher'){
+            const { id, receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } = req.body;
+
+            let dbData = await BankPayment.findById(id)
+
+            if(dbData){
+                const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
+                
+                if( receivedIn === dbData.receivedIn && cashInHand === dbData.cashInHand && receivedFrom === dbData.receivedFrom && amount === dbData.amount && date === dbDate && refNo === dbData.refNo && details === dbData.details && balance === dbData.balance){
+                    res.status(400).json({ success: false, message: "Already found!" }) 
+                }
+                else{
+                    await BankPayment.findByIdAndUpdate(id, {  receivedIn: receivedIn, cashInHand : cashInHand, receivedFrom : receivedFrom, amount : amount, date : date, refNo : refNo, details : details, balance : balance})
+                    res.status(200).json({ success: true, message: "Update Successfully!" }) 
+                }
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if (editPath === 'bankReceiptVoucher'){
+            const { id, receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } = req.body;
+
+            let dbData = await BankReceipt.findById(id)
+
+            if(dbData){
+                const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
+                
+                if( receivedIn === dbData.receivedIn && cashInHand === dbData.cashInHand && receivedFrom === dbData.receivedFrom && amount === dbData.amount && date === dbDate && refNo === dbData.refNo && details === dbData.details && balance === dbData.balance){
+                    res.status(400).json({ success: false, message: "Already found!" }) 
+                }
+                else{
+                    await BankReceipt.findByIdAndUpdate(id, {  receivedIn: receivedIn, cashInHand : cashInHand, receivedFrom : receivedFrom, amount : amount, date : date, refNo : refNo, details : details, balance : balance})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }

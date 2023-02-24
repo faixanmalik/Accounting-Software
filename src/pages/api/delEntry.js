@@ -71,7 +71,7 @@ export default async function handler(req, res) {
             await CashPayment.findByIdAndDelete( id )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        else if (delPath === 'cashReciptVoucher'){
+        else if (delPath === 'cashReceiptVoucher'){
             const { id } = req.body;
             
             await CashReceipt.findByIdAndDelete( id )
@@ -80,15 +80,16 @@ export default async function handler(req, res) {
         else if (delPath === 'bankPaymentVoucher'){
             const { id } = req.body;
             
-            await BankPaymentPayment.findByIdAndDelete( id )
+            await BankPayment.findByIdAndDelete( id )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        else if (delPath === 'bankReciptVoucher'){
+        else if (delPath === 'bankReceiptVoucher'){
             const { id } = req.body;
             
             await BankReceipt.findByIdAndDelete( id )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
+
         else if (delPath === 'journalVoucher'){
             const { id } = req.body;
             

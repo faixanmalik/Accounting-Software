@@ -97,28 +97,26 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts }) => {
       body: JSON.stringify(data),
     })
       let response = await res.json()
-      console.log(response)
 
       if (response.success === true){
-        //const dbigpDate = moment(response.data.igpDate).utc().format('YYYY-MM-DD')
-        
+        const dbDate = moment(response.data.date).utc().format('YYYY-MM-DD')                
+
         setId(response.data._id)
-        //setJournalNo(response.data.journalNo)
-        //setInputList.account(response.data.inputList[0].account)
-        //setInputList.account(response.data.inputList[0].debit)
-        //setInputList.account(response.data.inputList[0].credit)
-        //setInputList.account(response.data.inputList[0].desc)
-        //setInputList.account(response.data.inputList[0].name)
-        //setMemo(response.data.memo)
-        //setAttachment(response.data.attachment.data)
-        //setType(response.data.type)
+        setDate(dbDate)
+        setRefNo(response.data.refNo)
+        setReceivedIn(response.data.receivedIn)
+        setCashInHand(response.data.cashInHand)
+        setReceivedFrom(response.data.receivedFrom)
+        setDetails(response.data.details)
+        setBalance(response.data.balance)
+        setAmount(response.data.amount)
       }
   }
 
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, transactionType, igpDate, deliveryChallanNo, venderName,  poNumber, poDate, VehicleNo, driverName, remarks, item, poQty, receivedQty ,  editPath: 'bankReceiptVoucher'};
+    const data = { id, receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance ,  editPath: 'bankReceiptVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -128,10 +126,9 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts }) => {
       body: JSON.stringify(data),
     })
       let response = await res.json()
-      console.log(response)
       
         if (response.success === true) {
-          //window.location.reload();
+          window.location.reload();
         }
         else {
           toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
@@ -173,6 +170,15 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts }) => {
               <h3 className="text-lg font-medium leading-6 text-gray-900">Bank Receipt Vouchers</h3>
               <button onClick={()=>{
                 setOpen(true)
+                setId('')
+                setDate('')
+                setRefNo('')
+                setReceivedIn('')
+                setCashInHand('')
+                setReceivedFrom('')
+                setDetails('')
+                setBalance('')
+                setAmount('')
                 }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
                 New
               </button>
@@ -190,13 +196,13 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts }) => {
                             Sr
                         </th>
                         <th scope="col" className="px-6 py-3">
+                            Ref No
+                        </th>
+                        <th scope="col" className="px-6 py-3">
                             Voucher Date
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Received From
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Received In
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Cash In Hand
@@ -219,13 +225,13 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts }) => {
                           {index + 1}
                         </th>
                         <td className="px-6 py-3">
+                          {item.refNo}
+                        </td>
+                        <td className="px-6 py-3">
                           {moment(item.date).utc().format('YYYY-MM-DD')}
                         </td>
                         <td className="px-6 py-3">
                           <div>{item.receivedFrom}</div>
-                        </td>
-                        <td className="px-6 py-3">
-                          {item.receivedIn}
                         </td>
                         <td className="px-6 py-3">
                           {item.cashInHand}
@@ -335,6 +341,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts }) => {
                                   Received In:
                                   </label>
                                   <select id="receivedIn" name="receivedIn" onChange={handleChange} value={receivedIn} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>Select Received In</option>
                                   <option value={'Cash'}>Cash</option>
                                   <option value={'Cash Drawer'}>Cash Drawer</option>
                                   <option value={'Petty Cash'}>Petty Cash</option>

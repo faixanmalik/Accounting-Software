@@ -98,36 +98,6 @@ export default async function handler(req, res) {
             }
 
         }
-        else if( getDataPath === 'journalVoucher' ){
-            const { id } = req.body;
-            let data = await JournalVoucher.findById(id)
-            if(data){
-                res.status(200).json({ success: true, data}) 
-            } 
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-        }
-        else if( getDataPath === 'bankPaymentVoucher' ){
-            const { id } = req.body;
-            let data = await BankPayment.findById(id)
-            if(data){
-                res.status(200).json({ success: true, data}) 
-            } 
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-        }
-        else if( getDataPath === 'bankReceiptVoucher' ){
-            const { id } = req.body;
-            let data = await BankReceipt.findById(id)
-            if(data){
-                res.status(200).json({ success: true, data}) 
-            } 
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-        }
         else if( getDataPath === 'cashPaymentVoucher' ){
             const { id } = req.body;
             let data = await CashPayment.findById(id)
@@ -142,6 +112,36 @@ export default async function handler(req, res) {
         else if( getDataPath === 'cashReceiptVoucher' ){
             const { id } = req.body;
             let data = await CashReceipt.findById(id)
+            if(data){
+                res.status(200).json({ success: true, data}) 
+            } 
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if( getDataPath === 'bankPaymentVoucher' ){
+            const { id } = req.body;
+            let data = await BankPayment.findById(id)
+            if(data){
+                res.status(200).json({ success: true, data}) 
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if( getDataPath === 'bankReceiptVoucher' ){
+            const { id } = req.body;
+            let data = await BankReceipt.findById(id)
+            if(data){
+                res.status(200).json({ success: true, data}) 
+            } 
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if( getDataPath === 'journalVoucher' ){
+            const { id } = req.body;
+            let data = await JournalVoucher.findById(id)
             if(data){
                 res.status(200).json({ success: true, data}) 
             } 

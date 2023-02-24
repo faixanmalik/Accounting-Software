@@ -305,44 +305,45 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts }) => {
                               <div className="grid grid-cols-6 gap-6">
 
                               <div className="col-span-6 sm:col-span-3">
-                                  <label htmlFor="refNo" className="block text-sm font-medium text-gray-700">
-                                  Reference No:
-                                  </label>
-                                  <input
-                                  type="number"
-                                  onChange={handleChange}
-                                  name="refNo"
-                                  value={refNo}
-                                  id="refNo"
-                                  autoComplete="refNo"
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  />
+                                <label htmlFor="refNo" className="block text-sm font-medium text-gray-700">
+                                Reference No:
+                                </label>
+                                <input
+                                type="number"
+                                onChange={handleChange}
+                                name="refNo"
+                                value={refNo}
+                                id="refNo"
+                                autoComplete="refNo"
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
                               </div>
 
                               <div className="col-span-6 sm:col-span-3">
-                                  <label htmlFor="date" className="block text-sm font-medium text-gray-700">
-                                  Voucher Date:
-                                  </label>
-                                  <input
-                                  type="date"
-                                  onChange={handleChange}
-                                  name="date"
-                                  id="date"
-                                  value={date}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  required
-                                  />
+                                <label htmlFor="date" className="block text-sm font-medium text-gray-700">
+                                Voucher Date:
+                                </label>
+                                <input
+                                type="date"
+                                onChange={handleChange}
+                                name="date"
+                                id="date"
+                                value={date}
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                required
+                                />
                               </div>
 
                               <div className="col-span-6 sm:col-span-4">
-                                  <label htmlFor="receivedIn" className="block text-sm font-medium text-gray-700">
-                                  Received In:
-                                  </label>
-                                  <select id="receivedIn" name="receivedIn" onChange={handleChange} value={receivedIn} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                  <option value={'Cash'}>Cash</option>
-                                  <option value={'Cash Drawer'}>Cash Drawer</option>
-                                  <option value={'Petty Cash'}>Petty Cash</option>
-                                  </select>
+                                <label htmlFor="receivedIn" className="block text-sm font-medium text-gray-700">
+                                Received In:
+                                </label>
+                                <select id="receivedIn" name="receivedIn" onChange={handleChange} value={receivedIn} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <option>Select Received In</option>
+                                <option value={'Cash'}>Cash</option>
+                                <option value={'Cash Drawer'}>Cash Drawer</option>
+                                <option value={'Petty Cash'}>Petty Cash</option>
+                                </select>
                               </div>
 
                               

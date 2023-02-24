@@ -43,19 +43,34 @@ export default async function handler(req, res) {
         }
         else if( type === 'BPV'){
             const { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } = req.body;
-            
-            let newEntry = new BankReceipt( { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } );
-            await newEntry.save();
-            
-            res.status(200).json({ success: true, message: "Entry Added !" }) 
+
+            let dbBPV = await BankPayment.findOne({ refNo })
+
+            if( dbBPV ){
+                res.status(400).json({ success: false, message: "Already Found!" }) 
+            }
+            else{
+                let newEntry = new BankPayment( { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } );
+                await newEntry.save();
+                
+                res.status(200).json({ success: true, message: "Entry Added !" }) 
+            }
+
         }
         else if( type === 'BRV'){
             const { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } = req.body;
-            
-            let newEntry = new BankPayment( { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } );
-            await newEntry.save();
-            
-            res.status(200).json({ success: true, message: "Entry Added !" }) 
+
+            let dbBRV = await BankReceipt.findOne({ refNo })
+
+            if( dbBRV ){
+                res.status(400).json({ success: false, message: "Already Found!" }) 
+            }
+            else{
+                let newEntry = new BankReceipt( { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance } );
+                await newEntry.save();
+                
+                res.status(200).json({ success: true, message: "Entry Added !" }) 
+            }
         }
         else if( type === 'JV'){
             const { inputList, memo, journalDate, journalNo, attachment, type } = req.body;
