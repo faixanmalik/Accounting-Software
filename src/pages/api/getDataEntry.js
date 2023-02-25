@@ -144,7 +144,7 @@ export default async function handler(req, res) {
             let data = await JournalVoucher.findById(id)
             if(data){
                 res.status(200).json({ success: true, data}) 
-            } 
+            }
             else{
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }

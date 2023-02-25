@@ -73,9 +73,9 @@ export default async function handler(req, res) {
             }
         }
         else if( type === 'JV'){
-            const { inputList, memo, journalDate, journalNo, attachment, type } = req.body;
+            const { totalDebit , totalCredit, inputList, memo, journalDate, journalNo, attachment, type } = req.body;
             
-            let newEntry = new JournalVoucher( { inputList, memo, journalDate, journalNo, attachment, type } );
+            let newEntry = new JournalVoucher( { totalDebit , totalCredit, inputList, memo, journalDate, journalNo, attachment, type } );
             await newEntry.save();
             
             res.status(200).json({ success: true, message: "Entry Added !" }) 

@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const JournalVoucherSchema = new mongoose.Schema({
     inputList:{ type: Array },
+    totalDebit:{ type: Number },
+    totalCredit:{ type: Number },
     memo:{type: String},
     journalDate: {type: Date},
     journalNo: {type: Number, unique: true},

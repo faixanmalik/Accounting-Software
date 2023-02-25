@@ -239,7 +239,7 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'journalVoucher'){
-            const { id, inputList, memo, journalDate, journalNo, attachment } = req.body;
+            const { id, totalDebit, totalCredit, inputList, memo, journalDate, journalNo, attachment } = req.body;
 
             let dbData = await JournalVoucher.findById(id)
 
@@ -257,11 +257,13 @@ export default async function handler(req, res) {
                     //&& inputList === dbData.inputList
                     && journalDate === dbDate
                     && journalNo === dbData.journalNo
+                    && totalDebit === dbData.totalDebit
+                    && totalCredit === dbData.totalCredit
                     ){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await JournalVoucher.findByIdAndUpdate(id, {  inputList:inputList, memo:memo, journalDate:journalDate, journalNo : journalNo, attachment : attachment})
+                    await JournalVoucher.findByIdAndUpdate(id, { totalDebit:totalDebit , totalCredit:totalCredit,  inputList:inputList, memo:memo, journalDate:journalDate, journalNo : journalNo, attachment : attachment})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }

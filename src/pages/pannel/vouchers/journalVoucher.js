@@ -8,14 +8,16 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import Voucher from 'models/JournalVoucher';
+import Contact from 'models/Contact';
+import Charts from 'models/Charts';
 
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
   }
 
-  const JournalVoucher = ({ dbVouchers }) => {
-
+  const JournalVoucher = ({ dbVouchers, dbCharts, dbContacts }) => {
+    
     const [open, setOpen] = useState(false)
     const [id, setId] = useState('')
 
@@ -24,145 +26,166 @@ function classNames(...classes) {
     const [journalNo, setJournalNo] = useState('')
     const [memo, setMemo] = useState('')
     const [attachment, setAttachment] = useState('')
+    const [totalDebit, setTotalDebit] = useState(0)
+    const [totalCredit, setTotalCredit] = useState(0)
 
 
-  // JV
-  const [inputList, setInputList] = useState([
-    {account: '', desc: '', name: '' , credit: '', debit: ''},
-  ]);
+    // JV
+    const [inputList, setInputList] = useState([
+      {account: '', desc: '', name: '' , credit: 0, debit: 0},
+      {account: '', desc: '', name: '' , credit: 0, debit: 0},
+    ]);
 
-  // JV
-  const handleChange = (e) => {
-  
-    
-    if(e.target.name === 'journalDate'){
-      setJournalDate(e.target.value)
+    // JV
+    const handleChange = (e) => {
+      if(e.target.name === 'journalDate'){
+        setJournalDate(e.target.value)
+      }
+      else if(e.target.name === 'journalNo'){
+        setJournalNo(e.target.value)
+      }
+      else if(e.target.name === 'memo'){
+        setMemo(e.target.value)
+      }
+      else if(e.target.name === 'attachment'){
+        setAttachment(e.target.value)
+      }
+      else if(e.target.name === 'type'){
+        setType(e.target.value)
+      }
     }
-    else if(e.target.name === 'journalNo'){
-      setJournalNo(e.target.value)
-    }
-    else if(e.target.name === 'memo'){
-      setMemo(e.target.value)
-    }
-    else if(e.target.name === 'attachment'){
-      setAttachment(e.target.value)
-    }
-    else if(e.target.name === 'type'){
-      setType(e.target.value)
-    }
-  }
 
-  // JV
-  const submit = async(e)=>{
-    e.preventDefault()
+    // JV
+    const submit = async(e)=>{
+      e.preventDefault()
 
-    // fetch the data from form to makes a file in local system
-    const data = { inputList, memo, journalDate, journalNo, attachment, type:'JV' };
+      // fetch the data from form to makes a file in local system
+      const data = { totalDebit , totalCredit, inputList, memo, journalDate, journalNo, attachment, type:'JV' };
 
-    if( inputList[0].debit != inputList[0].credit ){
-      toast.error("Debit Credit values must be equal" , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+      if( totalDebit != totalCredit ){
+        toast.error("Debit Credit values must be equal" , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+      }
+      else{
+        let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
+          method: 'POST',
+          headers:{
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+        let response = await res.json()
+
+        if (response.success === true) {
+          window.location.reload();
+        }
+        else {
+          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+        }
+      }
     }
-    else{
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
+
+    // JV
+    const addLines = () => {
+      setInputList([...inputList,
+        {account: '', desc: '', name: '' , credit: '', debit: '' },
+      ])
+    }
+
+    // JV
+    const change = (e, index) => {
+      const values = [...inputList];
+      values[index][e.target.name] = e.target.value;
+      setInputList(values);
+
+
+      // total Debit
+      var totalDebitValue = 0;
+      for (let index = 0; index < inputList.length; index++) {
+        totalDebitValue += parseInt(inputList[index].debit);
+      }
+      setTotalDebit(totalDebitValue);
+
+
+      // total Credit
+      var totalCreditValue = 0;
+      for (let index = 0; index < inputList.length; index++) {
+        totalCreditValue += parseInt(inputList[index].credit);
+      }
+      setTotalCredit(totalCreditValue);
+
+
+
+    }
+
+    const editEntry = async(id)=>{
+      setOpen(true)
+
+      const data = { id, totalDebit, totalCredit, inputList, memo, journalDate, journalNo, attachment ,  editPath: 'journalVoucher'};
+      
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
         method: 'POST',
-        headers:{
+        headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       })
-      let response = await res.json()
-
-      if (response.success === true) {
-        window.location.reload();
-      }
-      else {
-        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-      }
-    }
-  }
-
-  // JV
-  const addLines = () => {
-    setInputList([...inputList,
-      {account: '', desc: '', name: '' , credit: '', debit: '' },
-    ])
-  }
-
-  // JV
-  const change = (e, index) => {
-    const values = [...inputList];
-    values[index][e.target.name] = e.target.value;
-    setInputList(values);
-  }
-
-  const editEntry = async(id)=>{
-    setOpen(true)
-
-    const data = { id, inputList, memo, journalDate, journalNo, attachment ,  editPath: 'journalVoucher'};
-    
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      let response = await res.json()
-      
-      if (response.success === true) {
-        //window.location.reload();
-      }
-      else {
-        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-      }
-  }
-
-  const delEntry = async(id)=>{
-
-    const data = { id , delPath: 'journalVoucher' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      let response = await res.json()
-
-      if (response.success === true) {
-        window.location.reload();
-      }
-      else {
-          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-      }
-    
-  }
-
-  const getData = async (id) =>{
-    setOpen(true)
-
-    const data = { id, getDataPath: 'journalVoucher' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      let response = await res.json()
-
-      if (response.success === true){
-        const dbJournalDate = moment(response.data.journalDate).utc().format('YYYY-MM-DD')
+        let response = await res.json()
         
-        setId(response.data._id)
-        setJournalDate(dbJournalDate)
-        setJournalNo(response.data.journalNo)
-        setInputList(response.data.inputList)
-        setMemo(response.data.memo)
-        setAttachment(response.data.attachment.data)
-      }
-  }
+        if (response.success === true) {
+          //window.location.reload();
+        }
+        else {
+          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+        }
+    }
 
+    const delEntry = async(id)=>{
+
+      const data = { id , delPath: 'journalVoucher' };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        let response = await res.json()
+
+        if (response.success === true) {
+          window.location.reload();
+        }
+        else {
+            toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+        }
+      
+    }
+
+    const getData = async (id) =>{
+      setOpen(true)
+
+      const data = { id, getDataPath: 'journalVoucher' };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        let response = await res.json()
+
+        if (response.success === true){
+          const dbJournalDate = moment(response.data.journalDate).utc().format('YYYY-MM-DD')
+          
+          setId(response.data._id)
+          setJournalDate(dbJournalDate)
+          setJournalNo(response.data.journalNo)
+          setInputList(response.data.inputList)
+          setTotalDebit(response.data.totalDebit)
+          setTotalCredit(response.data.totalCredit)
+          setMemo(response.data.memo)
+          setAttachment(response.data.attachment.data)
+        }
+    }
 
   return (
     <>
@@ -180,9 +203,12 @@ function classNames(...classes) {
               setJournalDate('')
               setJournalNo('')
               setInputList([
-                {account: '', desc: '', name: '' , credit: '', debit: ''},
+                {account: '', desc: '', name: '' , credit: 0, debit: 0},
+                {account: '', desc: '', name: '' , credit: 0, debit: 0},
               ])
               setMemo('')
+              setTotalDebit(0)
+              setTotalCredit(0)
               setAttachment('')
               }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
                 New
@@ -210,10 +236,10 @@ function classNames(...classes) {
                           Account
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          Debit
+                          Total Debit
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          Credit
+                          Total Credit
                       </th>
                       <th scope="col" className="px-6 py-3">
                           Name
@@ -239,10 +265,10 @@ function classNames(...classes) {
                         {item.inputList[0].account}
                       </td>
                       <td className="px-6 py-3">
-                        {item.inputList[0].debit}
+                        {item.totalDebit}
                       </td>
                       <td className="px-6 py-3">
-                        {item.inputList[0].credit}
+                        {item.totalCredit}
                       </td>
                       <td className="px-6 py-3">
                         {item.inputList[0].name}
@@ -277,7 +303,7 @@ function classNames(...classes) {
                     
                   </tbody>
                 </table>
-                {dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
+                { dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
               </div>
               
               {!dbVouchers.length === 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
@@ -305,151 +331,171 @@ function classNames(...classes) {
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
 
-                    <div className='w-full'>
-                      <form method="POST" onSubmit={submit}>
-                        <div className="overflow-hidden shadow sm:rounded-md">
-                          <div className="bg-white px-4 py-5 sm:p-6">
-                            <div className="">
-  
-                              <div className='flex space-x-4 mb-14'>
-                                <div className="w-full">
-                                  <label htmlFor="journalDate" className="block text-sm font-medium text-gray-700">
-                                  Journal Date:
-                                  </label>
-                                  <input
-                                  type="date"
-                                  onChange={handleChange}
-                                  name="journalDate"
-                                  id="journalDate"
-                                  value={journalDate}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  required
-                                  />
-                                </div>
-    
-                                <div className="w-full">
-                                  <label htmlFor="journalNo" className="block text-sm font-medium text-gray-700">
-                                  Journal No:
-                                  </label>
-                                  <input
-                                  type="number"
-                                  onChange={handleChange}
-                                  name="journalNo"
-                                  value={journalNo}
-                                  id="journalNo"
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  />
-                                </div>
-                              </div>
-    
-    
-                            {/* Account Lines*/}
-                            {inputList.map(( inputList , index)=>{
-                                return <div key={index} className='flex space-x-4 my-10 '>
-                                <div className="">
-                                <label htmlFor='account' className="block text-sm font-medium text-gray-700">
-                                  Account:
-                                </label>
-                                <input
-                                  onChange={ e=> change(e, index) }
-                                  value={ inputList.account }
-                                  type="text"
-                                  name='account'
-                                  id="account"
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                />
-                                </div>
-                                <div className="">
-                                <label htmlFor="desc" className="block text-sm font-medium text-gray-700">
-                                    Description:
-                                </label>
-                                <textarea cols="30" rows="1" type="text"
-                                  onChange={ e=> change(e, index) }
-                                  name="desc"
-                                  value={inputList.desc}
-                                  id="desc"
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                </textarea>
-                                </div>
-                                <div className="">
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                                    Name
-                                </label>
-                                <input
-                                  type="text"
-                                  onChange={ e=> change(e, index) }
-                                  value={inputList.name}
-                                  name="name"
-                                  id="name"
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                />
-                                </div>     
-                                <div className="">
-                                <label htmlFor="debit" className="block text-sm font-medium text-gray-700">
-                                    Debit:
-                                </label>
-                                <input
-                                  type="number"
-                                  onChange={ e=> change(e, index) }
-                                  value={ inputList.debit }
-                                  name="debit"
-                                  id="debit"
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                />
-                                </div>
-                                <div className="">
-                                <label htmlFor="credit" className="block text-sm font-medium text-gray-700">
-                                    Credit:
-                                </label>
-                                <input
-                                    type="number"
-                                    onChange={ e=> change(e, index) }
-                                    value = { inputList.credit }
-                                    name="credit"
-                                    id="credit"
-                                    className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                    required
-                                />
-                                </div>
-                              <button type='button' onClick={addLines}><AiOutlinePlusCircle className='text-lg'/></button>
-                            </div>})}
-    
-                                <div className=" mt-14">
-                                  <label htmlFor="memo" className="block text-sm font-medium text-gray-700">
-                                      Memo:
-                                  </label>
-                                  <textarea cols="30" rows="4" type="text"
-                                      name="memo"
-                                      onChange={handleChange}
-                                      id="memo"
-                                      value={memo}
-                                      className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                  </textarea>
-                                </div>
-                                
-                                <div className="mt-7">
-                                  <label htmlFor="attachment" className="block text-sm font-medium text-gray-700">
-                                      Attachment:
-                                  </label>
-                                  <input
-                                      type="file"
-                                      onChange={handleChange}
-                                      name="attachment"
-                                      value={attachment}
-                                      id="attachment"
-                                      className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                      multiple
-                                  />
-                                </div>
-                              </div>
+                  <div className='w-full'>
+                    <form method="POST" onSubmit={submit}>
+                      <div className="overflow-hidden shadow sm:rounded-md">
+                        <div className="bg-white px-4 py-5 sm:p-6">
+
+                          <div className='flex space-x-4 mb-14'>
+                            <div className="w-full">
+                              <label htmlFor="journalDate" className="block text-sm font-medium text-gray-700">
+                              Journal Date:
+                              </label>
+                              <input
+                              type="date"
+                              onChange={handleChange}
+                              name="journalDate"
+                              id="journalDate"
+                              value={journalDate}
+                              className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              required
+                              />
                             </div>
-                            <div className="bg-gray-50 space-x-3 px-4 py-3 text-right sm:px-6">
-                              <button type='button' onClick={()=>{editEntry(id)}} className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save Changes</button>
-                              <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save</button>
+
+                            <div className="w-full">
+                              <label htmlFor="journalNo" className="block text-sm font-medium text-gray-700">
+                              Journal No:
+                              </label>
+                              <input
+                              type="number"
+                              onChange={handleChange}
+                              name="journalNo"
+                              value={journalNo}
+                              id="journalNo"
+                              className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              />
+                            </div>
+                          </div>
+
+                          {inputList.map(( inputList , index)=>{
+                            return <div key={index} className='flex space-x-4 my-10 '>
+                            <div className="w-1/4">
+                              <label htmlFor='account' className="block text-sm font-medium text-gray-700">
+                                Account:
+                              </label>
+                              <select id="account" name="account" onChange={ e => change(e, index) } value={inputList.account} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <option>select accounts</option>
+                                {dbCharts.map((item)=>{
+                                  return <option key={item._id} value={item.accountName}>{item.accountCode} - {item.accountName}</option>
+                                })}
+                              </select>
+                            </div>
+                            <div className="w-1/4">
+                              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                  Name
+                              </label>
+                              <select id="name" name="name" onChange={ e => change(e, index) } value={inputList.name} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <option>select contacts</option>
+                                {dbContacts.map((item)=>{
+                                  return <option key={item._id} value={item.name}>{item.name}</option>
+                                })}
+                              </select>
+                            </div> 
+                            <div className="">
+                              <label htmlFor="desc" className="block text-sm font-medium text-gray-700">
+                                Description:
+                              </label>
+                              <textarea cols="30" rows="1" type="text"
+                                onChange={ e=> change(e, index) }
+                                name="desc"
+                                value={inputList.desc}
+                                id="desc"
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                              </textarea>
+                            </div>
+                            <div className="">
+                              <label htmlFor="debit" className="block text-sm font-medium text-gray-700">
+                                  Debit:
+                              </label>
+                              <input
+                                type="number"
+                                onChange={ e=> change(e, index) }
+                                value={ inputList.debit }
+                                name="debit"
+                                id="debit"
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              />
+                            </div>
+                            <div className="">
+                              <label htmlFor="credit" className="block text-sm font-medium text-gray-700">
+                                  Credit:
+                              </label>
+                              <input
+                                  type="number"
+                                  onChange={ e=> change(e, index) }
+                                  value = { inputList.credit }
+                                  name="credit"
+                                  id="credit"
+                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              />
+                            </div>
+                            <button type='button' onClick={addLines}><AiOutlinePlusCircle className='text-lg'/></button>
+                          </div>})}
+
+                          <div className='flex space-x-4 py-2 mt-20 justify-end pr-9 bg-gray-200'>
+                            <div className="w-36">
+                              <label htmlFor="totalDebit" className="block text-sm font-medium text-gray-700">
+                                  Total Debit:
+                              </label>
+                              <input
+                                type="number"
+                                onChange={handleChange}
+                                value = { totalDebit }
+                                name="totalDebit"
+                                id="totalDebit"
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
+                            <div className="w-36">
+                              <label htmlFor="totalCredit" className="block text-sm font-medium text-gray-700">
+                                Total Credit:
+                              </label>
+                              <input
+                                type="number"
+                                onChange={handleChange}
+                                value = { totalCredit }
+                                name="totalCredit"
+                                id="totalCredit"
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
+                            </div>
+                          </div>
+                        
+                          <div className=" mt-14">
+                            <label htmlFor="memo" className="block text-sm font-medium text-gray-700">
+                                Memo:
+                            </label>
+                            <textarea cols="30" rows="4" type="text"
+                                name="memo"
+                                onChange={handleChange}
+                                id="memo"
+                                value={memo}
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            </textarea>
+                          </div>
+                            
+                          <div className="mt-7">
+                            <label htmlFor="attachment" className="block text-sm font-medium text-gray-700">
+                                Attachment:
+                            </label>
+                            <input
+                                type="file"
+                                onChange={handleChange}
+                                name="attachment"
+                                value={attachment}
+                                id="attachment"
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                multiple
+                            />
                           </div>
                         </div>
-                        </form>
-                    </div>
+                        <div className="bg-gray-50 space-x-3 px-4 py-3 text-right sm:px-6">
+                          <button type='button' onClick={()=>{editEntry(id)}} className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save Changes</button>
+                          <button type="submit" className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
 
                 </div>
               </Dialog.Panel>
@@ -466,17 +512,21 @@ function classNames(...classes) {
 
 
 export async function getServerSideProps() {
-    if (!mongoose.connections[0].readyState){
-        mongoose.set("strictQuery", false);
-        await mongoose.connect(process.env.MONGO_URI)
+  if (!mongoose.connections[0].readyState){
+    mongoose.set("strictQuery", false);
+    await mongoose.connect(process.env.MONGO_URI)
+  }
+  let dbVouchers = await Voucher.find()
+  let dbContacts = await Contact.find()
+  let dbCharts = await Charts.find()
+
+  // Pass data to the page via props
+  return {
+    props: {
+      dbVouchers: JSON.parse(JSON.stringify(dbVouchers)),
+      dbContacts: JSON.parse(JSON.stringify(dbContacts)), 
+      dbCharts: JSON.parse(JSON.stringify(dbCharts)), 
     }
-    let dbVouchers = await Voucher.find()
-    
-        
-    // Pass data to the page via props
-    return {
-        props: { dbVouchers: JSON.parse(JSON.stringify(dbVouchers)) } 
-        }
-    }
-    
+  }
+}   
 export default JournalVoucher

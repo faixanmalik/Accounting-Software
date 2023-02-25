@@ -285,13 +285,12 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts }) => {
                                   Cash Receipt No:
                                 </label>
                                 <input
-                                type="number"
-                                onChange={handleChange}
-                                name="cashReceiptNo"
-                                value={cashReceiptNo}
-                                id="cashReceiptNo"
-                                autoComplete="cashReceiptNo"
-                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  type="number"
+                                  onChange={handleChange}
+                                  name="cashReceiptNo"
+                                  value={cashReceiptNo}
+                                  id="cashReceiptNo"
+                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 />
                               </div>
 
@@ -300,13 +299,12 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts }) => {
                                 Voucher Date:
                                 </label>
                                 <input
-                                type="date"
-                                onChange={handleChange}
-                                name="date"
-                                id="date"
-                                value={date}
-                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                required
+                                  type="date"
+                                  onChange={handleChange}
+                                  name="date"
+                                  id="date"
+                                  value={date}
+                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                 />
                               </div>
 
@@ -315,36 +313,36 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts }) => {
                                 Received In:
                                 </label>
                                 <select id="receivedIn" name="receivedIn" onChange={handleChange} value={receivedIn} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                <option>select received in</option>
-                                <option value={'Cash'}>Cash</option>
-                                <option value={'Petty Cash'}>Petty Cash</option>
+                                  <option>select received in</option>
+                                  <option value={'Cash'}>Cash</option>
+                                  <option value={'Petty Cash'}>Petty Cash</option>
                                 </select>
                               </div>
 
 
                               <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                                  <label htmlFor="details" className="block text-sm font-medium text-gray-700">
-                                  Details:
-                                  </label>
-                                  <textarea cols="30" rows="1" type="text"
+                                <label htmlFor="details" className="block text-sm font-medium text-gray-700">
+                                Details:
+                                </label>
+                                <textarea cols="30" rows="1" type="text"
                                   name="details"
                                   id="details"
                                   onChange={handleChange}
                                   value={details}
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                  </textarea>
+                                </textarea>
                               </div>
 
                               <div className="col-span-6 sm:col-span-4">
-                                  <label htmlFor="receivedFrom" className="block text-sm font-medium text-gray-700">
-                                  Received From:
-                                  </label>
-                                  <select id="receivedFrom" name="receivedFrom" onChange={handleChange} value={receivedFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <label htmlFor="receivedFrom" className="block text-sm font-medium text-gray-700">
+                                Received From:
+                                </label>
+                                <select id="receivedFrom" name="receivedFrom" onChange={handleChange} value={receivedFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                                   <option>select contacts</option>
                                   {dbContacts.map((item)=>{
                                       return <option key={item._id} value={item.name}>{item.name}</option>
                                   })}
-                                  </select>
+                                </select>
                               </div>
 
                               
