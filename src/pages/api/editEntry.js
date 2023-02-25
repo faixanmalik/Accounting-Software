@@ -243,18 +243,67 @@ export default async function handler(req, res) {
 
             let dbData = await JournalVoucher.findById(id)
 
-            // under construction
-            //for (let index = 0; index < array.length; index++) {
-            //    const element = array[index];
-            //}
+            let dbInputList = dbData.inputList;
+
+            // check req.body input List
+            var account = 0;
+            var desc = 0;
+            var name = 0;
+            var credit = 0;
+            var debit = 0;
+            for (let index = 0; index < inputList.length; index++) {
+                account = inputList[index].account;
+                desc = inputList[index].desc;
+                name = inputList[index].name;
+                credit += parseInt(inputList[index].credit);
+                debit += parseInt(inputList[index].debit);
+            }
+            console.log(account);
+            console.log(desc);
+            console.log(name);
+            console.log(credit);
+            console.log(debit);
+
+
+            // check database input List
+            var dbAccount = 0;
+            var dbDesc = 0;
+            var dbName = 0;
+            var dbCredit = 0;
+            var dbDebit = 0;
+            for (let index = 0; index < dbInputList.length; index++) {
+                dbAccount = dbInputList[index].account;
+                dbDesc = dbInputList[index].desc;
+                dbName = dbInputList[index].name;
+                dbCredit += parseInt(dbInputList[index].credit);
+                dbDebit += parseInt(dbInputList[index].debit);
+            }
+            console.log(dbAccount);
+            console.log(dbDesc);
+            console.log(dbName);
+            console.log(dbCredit);
+            console.log(dbDebit);
+
+            if(account === dbAccount && desc === dbDesc && name === dbName && credit === dbCredit && debit === dbDebit) {
+                console.log("matched")
+            }
+            else{
+                console.log("not matched")
+            }
 
             if(dbData){
                 const dbDate = moment(dbData.journalDate).utc().format('YYYY-MM-DD')
                 
                 if( 
-                    memo === dbData.memo 
+                    memo === dbData.memo && 
 
-                    //&& inputList === dbData.inputList
+                    //Input list 
+                    account === dbAccount 
+                    && desc === dbDesc 
+                    && name === dbName 
+                    && credit === dbCredit 
+                    && debit === dbDebit
+
                     && journalDate === dbDate
                     && journalNo === dbData.journalNo
                     && totalDebit === dbData.totalDebit

@@ -130,9 +130,10 @@ function classNames(...classes) {
         body: JSON.stringify(data),
       })
         let response = await res.json()
+        console.log(response)
         
         if (response.success === true) {
-          //window.location.reload();
+          window.location.reload();
         }
         else {
           toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
@@ -233,6 +234,9 @@ function classNames(...classes) {
                           Voucher Date
                       </th>
                       <th scope="col" className="px-6 py-3">
+                          Name
+                      </th>
+                      <th scope="col" className="px-6 py-3">
                           Account
                       </th>
                       <th scope="col" className="px-6 py-3">
@@ -241,9 +245,7 @@ function classNames(...classes) {
                       <th scope="col" className="px-6 py-3">
                           Total Credit
                       </th>
-                      <th scope="col" className="px-6 py-3">
-                          Name
-                      </th>
+                      
                       <th scope="col" className="px-6 py-3">
                         Action
                       </th>
@@ -262,6 +264,9 @@ function classNames(...classes) {
                         {moment(item.journalDate).utc().format('YYYY-MM-DD')}
                       </td>
                       <td className="px-6 py-3">
+                        {item.inputList[0].name}
+                      </td>
+                      <td className="px-6 py-3">
                         {item.inputList[0].account}
                       </td>
                       <td className="px-6 py-3">
@@ -269,9 +274,6 @@ function classNames(...classes) {
                       </td>
                       <td className="px-6 py-3">
                         {item.totalCredit}
-                      </td>
-                      <td className="px-6 py-3">
-                        {item.inputList[0].name}
                       </td>
                       <td className="px-6 py-3">
                         <Menu as="div" className=" inline-block text-left">
@@ -306,9 +308,9 @@ function classNames(...classes) {
                 { dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
               </div>
               
-              {!dbVouchers.length === 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
+              {/*{!dbVouchers.length == 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
                 <h1 className='text-sm text-indigo-700 mr-48'>Total Amount: $100</h1>
-              </div>: ''}
+              </div>: ''}*/}
 
             </div>
           </form>
