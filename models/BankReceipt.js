@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
 const BankReceiptSchema = new mongoose.Schema({
-    receivedIn:{type: String},
-    cashInHand:{type: String},
-    receivedFrom:{type: String},
+    paymentFrom:{type: String},
+    bankBranch:{type: String},
+    paymentTo:{type: String},
     amount:{type: Number},
     date:{type: Date},
-    refNo:{type: Number, unique: true},
+    bankReceiptNo:{type: Number, unique: true},
     details:{type: String},
-    balance:{type: Number},
+    bankAccountNo:{type: Number},
 
 },{timestamps:true});
 

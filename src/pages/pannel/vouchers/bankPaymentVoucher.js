@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Vouchers from 'models/BankPayment';
 import Contact from 'models/Contact';
+import BankAccount from 'models/BankAccount';
 
 
 function classNames(...classes) {
@@ -15,38 +16,37 @@ function classNames(...classes) {
 }
 
 
-const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
+const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
+
 
   const [open, setOpen] = useState(false)
   const [id, setId] = useState('')
 
   
   const [date, setDate] = useState('')
-  const [refNo, setRefNo] = useState('')
-  const [receivedIn, setReceivedIn] = useState('')
-  const [cashInHand, setCashInHand] = useState('')
-  const [receivedFrom, setReceivedFrom] = useState('')
+  const [bankPaymentNo, setBankPaymentNo] = useState('')
+  const [paymentFrom, setPaymentFrom] = useState('')
+  const [paymentTo, setPaymentTo] = useState('')
   const [details, setDetails] = useState('')
-  const [balance, setBalance] = useState('')
   const [amount, setAmount] = useState('')
+  const [bankBranch, setBankBranch] = useState('')
+  const [bankAccountNo, setBankAccountNo] = useState('')
+
 
 
   const handleChange = (e) => {
     
-    if(e.target.name === 'receivedIn'){
-      setReceivedIn(e.target.value)
+    if(e.target.name === 'paymentFrom'){
+      setPaymentFrom(e.target.value)
     }
-    else if(e.target.name === 'cashInHand'){
-      setCashInHand(e.target.value)
-    }
-    else if(e.target.name === 'receivedFrom'){
-      setReceivedFrom(e.target.value)
+    else if(e.target.name === 'paymentTo'){
+      setPaymentTo(e.target.value)
     }
     else if(e.target.name === 'date'){
       setDate(e.target.value)
     }
-    else if(e.target.name === 'refNo'){
-      setRefNo(e.target.value)
+    else if(e.target.name === 'bankPaymentNo'){
+      setBankPaymentNo(e.target.value)
     }
     else if(e.target.name === 'amount'){
       setAmount(e.target.value)
@@ -54,8 +54,11 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
     else if(e.target.name === 'details'){
       setDetails(e.target.value)
     }
-    else if(e.target.name === 'balance'){
-      setBalance(e.target.value)
+    else if(e.target.name === 'bankBranch'){
+      setBankBranch(e.target.value)
+    }
+    else if(e.target.name === 'bankAccountNo'){
+      setBankAccountNo(e.target.value)
     }
   }
 
@@ -63,7 +66,7 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance, type:'BPV' };
+    const data = { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, type:'BPV' };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -100,20 +103,20 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
 
         setId(response.data._id)
         setDate(dbDate)
-        setRefNo(response.data.refNo)
-        setReceivedIn(response.data.receivedIn)
-        setCashInHand(response.data.cashInHand)
-        setReceivedFrom(response.data.receivedFrom)
+        setBankPaymentNo(response.data.bankPaymentNo)
+        setPaymentFrom(response.data.paymentFrom)
+        setPaymentTo(response.data.paymentTo)
         setDetails(response.data.details)
-        setBalance(response.data.balance)
         setAmount(response.data.amount)
+        setBankBranch(response.data.bankBranch)
+        setBankAccountNo(response.data.bankAccountNo)
       }
   }
 
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, receivedIn, cashInHand, receivedFrom, amount, date, refNo, details, balance ,  editPath: 'bankPaymentVoucher'};
+    const data = { id, paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details ,  editPath: 'bankPaymentVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -123,14 +126,13 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
       body: JSON.stringify(data),
     })
       let response = await res.json()
-      console.log(response)
       
-        if (response.success === true) {
-          window.location.reload();
-        }
-        else {
-          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-        }
+      if (response.success === true) {
+        window.location.reload();
+      }
+      else {
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+      }
       
     
   }
@@ -170,12 +172,10 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                 setOpen(true)
                 setId('')
                 setDate('')
-                setRefNo('')
-                setReceivedIn('')
-                setCashInHand('')
-                setReceivedFrom('')
+                setBankPaymentNo('')
+                setPaymentFrom('')
+                setPaymentTo('')
                 setDetails('')
-                setBalance('')
                 setAmount('')
                 }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
                   New
@@ -194,19 +194,16 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                             Sr
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Ref No
+                            Bank Payment No
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Voucher Date
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Received From
+                            Payment To
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Cash In Hand
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Balance
+                            Account No
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Amount
@@ -223,19 +220,16 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                           {index + 1}
                         </th>
                         <td className="px-6 py-3">
-                          <div>{item.refNo}</div>
+                          <div>{item.bankPaymentNo}</div>
                         </td>
                         <td className="px-6 py-3">
                           {moment(item.date).utc().format('YYYY-MM-DD')}
                         </td>
                         <td className="px-6 py-3">
-                          <div>{item.receivedFrom}</div>
+                          <div>{item.paymentTo}</div>
                         </td>
                         <td className="px-6 py-3">
-                          {item.cashInHand}
-                        </td>
-                        <td className="px-6 py-3">
-                          {item.balance}
+                          <div>{item.bankAccountNo}</div>
                         </td>
                         <td className="px-6 py-3">
                           {item.amount}
@@ -304,16 +298,15 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                               <div className="grid grid-cols-6 gap-6">
 
                               <div className="col-span-6 sm:col-span-3">
-                                  <label htmlFor="refNo" className="block text-sm font-medium text-gray-700">
-                                  Reference No:
+                                  <label htmlFor="bankPaymentNo" className="block text-sm font-medium text-gray-700">
+                                   Bank Payment No:
                                   </label>
                                   <input
                                   type="number"
                                   onChange={handleChange}
-                                  name="refNo"
-                                  value={refNo}
-                                  id="refNo"
-                                  autoComplete="refNo"
+                                  name="bankPaymentNo"
+                                  value={bankPaymentNo}
+                                  id="bankPaymentNo"
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                   />
                               </div>
@@ -334,85 +327,89 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                               </div>
 
                               <div className="col-span-6 sm:col-span-4">
-                                <label htmlFor="receivedIn" className="block text-sm font-medium text-gray-700">
-                                Received In:
+                                <label htmlFor="paymentFrom" className="block text-sm font-medium text-gray-700">
+                                  Payment From:
                                 </label>
-                                <select id="receivedIn" name="receivedIn" onChange={handleChange} value={receivedIn} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                <option>Select Received In</option>
-                                <option value={'Cash'}>Cash</option>
-                                <option value={'Cash Drawer'}>Cash Drawer</option>
-                                <option value={'Petty Cash'}>Petty Cash</option>
+                                <select id="paymentFrom" name="paymentFrom" onChange={handleChange} value={paymentFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <option>select payment from</option>
+                                <option value={'Bank'}>Bank</option>
+                                <option value={'Debit Card'}>Debit Card</option>
+                                <option value={'Credit Card'}>Credit Card</option>
                                 </select>
                               </div>
 
-                              
-                              <div className="col-span-6 sm:col-span-2">
-                                  <label htmlFor="cashInHand" className="block text-sm font-medium text-gray-700">
-                                  Cash In Hand:
-                                  </label>
-                                  <input
-                                  type="number"
-                                  onChange={handleChange}
-                                  name="cashInHand"
-                                  id="cashInHand"
-                                  value={cashInHand}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  />
-                              </div>
-
-                              <div className="col-span-6 sm:col-span-4">
-                                  <label htmlFor="receivedFrom" className="block text-sm font-medium text-gray-700">
-                                  Received From:
-                                  </label>
-                                  <select id="receivedFrom" name="receivedFrom" onChange={handleChange} value={receivedFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                  <option>Select Contact</option>
-                                  {dbContacts.map((item)=>{
-                                      return <option key={item._id} value={item.name}>{item.name}</option>
-                                  })}
-                                  </select>
-                              </div>
-
-                              <div className="col-span-6 sm:col-span-2">
-                                  <label htmlFor="balance" className="block text-sm font-medium text-gray-700">
-                                  Balance:
-                                  </label>
-                                  <input
-                                  type="number"
-                                  onChange={handleChange}
-                                  name="balance"
-                                  id="balance"
-                                  value={balance}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  />
-                              </div>
-
-                              <div className="col-span-6 sm:col-span-3 lg:col-span-4">
-                                  <label htmlFor="details" className="block text-sm font-medium text-gray-700">
-                                  Details:
-                                  </label>
-                                  <textarea cols="30" rows="1" type="text"
+                              <div className="col-span-6 sm:col-span-3 lg:col-span-2">
+                                <label htmlFor="details" className="block text-sm font-medium text-gray-700">
+                                Details:
+                                </label>
+                                <textarea cols="30" rows="1" type="text"
                                   name="details"
                                   id="details"
                                   onChange={handleChange}
                                   value={details}
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                  </textarea>
+                                </textarea>
+                              </div>
+
+                              
+                              
+
+                              <div className="col-span-6 sm:col-span-4">
+                                <label htmlFor="paymentTo" className="block text-sm font-medium text-gray-700">
+                                Payment To:
+                                </label>
+                                <select id="paymentTo" name="paymentTo" onChange={handleChange} value={paymentTo} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>Select Contacts</option>
+                                  {dbContacts.map((item)=>{
+                                      return <option key={item._id} value={item.name}>{item.name}</option>
+                                  })}
+                                </select>
                               </div>
 
                               <div className="col-span-6 sm:col-span-2">
-                                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
                                   Amount:
-                                  </label>
-                                  <input
-                                  type="number"
-                                  onChange={handleChange}
-                                  name="amount"
-                                  id="amount"
-                                  value={amount}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  />
+                                </label>
+                                <input
+                                type="number"
+                                onChange={handleChange}
+                                name="amount"
+                                id="amount"
+                                value={amount}
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
                               </div>
+
+
+                              <div className="col-span-6 sm:col-span-3">
+                                <label htmlFor="bankBranch" className="block text-sm font-medium text-gray-700">
+                                Bank Branch:
+                                </label>
+                                <select id="bankBranch" name="bankBranch" onChange={handleChange} value={bankBranch} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>select bank</option>
+                                  {dbbankAccounts.map((item)=>{
+                                     if( paymentTo == item.accountTitle){
+                                      return <option key={item._id} value={item.bankBranch}>{item.bankBranch}</option>
+                                    }
+                                  })}
+                                </select>
                               </div>
+
+                              <div className="col-span-6 sm:col-span-3">
+                                <label htmlFor="bankAccountNo" className="block text-sm font-medium text-gray-700">
+                                Bank Account No:
+                                </label>
+                                <select id="bankAccountNo" name="bankAccountNo" onChange={handleChange} value={bankAccountNo} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>select account no</option>
+                                  {dbbankAccounts.map((item)=>{
+                                     if( paymentTo == item.accountTitle){
+                                      return <option key={item._id} value={item.accountNo}>{item.accountNo}</option>
+                                    }
+                                  })}
+                                </select>
+                              </div>
+                              
+                            </div>
                           </div>
 
                           <div className="bg-gray-50 space-x-3 px-4 py-3 text-right sm:px-6">
@@ -442,6 +439,7 @@ export async function getServerSideProps() {
   }
   let dbVouchers = await Vouchers.find()
   let dbContacts = await Contact.find()
+  let dbbankAccounts = await BankAccount.find()
   
       
   // Pass data to the page via props
@@ -449,6 +447,7 @@ export async function getServerSideProps() {
       props: { 
       dbVouchers: JSON.parse(JSON.stringify(dbVouchers)),
       dbContacts: JSON.parse(JSON.stringify(dbContacts)),
+      dbbankAccounts: JSON.parse(JSON.stringify(dbbankAccounts)),
       } 
       }
   }

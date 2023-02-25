@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
 const CashPaymentSchema = new mongoose.Schema({
-    receivedIn:{type: String},
-    cashInHand:{type: String},
-    receivedFrom:{type: String},
+    paymentFrom:{type: String},
+    paymentTo:{type: String},
     amount:{type: Number},
     date:{type: Date},
-    refNo:{type: Number, unique: true},
-    details:{type: String},
-    balance:{type: Number},
+    cashPaymentNo:{type: Number, unique: true},
+    details:{type: String}
 },{timestamps:true});
 
 mongoose.models={}
