@@ -433,34 +433,39 @@ function classNames(...classes) {
                             </div>
                             <button type='button' onClick={addLines}><AiOutlinePlusCircle className='text-lg'/></button>
                           </div>})}
-
-                          <div className='flex space-x-4 py-2 mt-20 justify-end pr-9 bg-gray-200'>
-                            <div className="w-36">
-                              <label htmlFor="totalDebit" className="block text-sm font-medium text-gray-700">
-                                  Total Debit:
-                              </label>
-                              <input
-                                type="number"
-                                onChange={handleChange}
-                                value = { totalDebit }
-                                name="totalDebit"
-                                id="totalDebit"
-                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                />
+                            
+                          <div className='bg-gray-200'>
+                            <div className='flex space-x-4 py-2 mt-20 justify-end pr-9 '>
+                              <div className="w-36">
+                                <label htmlFor="totalDebit" className="block text-sm font-medium text-gray-700">
+                                    Total Debit:
+                                </label>
+                                <input
+                                  type="number"
+                                  onChange={handleChange}
+                                  value = { totalDebit }
+                                  name="totalDebit"
+                                  id="totalDebit"
+                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  readOnly
+                                  />
+                              </div>
+                              <div className="w-36">
+                                <label htmlFor="totalCredit" className="block text-sm font-medium text-gray-700">
+                                  Total Credit:
+                                </label>
+                                <input
+                                  type="number"
+                                  onChange={handleChange}
+                                  value = { totalCredit }
+                                  name="totalCredit"
+                                  id="totalCredit"
+                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  readOnly
+                                  />
+                              </div>
                             </div>
-                            <div className="w-36">
-                              <label htmlFor="totalCredit" className="block text-sm font-medium text-gray-700">
-                                Total Credit:
-                              </label>
-                              <input
-                                type="number"
-                                onChange={handleChange}
-                                value = { totalCredit }
-                                name="totalCredit"
-                                id="totalCredit"
-                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                />
-                            </div>
+                            {/*<h1 id='checkMatch' className='text-sm text-red-500 tracking-wide font-semibold my-auto text-center ml-72'></h1>*/}
                           </div>
                         
                           <div className=" mt-14">
