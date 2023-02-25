@@ -25,7 +25,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
   // Cash Receipt
   const [date, setDate] = useState('')
   const [bankReceiptNo, setBankReceiptNo] = useState('')
-  const [paymentFrom, setPaymentFrom] = useState('')
+  const [receiptFrom, setReceiptFrom] = useState('')
   const [paymentTo, setPaymentTo] = useState('')
   const [details, setDetails] = useState('')
   const [bankBranch, setBankBranch] = useState('')
@@ -36,8 +36,8 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
   // Cash Receipt
   const handleChange = (e) => {
     
-    if(e.target.name === 'paymentFrom'){
-      setPaymentFrom(e.target.value)
+    if(e.target.name === 'receiptFrom'){
+      setReceiptFrom(e.target.value)
     }
     else if(e.target.name === 'bankBranch'){
       setBankBranch(e.target.value)
@@ -67,7 +67,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
   e.preventDefault()
 
   // fetch the data from form to makes a file in local system
-  const data = { paymentFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, type:'BRV' };
+  const data = { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, type:'BRV' };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -105,7 +105,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
         setId(response.data._id)
         setDate(dbDate)
         setBankReceiptNo(response.data.bankReceiptNo)
-        setPaymentFrom(response.data.paymentFrom)
+        setReceiptFrom(response.data.receiptFrom)
         setBankBranch(response.data.bankBranch)
         setPaymentTo(response.data.paymentTo)
         setDetails(response.data.details)
@@ -117,7 +117,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, paymentFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo ,  editPath: 'bankReceiptVoucher'};
+    const data = { id, receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo ,  editPath: 'bankReceiptVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -174,7 +174,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                 setId('')
                 setDate('')
                 setBankReceiptNo('')
-                setPaymentFrom('')
+                setReceiptFrom('')
                 setBankBranch('')
                 setPaymentTo('')
                 setDetails('')
@@ -337,10 +337,10 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                               </div>
 
                               <div className="col-span-6 sm:col-span-4">
-                                <label htmlFor="paymentFrom" className="block text-sm font-medium text-gray-700">
-                                  Payment From:
+                                <label htmlFor="receiptFrom" className="block text-sm font-medium text-gray-700">
+                                  Receipt From:
                                 </label>
-                                <select id="paymentFrom" name="paymentFrom" onChange={handleChange} value={paymentFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <select id="receiptFrom" name="receiptFrom" onChange={handleChange} value={receiptFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                                   <option>select payment from</option>
                                   <option value={'Bank'}>Bank</option>
                                   <option value={'Debit Card'}>Debit Card</option>

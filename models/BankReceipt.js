@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const BankReceiptSchema = new mongoose.Schema({
-    paymentFrom:{type: String},
+    receiptFrom:{type: String},
     bankBranch:{type: String},
     paymentTo:{type: String},
     amount:{type: Number},
