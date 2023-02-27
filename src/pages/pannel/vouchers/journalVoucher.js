@@ -231,7 +231,7 @@ function classNames(...classes) {
                           Voucher No
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          Voucher Date
+                          Date
                       </th>
                       <th scope="col" className="px-6 py-3">
                           Name
@@ -261,7 +261,7 @@ function classNames(...classes) {
                         {item.journalNo}
                       </td>
                       <td className="px-6 py-3">
-                        {moment(item.journalDate).utc().format('YYYY-MM-DD')}
+                        {moment(item.journalDate).utc().format('DD-MM-YYYY')}
                       </td>
                       <td className="px-6 py-3">
                         {item.inputList[0].name}

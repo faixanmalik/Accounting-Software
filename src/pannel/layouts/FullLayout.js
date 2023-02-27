@@ -3,6 +3,9 @@ import { Container } from "reactstrap";
 import Header from "./header/Header";
 import Sidebar from "./sidebars/vertical/Sidebar";
 
+// this line is remove the useLayoutEffect error
+React.useLayoutEffect = React.useEffect 
+
 const FullLayout = ({ children }) => {
   const [open, setOpen] = React.useState(false);
   const showMobilemenu = () => {
@@ -22,7 +25,7 @@ const FullLayout = ({ children }) => {
         </aside>
         {/********Content Area**********/}
 
-        <div className="contentArea">
+        <div className="contentArea bg-slate-100">
           {/********header**********/}
           <Header showMobmenu={() => showMobilemenu()} />
 

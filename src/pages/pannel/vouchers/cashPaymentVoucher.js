@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Vouchers from 'models/CashPayment';
 import Contact from 'models/Contact';
+import Charts from 'models/Charts';
 
 
 function classNames(...classes) {
@@ -15,7 +16,7 @@ function classNames(...classes) {
 }
 
 
-const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
+const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
 
   const [open, setOpen] = useState(false)
@@ -28,6 +29,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
   const [paymentTo, setPaymentTo] = useState('')
   const [details, setDetails] = useState('')
   const [amount, setAmount] = useState('')
+  const [account, setAccount] = useState('')
 
 
   const handleChange = (e) => {
@@ -50,6 +52,9 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
     else if(e.target.name === 'details'){
       setDetails(e.target.value)
     }
+    else if(e.target.name === 'account'){
+      setAccount(e.target.value)
+    }
   }
 
 
@@ -57,7 +62,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { paymentFrom, paymentTo, amount, date, cashPaymentNo, details, type:'CPV' };
+    const data = { paymentFrom, paymentTo, amount, date, cashPaymentNo, details,account, type:'CPV' };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -99,13 +104,14 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
         setPaymentTo(response.data.paymentTo)
         setDetails(response.data.details)
         setAmount(response.data.amount)
+        setAccount(response.data.account)
       }
   }
   
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, paymentFrom, paymentTo, amount, date, cashPaymentNo, details ,  editPath: 'cashPaymentVoucher'};
+    const data = { id, paymentFrom, paymentTo, amount, date, cashPaymentNo, details , account,  editPath: 'cashPaymentVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -115,14 +121,13 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
       body: JSON.stringify(data),
     })
       let response = await res.json()
-      console.log(response)
       
-        if (response.success === true) {
-          window.location.reload();
-        }
-        else {
-          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-        }
+      if (response.success === true) {
+        window.location.reload();
+      }
+      else {
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+      }
       
     
   }
@@ -167,6 +172,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                 setPaymentTo('')
                 setDetails('')
                 setAmount('')
+                setAccount('')
                 }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
                   New
               </button>
@@ -190,6 +196,9 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                             Voucher Date
                         </th>
                         <th scope="col" className="px-6 py-3">
+                            Account
+                        </th>
+                        <th scope="col" className="px-6 py-3">
                             Payment To
                         </th>
                         <th scope="col" className="px-6 py-3">
@@ -210,10 +219,13 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                           {item.cashPaymentNo}
                         </td>
                         <td className="px-6 py-3">
-                          {moment(item.date).utc().format('YYYY-MM-DD')}
+                          {moment(item.date).utc().format('DD-MM-YYYY')}
                         </td>
                         <td className="px-6 py-3">
-                          <div>{item.paymentTo}</div>
+                          {item.account}
+                        </td>
+                        <td className="px-6 py-3">
+                          {item.paymentTo}
                         </td>
                         <td className="px-6 py-3">
                           {item.amount}
@@ -312,6 +324,20 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                               </div>
 
                               <div className="col-span-6 sm:col-span-4">
+                                <label htmlFor="account" className="block text-sm font-medium text-gray-700">
+                                  Charts of Accounts:
+                                </label>
+                                <select id="account" name="account" onChange={handleChange} value={account} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>select accounts</option>
+                                  {dbCharts.map((item)=>{
+                                      return <option key={item._id} value={item.accountName}>{item.accountCode} - {item.accountName}</option>
+                                  })}
+                                </select>
+                              </div>
+
+
+
+                              <div className="col-span-6 sm:col-span-2">
                                   <label htmlFor="paymentFrom" className="block text-sm font-medium text-gray-700">
                                     Payment From:
                                   </label>
@@ -322,18 +348,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                                   </select>
                               </div>
 
-                              <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                                  <label htmlFor="details" className="block text-sm font-medium text-gray-700">
-                                  Details:
-                                  </label>
-                                  <textarea cols="30" rows="1" type="text"
-                                  name="details"
-                                  id="details"
-                                  onChange={handleChange}
-                                  value={details}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                  </textarea>
-                              </div>
+                              
 
                               
                               
@@ -365,6 +380,22 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts }) => {
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                   />
                               </div>
+
+                              <div className="col-span-6 sm:col-span-3 lg:col-span-6">
+                                  <label htmlFor="details" className="block text-sm font-medium text-gray-700">
+                                  Details:
+                                  </label>
+                                  <textarea cols="30" rows="1" type="text"
+                                  name="details"
+                                  id="details"
+                                  onChange={handleChange}
+                                  value={details}
+                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                  </textarea>
+                              </div>
+
+
+
                               </div>
                           </div>
 
@@ -395,15 +426,17 @@ export async function getServerSideProps() {
   }
   let dbVouchers = await Vouchers.find()
   let dbContacts = await Contact.find()
+  let dbCharts = await Charts.find()
   
       
   // Pass data to the page via props
   return {
-      props: { 
+    props: { 
       dbVouchers: JSON.parse(JSON.stringify(dbVouchers)),
       dbContacts: JSON.parse(JSON.stringify(dbContacts)),
-      } 
-      }
+      dbCharts: JSON.parse(JSON.stringify(dbCharts)),
+    } 
   }
+}
     
 export default CashPaymentVoucher

@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Vouchers from 'models/BankPayment';
 import Contact from 'models/Contact';
 import BankAccount from 'models/BankAccount';
+import Charts from 'models/Charts';
 
 
 function classNames(...classes) {
@@ -16,7 +17,7 @@ function classNames(...classes) {
 }
 
 
-const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
+const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }) => {
 
 
   const [open, setOpen] = useState(false)
@@ -31,6 +32,7 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
   const [amount, setAmount] = useState('')
   const [bankBranch, setBankBranch] = useState('')
   const [bankAccountNo, setBankAccountNo] = useState('')
+  const [account, setAccount] = useState('')
 
 
 
@@ -60,13 +62,16 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
     else if(e.target.name === 'bankAccountNo'){
       setBankAccountNo(e.target.value)
     }
+    else if(e.target.name === 'account'){
+      setAccount(e.target.value)
+    }
   }
 
   const submit = async(e)=>{
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, type:'BPV' };
+    const data = { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, account, type:'BPV' };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -110,13 +115,14 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
         setAmount(response.data.amount)
         setBankBranch(response.data.bankBranch)
         setBankAccountNo(response.data.bankAccountNo)
+        setAccount(response.data.account)
       }
   }
 
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details ,  editPath: 'bankPaymentVoucher'};
+    const data = { id, paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details , account,  editPath: 'bankPaymentVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -177,6 +183,7 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                 setPaymentTo('')
                 setDetails('')
                 setAmount('')
+                setAccount('')
                 }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
                   New
               </button>
@@ -197,7 +204,10 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                             Bank Payment No
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Voucher Date
+                            Date
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Account
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Payment To
@@ -223,7 +233,10 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                           <div>{item.bankPaymentNo}</div>
                         </td>
                         <td className="px-6 py-3">
-                          {moment(item.date).utc().format('YYYY-MM-DD')}
+                          {moment(item.date).utc().format('DD-MM-YYYY')}
+                        </td>
+                        <td className="px-6 py-3">
+                          <div>{item.account}</div>
                         </td>
                         <td className="px-6 py-3">
                           <div>{item.paymentTo}</div>
@@ -327,6 +340,18 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                               </div>
 
                               <div className="col-span-6 sm:col-span-4">
+                                <label htmlFor="account" className="block text-sm font-medium text-gray-700">
+                                  Charts of Accounts:
+                                </label>
+                                <select id="account" name="account" onChange={handleChange} value={account} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>select accounts</option>
+                                  {dbCharts.map((item)=>{
+                                      return <option key={item._id} value={item.accountName}>{item.accountCode} - {item.accountName}</option>
+                                  })}
+                                </select>
+                              </div>
+
+                              <div className="col-span-6 sm:col-span-2">
                                 <label htmlFor="paymentFrom" className="block text-sm font-medium text-gray-700">
                                   Payment From:
                                 </label>
@@ -338,18 +363,7 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                                 </select>
                               </div>
 
-                              <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                                <label htmlFor="details" className="block text-sm font-medium text-gray-700">
-                                Details:
-                                </label>
-                                <textarea cols="30" rows="1" type="text"
-                                  name="details"
-                                  id="details"
-                                  onChange={handleChange}
-                                  value={details}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                </textarea>
-                              </div>
+                              
 
                               
                               
@@ -408,6 +422,19 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts }) => {
                                   })}
                                 </select>
                               </div>
+
+                              <div className="col-span-6 sm:col-span-3 lg:col-span-6">
+                                <label htmlFor="details" className="block text-sm font-medium text-gray-700">
+                                Details:
+                                </label>
+                                <textarea cols="30" rows="1" type="text"
+                                  name="details"
+                                  id="details"
+                                  onChange={handleChange}
+                                  value={details}
+                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                </textarea>
+                              </div>
                               
                             </div>
                           </div>
@@ -440,6 +467,7 @@ export async function getServerSideProps() {
   let dbVouchers = await Vouchers.find()
   let dbContacts = await Contact.find()
   let dbbankAccounts = await BankAccount.find()
+  let dbCharts= await Charts.find()
   
       
   // Pass data to the page via props
@@ -448,6 +476,7 @@ export async function getServerSideProps() {
       dbVouchers: JSON.parse(JSON.stringify(dbVouchers)),
       dbContacts: JSON.parse(JSON.stringify(dbContacts)),
       dbbankAccounts: JSON.parse(JSON.stringify(dbbankAccounts)),
+      dbCharts: JSON.parse(JSON.stringify(dbCharts)),
       } 
       }
   }

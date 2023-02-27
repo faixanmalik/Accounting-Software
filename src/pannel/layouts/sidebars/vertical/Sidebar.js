@@ -298,51 +298,57 @@ const Sidebar2 = ({ showMobilemenu }) => {
           </SubMenu>
 
           <SubMenu label="Sales Module" icon={<BsShop className='text-lg'/>}>
-            <MenuItem href="/pannel/businessSetup/quotations" icon={<BsChatQuote className='text-lg'/>} className={ location === '/pannel/businessSetup/quotations' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/salesModule/quotations" icon={<BsChatQuote className='text-lg'/>} className={ location === '/pannel/salesModule/quotations' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Quotations
             </MenuItem>
-            <MenuItem href="/pannel/businessSetup/saleOrder" icon={<BiPurchaseTagAlt className='text-lg'/>} className={ location === '/pannel/businessSetup/saleOrder' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/salesModule/saleOrder" icon={<BiPurchaseTagAlt className='text-lg'/>} className={ location === '/pannel/salesModule/saleOrder' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Sale Order
             </MenuItem>
-            <MenuItem href="/pannel/businessSetup/outwardGatewayPass" icon={<FaToriiGate className='text-lg'/>} className={ location === '/pannel/businessSetup/outwardGatewayPass' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/salesModule/outwardGatewayPass" icon={<FaToriiGate className='text-lg'/>} className={ location === '/pannel/salesModule/outwardGatewayPass' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Outward Gateway Pass
             </MenuItem>
-            <MenuItem href="/pannel/businessSetup/saleOverview" icon={<TbFileInvoice className='text-lg'/>} className={ location === '/pannel/businessSetup/saleOverview' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/salesModule/saleOverview" icon={<TbFileInvoice className='text-lg'/>} className={ location === '/pannel/salesModule/saleOverview' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Overview
             </MenuItem>
           </SubMenu>
 
           <SubMenu label="Inventory Module" icon={<MdOutlineInventory2 className='text-lg'/>}>
-            <MenuItem href="/pannel/businessSetup/inventory" icon={<MdOutlineInventory2 className='text-lg'/>} className={ location === '/pannel/businessSetup/inventory' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/inventoryModule/inventory" icon={<MdOutlineInventory2 className='text-lg'/>} className={ location === '/pannel/inventoryModule/inventory' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Inventory
             </MenuItem>
           </SubMenu>
          
           <SubMenu label="Payroll Department" icon={<AiOutlineTeam className='text-lg'/>}>
-            <MenuItem href="/pannel/businessSetup/employeesDetails" icon={<AiOutlineTeam className='text-lg'/>} className={ location === '/pannel/businessSetup/employeesDetails' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/payrollDepartment/employeesDetails" icon={<AiOutlineTeam className='text-lg'/>} className={ location === '/pannel/payrollDepartment/employeesDetails' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Employees Details
             </MenuItem>
-            <MenuItem href="/pannel/businessSetup/employeesAttendance" icon={<BiFingerprint className='text-lg'/>} className={ location === '/pannel/businessSetup/employeesAttendance' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/payrollDepartment/employeesAttendance" icon={<BiFingerprint className='text-lg'/>} className={ location === '/pannel/payrollDepartment/employeesAttendance' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Employees Attendance
             </MenuItem>
           </SubMenu>
 
           
           <SubMenu label="Financial Managment" icon={<HiOutlineCash className='text-lg'/>}>
-            <MenuItem href="/pannel/businessSetup/saleBilling" icon={<RiBillLine className='text-lg'/>} className={ location === '/pannel/businessSetup/saleBilling' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/financialManagment/saleBilling" icon={<RiBillLine className='text-lg'/>} className={ location === '/pannel/financialManagment/saleBilling' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Sale Invoice & Billing
             </MenuItem>
-            <MenuItem href="/pannel/businessSetup/purchaseBilling" icon={<RiBillLine className='text-lg'/>} className={ location === '/pannel/businessSetup/purchaseBilling' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            <MenuItem href="/pannel/financialManagment/purchaseBilling" icon={<RiBillLine className='text-lg'/>} className={ location === '/pannel/financialManagment/purchaseBilling' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Purchase Invoice & Billing
             </MenuItem>
-            <MenuItem href="/pannel/financialManagment/manageVouchers" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/businessSetup/vouchers' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            {/*<MenuItem href="/pannel/financialManagment/manageVouchers" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/vouchers' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Vouchers
-            </MenuItem>
-            <MenuItem href="/pannel/businessSetup/financialReports" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/businessSetup/financialReports' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Reports
-            </MenuItem>
-            <MenuItem href="/pannel/businessSetup/projections" icon={<AiOutlineFundProjectionScreen className='text-lg'/>} className={ location === '/pannel/businessSetup/projections' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Projections
+            </MenuItem>*/}
+            
+            <SubMenu label="Reports" icon={<HiOutlineDocumentReport className='text-lg'/>}>
+              <MenuItem href="/pannel/financialManagment/reports/generalLedger" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/generalLedger' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+                General Ledger
+              </MenuItem>
+              <MenuItem href="/pannel/financialManagment/reports/trialBalance" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/trialBalance' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+                Trial Balance
+              </MenuItem>
+            </SubMenu>
+            <MenuItem href="/pannel/financialManagment/reports/journalReport" icon={<AiOutlineFundProjectionScreen className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/journalReport' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+                Journal Report
             </MenuItem>
           </SubMenu>
           

@@ -5,8 +5,9 @@ const CashReceiptSchema = new mongoose.Schema({
     receivedFrom:{type: String},
     amount:{type: Number},
     date:{type: Date},
-    cashReceiptNo:{type: Number, unique: true},
+    cashReceiptNo:{type: Number},
     details:{type: String},
+    account:{type: String}
 },{timestamps:true});
 
 mongoose.models={}

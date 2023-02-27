@@ -6,7 +6,8 @@ const CashPaymentSchema = new mongoose.Schema({
     amount:{type: Number},
     date:{type: Date},
     cashPaymentNo:{type: Number, unique: true},
-    details:{type: String}
+    details:{type: String},
+    account:{type: String}
 },{timestamps:true});
 
 mongoose.models={}

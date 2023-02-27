@@ -9,6 +9,7 @@ const BankReceiptSchema = new mongoose.Schema({
     bankReceiptNo:{type: Number, unique: true},
     details:{type: String},
     bankAccountNo:{type: Number},
+    account:{type: String},
 
 },{timestamps:true});
 

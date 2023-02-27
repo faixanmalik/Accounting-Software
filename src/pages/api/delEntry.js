@@ -17,7 +17,6 @@ export default async function handler(req, res) {
 
     if (req.method == 'POST'){
         const { delPath } = req.body;
-        console.log(delPath)
 
         if(delPath === 'chartsOfAccounts'){
             const { id } = req.body;

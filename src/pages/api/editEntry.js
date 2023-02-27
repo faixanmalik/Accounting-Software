@@ -161,16 +161,16 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'cashPaymentVoucher'){
-            const { id, paymentFrom, paymentTo, amount, date, cashPaymentNo, details } = req.body;
+            const { id, paymentFrom, paymentTo, amount, date, cashPaymentNo, details, account } = req.body;
             let dbData = await CashPayment.findById(id)
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( paymentFrom === dbData.paymentFrom && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && cashPaymentNo === dbData.cashPaymentNo && details === dbData.details ){
+                if( paymentFrom === dbData.paymentFrom && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && cashPaymentNo === dbData.cashPaymentNo && details === dbData.details && account === dbData.account ){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await CashPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, date : date, cashPaymentNo : cashPaymentNo, details : details })
+                    await CashPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, date : date, cashPaymentNo : cashPaymentNo, details : details, account : account })
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }
@@ -179,18 +179,18 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'cashReceiptVoucher'){
-            const { id, receivedIn, receivedFrom, amount, date, cashReceiptNo, details } = req.body;
+            const { id, receivedIn, receivedFrom, amount, date, cashReceiptNo, details, account } = req.body;
 
             let dbData = await CashReceipt.findById(id)
 
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( receivedIn === dbData.receivedIn && receivedFrom === dbData.receivedFrom && amount === dbData.amount && date === dbDate && cashReceiptNo === dbData.cashReceiptNo && details === dbData.details){
+                if( receivedIn === dbData.receivedIn && receivedFrom === dbData.receivedFrom && amount === dbData.amount && date === dbDate && cashReceiptNo === dbData.cashReceiptNo && details === dbData.details && account === dbData.account){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await CashReceipt.findByIdAndUpdate(id, {  receivedIn: receivedIn, receivedFrom : receivedFrom, amount : amount, date : date, cashReceiptNo : cashReceiptNo, details : details})
+                    await CashReceipt.findByIdAndUpdate(id, {  receivedIn: receivedIn, receivedFrom : receivedFrom, amount : amount, date : date, cashReceiptNo : cashReceiptNo, details : details , account : account})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }
@@ -199,18 +199,18 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'bankPaymentVoucher'){
-            const { id, paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details } = req.body;
+            const { id, paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, account } = req.body;
 
             let dbData = await BankPayment.findById(id)
 
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( paymentFrom === dbData.paymentFrom &&  paymentTo === dbData.paymentTo && amount === dbData.amount && bankBranch === dbData.bankBranch && bankAccountNo === dbData.bankAccountNo && date === dbDate && bankPaymentNo === dbData.bankPaymentNo && details === dbData.details ){
+                if( paymentFrom === dbData.paymentFrom &&  paymentTo === dbData.paymentTo && amount === dbData.amount && bankBranch === dbData.bankBranch && bankAccountNo === dbData.bankAccountNo && date === dbDate && bankPaymentNo === dbData.bankPaymentNo && details === dbData.details && account === dbData.account ){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await BankPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, bankBranch : bankBranch,  bankAccountNo : bankAccountNo, date : date, bankPaymentNo : bankPaymentNo, details : details })
+                    await BankPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, bankBranch : bankBranch,  bankAccountNo : bankAccountNo, date : date, bankPaymentNo : bankPaymentNo, details : details , account : account})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }
@@ -219,18 +219,18 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'bankReceiptVoucher'){
-            const { id, receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo } = req.body;
+            const { id, receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, account } = req.body;
 
             let dbData = await BankReceipt.findById(id)
 
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( receiptFrom === dbData.receiptFrom && bankBranch === dbData.bankBranch && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && bankReceiptNo === dbData.bankReceiptNo && details === dbData.details && bankAccountNo === dbData.bankAccountNo){
+                if( receiptFrom === dbData.receiptFrom && bankBranch === dbData.bankBranch && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && bankReceiptNo === dbData.bankReceiptNo && details === dbData.details && bankAccountNo === dbData.bankAccountNo && account === dbData.account){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await BankReceipt.findByIdAndUpdate(id, {  receiptFrom: receiptFrom, bankBranch : bankBranch, paymentTo : paymentTo, amount : amount, date : date, bankReceiptNo : bankReceiptNo, details : details, bankAccountNo : bankAccountNo})
+                    await BankReceipt.findByIdAndUpdate(id, {  receiptFrom: receiptFrom, bankBranch : bankBranch, paymentTo : paymentTo, amount : amount, date : date, bankReceiptNo : bankReceiptNo, details : details, bankAccountNo : bankAccountNo , account : account})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }
@@ -258,11 +258,6 @@ export default async function handler(req, res) {
                 credit += parseInt(inputList[index].credit);
                 debit += parseInt(inputList[index].debit);
             }
-            console.log(account);
-            console.log(desc);
-            console.log(name);
-            console.log(credit);
-            console.log(debit);
 
 
             // check database input List
@@ -277,18 +272,6 @@ export default async function handler(req, res) {
                 dbName = dbInputList[index].name;
                 dbCredit += parseInt(dbInputList[index].credit);
                 dbDebit += parseInt(dbInputList[index].debit);
-            }
-            console.log(dbAccount);
-            console.log(dbDesc);
-            console.log(dbName);
-            console.log(dbCredit);
-            console.log(dbDebit);
-
-            if(account === dbAccount && desc === dbDesc && name === dbName && credit === dbCredit && debit === dbDebit) {
-                console.log("matched")
-            }
-            else{
-                console.log("not matched")
             }
 
             if(dbData){

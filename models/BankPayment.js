@@ -8,7 +8,8 @@ const BankPaymentSchema = new mongoose.Schema({
     bankPaymentNo:{type: Number, unique: true},
     details:{type: String},
     bankBranch:{type: String},
-    bankAccountNo:{type: Number}
+    bankAccountNo:{type: Number},
+    account:{type: String}
 
 },{timestamps:true});
 

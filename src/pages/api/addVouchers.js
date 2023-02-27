@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         const { type } = req.body;
 
         if( type === 'CPV'){
-            const { paymentFrom, paymentTo, amount, date, cashPaymentNo, details } = req.body;
+            const { paymentFrom, paymentTo, amount, date, cashPaymentNo, details, account } = req.body;
             
             let dbCPV = await CashPayment.findOne({ cashPaymentNo })
 
@@ -20,14 +20,15 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new CashPayment( { paymentFrom, paymentTo, amount, date, cashPaymentNo, details } );
+                let newEntry = new CashPayment( { paymentFrom, paymentTo, amount, date, cashPaymentNo, details, account } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added!" }) 
             }
         }
         else if( type === 'CRV'){
-            const { receivedIn, receivedFrom, amount, date, cashReceiptNo, details } = req.body;
+            const { receivedIn, receivedFrom, amount, date, cashReceiptNo, details, account } = req.body;
+        
             
             let dbCRV = await CashReceipt.findOne({ cashReceiptNo })
 
@@ -35,14 +36,14 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new CashReceipt( { receivedIn, receivedFrom, amount, date, cashReceiptNo, details } );
+                let newEntry = new CashReceipt( { receivedIn, receivedFrom, amount, date, cashReceiptNo, details, account } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added !" }) 
             }
         }
         else if( type === 'BPV'){
-            const { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details } = req.body;
+            const { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, account } = req.body;
 
             let dbBPV = await BankPayment.findOne({ bankPaymentNo })
 
@@ -50,7 +51,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new BankPayment( { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details } );
+                let newEntry = new BankPayment( { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, account } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added !" }) 
@@ -58,7 +59,7 @@ export default async function handler(req, res) {
 
         }
         else if( type === 'BRV'){
-            const { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo } = req.body;
+            const { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, account } = req.body;
 
             let dbBRV = await BankReceipt.findOne({ bankReceiptNo })
 
@@ -66,7 +67,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new BankReceipt( { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo } );
+                let newEntry = new BankReceipt( { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, account } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added !" }) 
