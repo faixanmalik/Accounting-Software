@@ -5,11 +5,14 @@ const BankPaymentSchema = new mongoose.Schema({
     paymentTo:{type: String},
     amount:{type: Number},
     date:{type: Date},
-    bankPaymentNo:{type: Number, unique: true},
-    details:{type: String},
+    journalNo:{type: Number, unique: true},
+    desc:{type: String},
     bankBranch:{type: String},
     bankAccountNo:{type: Number},
-    account:{type: String}
+    account:{type: String},
+    type:{type: String},
+    debit:{type: Number},
+    credit:{type: Number}
 
 },{timestamps:true});
 

@@ -161,16 +161,16 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'cashPaymentVoucher'){
-            const { id, paymentFrom, paymentTo, amount, date, cashPaymentNo, details, account } = req.body;
+            const { id, paymentFrom, paymentTo, amount, date, journalNo, desc, account, debit, credit } = req.body;
             let dbData = await CashPayment.findById(id)
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( paymentFrom === dbData.paymentFrom && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && cashPaymentNo === dbData.cashPaymentNo && details === dbData.details && account === dbData.account ){
+                if( paymentFrom === dbData.paymentFrom && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && journalNo === dbData.journalNo && desc === dbData.desc && account === dbData.account && debit === dbData.debit && credit === dbData.credit ){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await CashPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, date : date, cashPaymentNo : cashPaymentNo, details : details, account : account })
+                    await CashPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, date : date, journalNo : journalNo, desc : desc, account : account, debit : debit, credit : credit})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }
@@ -179,18 +179,18 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'cashReceiptVoucher'){
-            const { id, receivedIn, receivedFrom, amount, date, cashReceiptNo, details, account } = req.body;
+            const { id, receivedIn, receivedFrom, amount, date, journalNo, desc, account, debit, credit } = req.body;
 
             let dbData = await CashReceipt.findById(id)
 
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( receivedIn === dbData.receivedIn && receivedFrom === dbData.receivedFrom && amount === dbData.amount && date === dbDate && cashReceiptNo === dbData.cashReceiptNo && details === dbData.details && account === dbData.account){
+                if( receivedIn === dbData.receivedIn && receivedFrom === dbData.receivedFrom && amount === dbData.amount && date === dbDate && journalNo === dbData.journalNo && desc === dbData.desc && account === dbData.account && debit === dbData.debit && credit === dbData.credit){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await CashReceipt.findByIdAndUpdate(id, {  receivedIn: receivedIn, receivedFrom : receivedFrom, amount : amount, date : date, cashReceiptNo : cashReceiptNo, details : details , account : account})
+                    await CashReceipt.findByIdAndUpdate(id, {  receivedIn: receivedIn, receivedFrom : receivedFrom, amount : amount, date : date, journalNo : journalNo, desc : desc , account : account, debit : debit, credit : credit})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }
@@ -199,18 +199,18 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'bankPaymentVoucher'){
-            const { id, paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, account } = req.body;
+            const { id, paymentFrom, paymentTo, amount, date, journalNo, bankBranch, bankAccountNo, desc, account, debit, credit } = req.body;
 
             let dbData = await BankPayment.findById(id)
 
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( paymentFrom === dbData.paymentFrom &&  paymentTo === dbData.paymentTo && amount === dbData.amount && bankBranch === dbData.bankBranch && bankAccountNo === dbData.bankAccountNo && date === dbDate && bankPaymentNo === dbData.bankPaymentNo && details === dbData.details && account === dbData.account ){
+                if( paymentFrom === dbData.paymentFrom &&  paymentTo === dbData.paymentTo && amount === dbData.amount && bankBranch === dbData.bankBranch && bankAccountNo === dbData.bankAccountNo && date === dbDate && journalNo === dbData.journalNo && desc === dbData.desc && account === dbData.account && debit === dbData.debit && credit === dbData.credit ){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await BankPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, bankBranch : bankBranch,  bankAccountNo : bankAccountNo, date : date, bankPaymentNo : bankPaymentNo, details : details , account : account})
+                    await BankPayment.findByIdAndUpdate(id, {  paymentFrom: paymentFrom, paymentTo : paymentTo, amount : amount, bankBranch : bankBranch,  bankAccountNo : bankAccountNo, date : date, journalNo : journalNo, desc : desc , account : account, debit : debit, credit : credit})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }
@@ -219,18 +219,18 @@ export default async function handler(req, res) {
             }
         }
         else if (editPath === 'bankReceiptVoucher'){
-            const { id, receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, account } = req.body;
+            const { id, receiptFrom, bankBranch, paymentTo, amount, date, journalNo, desc, bankAccountNo, account, debit, credit } = req.body;
 
             let dbData = await BankReceipt.findById(id)
 
             if(dbData){
                 const dbDate = moment(dbData.date).utc().format('YYYY-MM-DD')
                 
-                if( receiptFrom === dbData.receiptFrom && bankBranch === dbData.bankBranch && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && bankReceiptNo === dbData.bankReceiptNo && details === dbData.details && bankAccountNo === dbData.bankAccountNo && account === dbData.account){
+                if( receiptFrom === dbData.receiptFrom && bankBranch === dbData.bankBranch && paymentTo === dbData.paymentTo && amount === dbData.amount && date === dbDate && journalNo === dbData.journalNo && desc === dbData.desc && bankAccountNo === dbData.bankAccountNo && account === dbData.account && debit === dbData.debit && credit === dbData.credit){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await BankReceipt.findByIdAndUpdate(id, {  receiptFrom: receiptFrom, bankBranch : bankBranch, paymentTo : paymentTo, amount : amount, date : date, bankReceiptNo : bankReceiptNo, details : details, bankAccountNo : bankAccountNo , account : account})
+                    await BankReceipt.findByIdAndUpdate(id, {  receiptFrom: receiptFrom, bankBranch : bankBranch, paymentTo : paymentTo, amount : amount, date : date, journalNo : journalNo, desc : desc, bankAccountNo : bankAccountNo , account : account, debit : debit, credit : credit})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }

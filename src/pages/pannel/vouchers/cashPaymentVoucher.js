@@ -24,10 +24,10 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
   
   const [date, setDate] = useState('')
-  const [cashPaymentNo, setCashPaymentNo] = useState('')
+  const [journalNo, setJournalNo] = useState('')
   const [paymentFrom, setPaymentFrom] = useState('')
   const [paymentTo, setPaymentTo] = useState('')
-  const [details, setDetails] = useState('')
+  const [desc, setDesc] = useState('')
   const [amount, setAmount] = useState('')
   const [account, setAccount] = useState('')
 
@@ -43,14 +43,14 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
     else if(e.target.name === 'date'){
       setDate(e.target.value)
     }
-    else if(e.target.name === 'cashPaymentNo'){
-      setCashPaymentNo(e.target.value)
+    else if(e.target.name === 'journalNo'){
+      setJournalNo(e.target.value)
     }
     else if(e.target.name === 'amount'){
       setAmount(e.target.value)
     }
-    else if(e.target.name === 'details'){
-      setDetails(e.target.value)
+    else if(e.target.name === 'desc'){
+      setDesc(e.target.value)
     }
     else if(e.target.name === 'account'){
       setAccount(e.target.value)
@@ -62,7 +62,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { paymentFrom, paymentTo, amount, date, cashPaymentNo, details,account, type:'CPV' };
+    const data = { paymentFrom, paymentTo, amount, date, journalNo, desc, account, type:'CPV', debit: 0, credit: amount };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -99,10 +99,10 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
         
         setId(response.data._id)
         setDate(dbDate)
-        setCashPaymentNo(response.data.cashPaymentNo)
+        setJournalNo(response.data.journalNo)
         setPaymentFrom(response.data.paymentFrom)
         setPaymentTo(response.data.paymentTo)
-        setDetails(response.data.details)
+        setDesc(response.data.desc)
         setAmount(response.data.amount)
         setAccount(response.data.account)
       }
@@ -111,7 +111,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, paymentFrom, paymentTo, amount, date, cashPaymentNo, details , account,  editPath: 'cashPaymentVoucher'};
+    const data = { id, paymentFrom, paymentTo, amount, date, journalNo, desc , account,  editPath: 'cashPaymentVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -167,10 +167,10 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                 setOpen(true)
                 setId('')
                 setDate('')
-                setCashPaymentNo('')
+                setJournalNo(`CPV-${dbVouchers.length + 1}`)
                 setPaymentFrom('')
                 setPaymentTo('')
-                setDetails('')
+                setDesc('')
                 setAmount('')
                 setAccount('')
                 }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
@@ -216,7 +216,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                           {index + 1}
                         </th>
                         <td className="px-6 py-3">
-                          {item.cashPaymentNo}
+                          {item.journalNo}
                         </td>
                         <td className="px-6 py-3">
                           {moment(item.date).utc().format('DD-MM-YYYY')}
@@ -294,17 +294,18 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                               <div className="grid grid-cols-6 gap-6">
 
                               <div className="col-span-6 sm:col-span-3">
-                                  <label htmlFor="cashPaymentNo" className="block text-sm font-medium text-gray-700">
-                                  Cash Payment No:
+                                  <label htmlFor="journalNo" className="block text-sm font-medium text-gray-700">
+                                    Cash Payment No:
                                   </label>
                                   <input
-                                  type="number"
+                                  type="text"
                                   onChange={handleChange}
-                                  name="cashPaymentNo"
-                                  value={cashPaymentNo}
-                                  id="cashPaymentNo"
-                                  autoComplete="cashPaymentNo"
+                                  name="journalNo"
+                                  value={journalNo}
+                                  id="journalNo"
+                                  autoComplete="journalNo"
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  readOnly
                                   />
                               </div>
 
@@ -382,14 +383,14 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                               </div>
 
                               <div className="col-span-6 sm:col-span-3 lg:col-span-6">
-                                  <label htmlFor="details" className="block text-sm font-medium text-gray-700">
-                                  Details:
+                                  <label htmlFor="desc" className="block text-sm font-medium text-gray-700">
+                                  Description
                                   </label>
                                   <textarea cols="30" rows="1" type="text"
-                                  name="details"
-                                  id="details"
+                                  name="desc"
+                                  id="desc"
                                   onChange={handleChange}
-                                  value={details}
+                                  value={desc}
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                   </textarea>
                               </div>

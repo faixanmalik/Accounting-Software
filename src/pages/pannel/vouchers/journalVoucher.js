@@ -32,8 +32,8 @@ function classNames(...classes) {
 
     // JV
     const [inputList, setInputList] = useState([
-      {account: '', desc: '', name: '' , credit: 0, debit: 0},
-      {account: '', desc: '', name: '' , credit: 0, debit: 0},
+      { journalNo, account: '', desc: '', name: '' , credit: 0, debit: 0},
+      { journalNo, account: '', desc: '', name: '' , credit: 0, debit: 0},
     ]);
 
     // JV
@@ -98,6 +98,7 @@ function classNames(...classes) {
       setInputList(values);
 
 
+
       // total Debit
       var totalDebitValue = 0;
       for (let index = 0; index < inputList.length; index++) {
@@ -130,7 +131,6 @@ function classNames(...classes) {
         body: JSON.stringify(data),
       })
         let response = await res.json()
-        console.log(response)
         
         if (response.success === true) {
           window.location.reload();
@@ -202,10 +202,10 @@ function classNames(...classes) {
               setOpen(true)
               setId('')
               setJournalDate('')
-              setJournalNo('')
+              setJournalNo(`JV-${dbVouchers.length + 1}`)
               setInputList([
-                {account: '', desc: '', name: '' , credit: 0, debit: 0},
-                {account: '', desc: '', name: '' , credit: 0, debit: 0},
+                {journalNo : `JV-${dbVouchers.length + 1}` , account: '', desc: '', name: '' , credit: 0, debit: 0},
+                {journalNo : `JV-${dbVouchers.length + 1}` , account: '', desc: '', name: '' , credit: 0, debit: 0},
               ])
               setMemo('')
               setTotalDebit(0)
@@ -343,28 +343,28 @@ function classNames(...classes) {
                               <label htmlFor="journalDate" className="block text-sm font-medium text-gray-700">
                               Journal Date:
                               </label>
-                              <input
+                              <input 
                               type="date"
                               onChange={handleChange}
                               name="journalDate"
                               id="journalDate"
                               value={journalDate}
                               className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                              required
                               />
                             </div>
 
                             <div className="w-full">
                               <label htmlFor="journalNo" className="block text-sm font-medium text-gray-700">
-                              Journal No:
+                                Journal No:
                               </label>
                               <input
-                              type="number"
+                              type="text"
                               onChange={handleChange}
                               name="journalNo"
                               value={journalNo}
                               id="journalNo"
                               className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                              readOnly
                               />
                             </div>
                           </div>
@@ -405,6 +405,7 @@ function classNames(...classes) {
                                 className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                               </textarea>
                             </div>
+                          
                             <div className="">
                               <label htmlFor="debit" className="block text-sm font-medium text-gray-700">
                                   Debit:

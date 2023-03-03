@@ -349,11 +349,9 @@ const ProductAndServices = ({product, charts}) => {
                               required
                             />
                           </div>
-
-
                           <div className='col-span-6 sm:col-span-6 mt-10'>
                             <div className="flex space-x-3 items-center">
-                                <input type="checkbox" value={purchaseStatus} name="purchaseStatus" id="purchaseStatus" className='w-5 h-5' />
+                                <input type="checkbox" value={purchaseStatus}   name="purchaseStatus" id="purchaseStatus" className='w-5 h-5' />
                                 <label htmlFor="purchaseStatus" className="block text-lg  font-medium text-gray-700">
                                     Purchase
                                 </label>

@@ -24,10 +24,10 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
   // Cash Receipt
   const [date, setDate] = useState('')
-  const [cashReceiptNo, setCashReceiptNo] = useState('')
+  const [journalNo, setJournalNo] = useState('')
   const [receivedIn, setReceivedIn] = useState('')
   const [receivedFrom, setReceivedFrom] = useState('')
-  const [details, setDetails] = useState('')
+  const [desc, setDesc] = useState('')
   const [amount, setAmount] = useState('')
   const [account, setAccount] = useState('')
 
@@ -44,14 +44,14 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
     else if(e.target.name === 'date'){
       setDate(e.target.value)
     }
-    else if(e.target.name === 'cashReceiptNo'){
-      setCashReceiptNo(e.target.value)
+    else if(e.target.name === 'journalNo'){
+      setJournalNo(e.target.value)
     }
     else if(e.target.name === 'amount'){
       setAmount(e.target.value)
     }
-    else if(e.target.name === 'details'){
-      setDetails(e.target.value)
+    else if(e.target.name === 'desc'){
+      setDesc(e.target.value)
     }
     else if(e.target.name === 'account'){
       setAccount(e.target.value)
@@ -64,7 +64,7 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { receivedIn, receivedFrom, amount, date, cashReceiptNo, details, account, type:'CRV' };
+    const data = { receivedIn, receivedFrom, amount, date, journalNo, desc, account, type:'CRV', debit: amount, credit: 0 };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -101,10 +101,10 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
         
         setId(response.data._id)
         setDate(dbDate)
-        setCashReceiptNo(response.data.cashReceiptNo)
+        setJournalNo(response.data.journalNo)
         setReceivedIn(response.data.receivedIn)
         setReceivedFrom(response.data.receivedFrom)
-        setDetails(response.data.details)
+        setDesc(response.data.desc)
         setAmount(response.data.amount)
         setAccount(response.data.account)
       }
@@ -113,7 +113,7 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, receivedIn, receivedFrom, amount, date, cashReceiptNo, details , account, editPath: 'cashReceiptVoucher'};
+    const data = { id, receivedIn, receivedFrom, amount, date, journalNo, desc , account, editPath: 'cashReceiptVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -167,10 +167,10 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                 setOpen(true)
                 setId('')
                 setDate('')
-                setCashReceiptNo('')
+                setJournalNo(`CRV-${dbVouchers.length + 1}`)
                 setReceivedIn('')
                 setReceivedFrom('')
-                setDetails('')
+                setDesc('')
                 setAmount('')
                 setAccount('')
                 }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
@@ -216,7 +216,7 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                           {index + 1}
                         </th>
                         <td className="px-6 py-3">
-                          {item.cashReceiptNo}
+                          {item.journalNo}
                         </td>
                         <td className="px-6 py-3">
                           {moment(item.date).utc().format('DD-MM-YYYY')}
@@ -294,16 +294,17 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                               <div className="grid grid-cols-6 gap-6">
 
                               <div className="col-span-6 sm:col-span-3">
-                                <label htmlFor="cashReceiptNo" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="journalNo" className="block text-sm font-medium text-gray-700">
                                   Cash Receipt No:
                                 </label>
                                 <input
-                                  type="number"
+                                  type="text"
                                   onChange={handleChange}
-                                  name="cashReceiptNo"
-                                  value={cashReceiptNo}
-                                  id="cashReceiptNo"
+                                  name="journalNo"
+                                  value={journalNo}
+                                  id="journalNo"
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  readOnly
                                 />
                               </div>
 
@@ -381,14 +382,14 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
 
                               <div className="col-span-6 sm:col-span-3 lg:col-span-6">
-                                <label htmlFor="details" className="block text-sm font-medium text-gray-700">
-                                Details:
+                                <label htmlFor="desc" className="block text-sm font-medium text-gray-700">
+                                Description:
                                 </label>
                                 <textarea cols="30" rows="1" type="text"
-                                  name="details"
-                                  id="details"
+                                  name="desc"
+                                  id="desc"
                                   onChange={handleChange}
-                                  value={details}
+                                  value={desc}
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                 </textarea>
                               </div>

@@ -12,46 +12,47 @@ export default async function handler(req, res) {
         const { type } = req.body;
 
         if( type === 'CPV'){
-            const { paymentFrom, paymentTo, amount, date, cashPaymentNo, details, account } = req.body;
+            const { paymentFrom, paymentTo, amount, date, journalNo, desc, account, type, debit, credit } = req.body;
             
-            let dbCPV = await CashPayment.findOne({ cashPaymentNo })
+            
+            let dbCPV = await CashPayment.findOne({ journalNo })
 
             if( dbCPV ){
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new CashPayment( { paymentFrom, paymentTo, amount, date, cashPaymentNo, details, account } );
+                let newEntry = new CashPayment( { paymentFrom, paymentTo, amount, date, journalNo, desc, account, type,  debit, credit } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added!" }) 
             }
         }
         else if( type === 'CRV'){
-            const { receivedIn, receivedFrom, amount, date, cashReceiptNo, details, account } = req.body;
+            const { receivedIn, receivedFrom, amount, date, journalNo, desc, account, type, debit, credit } = req.body;
         
             
-            let dbCRV = await CashReceipt.findOne({ cashReceiptNo })
+            let dbCRV = await CashReceipt.findOne({ journalNo })
 
             if( dbCRV ){
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new CashReceipt( { receivedIn, receivedFrom, amount, date, cashReceiptNo, details, account } );
+                let newEntry = new CashReceipt( { receivedIn, receivedFrom, amount, date, journalNo, desc, account, type, debit, credit } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added !" }) 
             }
         }
         else if( type === 'BPV'){
-            const { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, account } = req.body;
+            const { paymentFrom, paymentTo, amount, date, journalNo, bankBranch, bankAccountNo, desc, account, type, debit, credit } = req.body;
 
-            let dbBPV = await BankPayment.findOne({ bankPaymentNo })
+            let dbBPV = await BankPayment.findOne({ journalNo })
 
             if( dbBPV ){
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new BankPayment( { paymentFrom, paymentTo, amount, date, bankPaymentNo, bankBranch, bankAccountNo, details, account } );
+                let newEntry = new BankPayment( { paymentFrom, paymentTo, amount, date, journalNo, bankBranch, bankAccountNo, desc, account, type, debit, credit } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added !" }) 
@@ -59,18 +60,18 @@ export default async function handler(req, res) {
 
         }
         else if( type === 'BRV'){
-            const { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, account } = req.body;
+            const { receiptFrom, bankBranch, paymentTo, amount, date, journalNo, desc, bankAccountNo, account, type, debit, credit } = req.body;
 
-            let dbBRV = await BankReceipt.findOne({ bankReceiptNo })
+            let dbBRV = await BankReceipt.findOne({ journalNo })
 
             if( dbBRV ){
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new BankReceipt( { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo, account } );
+                let newEntry = new BankReceipt( { receiptFrom, bankBranch, paymentTo, amount, date, journalNo, desc, bankAccountNo, account, type, debit, credit } );
                 await newEntry.save();
                 
-                res.status(200).json({ success: true, message: "Entry Added !" }) 
+                res.status(200).json({ success: true, message: "Entry Added !" })
             }
         }
         else if( type === 'JV'){

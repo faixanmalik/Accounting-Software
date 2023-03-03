@@ -25,10 +25,10 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
 
   // Cash Receipt
   const [date, setDate] = useState('')
-  const [bankReceiptNo, setBankReceiptNo] = useState('')
+  const [journalNo, setJournalNo] = useState('')
   const [receiptFrom, setReceiptFrom] = useState('')
   const [paymentTo, setPaymentTo] = useState('')
-  const [details, setDetails] = useState('')
+  const [desc, setDesc] = useState('')
   const [bankBranch, setBankBranch] = useState('')
   const [bankAccountNo, setBankAccountNo] = useState('')
   const [amount, setAmount] = useState('')
@@ -50,14 +50,14 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
     else if(e.target.name === 'date'){
       setDate(e.target.value)
     }
-    else if(e.target.name === 'bankReceiptNo'){
-      setBankReceiptNo(e.target.value)
+    else if(e.target.name === 'journalNo'){
+      setJournalNo(e.target.value)
     }
     else if(e.target.name === 'amount'){
       setAmount(e.target.value)
     }
-    else if(e.target.name === 'details'){
-      setDetails(e.target.value)
+    else if(e.target.name === 'desc'){
+      setDesc(e.target.value)
     }
     else if(e.target.name === 'bankAccountNo'){
       setBankAccountNo(e.target.value)
@@ -71,7 +71,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
   e.preventDefault()
 
   // fetch the data from form to makes a file in local system
-  const data = { receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo,account, type:'BRV' };
+  const data = { receiptFrom, bankBranch, paymentTo, amount, date, journalNo, desc, bankAccountNo,account, type:'BRV', debit: amount, credit: 0 };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -108,11 +108,11 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
 
         setId(response.data._id)
         setDate(dbDate)
-        setBankReceiptNo(response.data.bankReceiptNo)
+        setJournalNo(response.data.journalNo)
         setReceiptFrom(response.data.receiptFrom)
         setBankBranch(response.data.bankBranch)
         setPaymentTo(response.data.paymentTo)
-        setDetails(response.data.details)
+        setDesc(response.data.desc)
         setBankAccountNo(response.data.bankAccountNo)
         setAmount(response.data.amount)
         setAccount(response.data.account)
@@ -122,7 +122,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, receiptFrom, bankBranch, paymentTo, amount, date, bankReceiptNo, details, bankAccountNo , account,  editPath: 'bankReceiptVoucher'};
+    const data = { id, receiptFrom, bankBranch, paymentTo, amount, date, journalNo, desc, bankAccountNo , account,  editPath: 'bankReceiptVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -178,11 +178,11 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                 setOpen(true)
                 setId('')
                 setDate('')
-                setBankReceiptNo('')
+                setJournalNo(`BRV-${dbVouchers.length + 1}`)
                 setReceiptFrom('')
                 setBankBranch('')
                 setPaymentTo('')
-                setDetails('')
+                setDesc('')
                 setBankAccountNo('')
                 setAmount('')
                 setAccount('')
@@ -235,7 +235,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                           {index + 1}
                         </th>
                         <td className="px-6 py-3">
-                          {item.bankReceiptNo}
+                          {item.journalNo}
                         </td>
                         <td className="px-6 py-3">
                           {moment(item.date).utc().format('DD-MM-YYYY')}
@@ -320,16 +320,17 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                               <div className="grid grid-cols-6 gap-6">
 
                               <div className="col-span-6 sm:col-span-3">
-                                  <label htmlFor="bankReceiptNo" className="block text-sm font-medium text-gray-700">
+                                  <label htmlFor="journalNo" className="block text-sm font-medium text-gray-700">
                                     Bank Receipt No:
                                   </label>
                                   <input
-                                  type="number"
+                                  type="text"
                                   onChange={handleChange}
-                                  name="bankReceiptNo"
-                                  value={bankReceiptNo}
-                                  id="bankReceiptNo"
+                                  name="journalNo"
+                                  value={journalNo}
+                                  id="journalNo"
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                  readOnly
                                   />
                               </div>
 
@@ -433,14 +434,14 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                               </div>
 
                               <div className="col-span-6 sm:col-span-3 lg:col-span-6">
-                                  <label htmlFor="details" className="block text-sm font-medium text-gray-700">
-                                  Details:
+                                  <label htmlFor="desc" className="block text-sm font-medium text-gray-700">
+                                  Description
                                   </label>
                                   <textarea cols="30" rows="1" type="text"
-                                  name="details"
-                                  id="details"
+                                  name="desc"
+                                  id="desc"
                                   onChange={handleChange}
-                                  value={details}
+                                  value={desc}
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                   </textarea>
                               </div>
