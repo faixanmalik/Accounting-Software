@@ -13,22 +13,14 @@ import Charts from 'models/Charts';
 
 const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
 
-
-
-    
-
-
-
     // Cash Receipt
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('') 
     const [sortBy, setsortBy] = useState('')
     const [account, setAccount] = useState('')
     const [dbAccount, setDbAccount] = useState(false)
-
-
-
-    
+    const [balance, setBalance] = useState([])
+    const [initialBalance, setInitialBalance] = useState(0)
 
 
     useEffect(() => {
@@ -37,7 +29,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                 return data.account;
             }
         })
-        
         if(!dbchart.length == 0){
             if(dbchart[0].account === 'Incomes' || dbchart[0].account === 'Equity' || dbchart[0].account === 'Liabilities'){
                 setDbAccount(true)
@@ -46,8 +37,9 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                 setDbAccount(false)
             }
         }
-    }, [account])
+        balanceAmount()
 
+    }, [account, dbAccount, initialBalance])
 
 
 
@@ -55,7 +47,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     let allVouchers = [];
 
     if(account != 'Cash' && account != 'Bank' ){
-        
         allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
 
         const dbAll = allVouchers.filter((data) => {
@@ -74,6 +65,15 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             }
         })
         dbAllEntries = dbAllEntries.concat(dbAll);
+    }
+    else if(account === 'Cash'){
+        allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
+        dbAllEntries = dbAllEntries.concat(allVouchers);
+        
+    }
+    else if(account === 'Bank'){
+        allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
+        dbAllEntries = dbAllEntries.concat(allVouchers);
     }
 
 
@@ -95,12 +95,51 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     }
 
 
+    
+    const balanceAmount = async()=>{
 
+        let result = [];
+        if(dbAllEntries){
+            if(dbAllEntries.length > 0){
 
+                const initalCreditEntry = parseInt(dbAllEntries[0].credit);
+                let initialBalance = initalCreditEntry;
 
+                
+                for (let index = 0; index < dbAllEntries.length; index++) {
+                
+                    const currentCreditEntry = parseInt(dbAllEntries[index].credit);
+                    const currentDebitEntry = parseInt(dbAllEntries[index].debit);
+                    
+                    if(index <= 0){
+                        let totalBalance;
+                        if(dbAccount === true){
+                            totalBalance = currentCreditEntry - currentDebitEntry;
+                        }
+                        else if(dbAccount === false){ 
+                            totalBalance = currentDebitEntry - currentCreditEntry;
+                        }
+                        initialBalance = totalBalance;
+                        result.push(totalBalance)
+                    }
+                    else{
+                        let totalBalance;
+                        if(dbAccount === true){
+                            totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
+                        }
+                        else{
+                            totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
+                        }
+                        initialBalance = totalBalance;
 
-
-
+                        result.push(totalBalance);
+                    }
+                }
+                setBalance(result)
+            }
+        }
+    }
+    
 
 
 
@@ -145,7 +184,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 Account:
                             </label>
                             <select id="account" name="account" onChange={handleChange} value={account} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                <option>select</option>
+                                <option>select account</option>
                                 {dbCharts.map((item) => {
                                     return <option key={item._id} value={item.accountName}>{item.accountCode} - {item.accountName}</option>
                                 })}
@@ -182,7 +221,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         <table className="w-full text-sm text-left text-gray-500 ">
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
-
                                     <th scope="col" className="px-6 py-3">
                                         Account
                                     </th>
@@ -198,7 +236,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                     <th scope="col" className="px-6 py-3">
                                         Credit
                                     </th>
-                                    <th scope="col" className="px-6 py-3">
+                                    <th scope="col" className="px-6 py-3 text-blue-800 font-bold">
                                         Balance
                                     </th>
                                 </tr>
@@ -206,8 +244,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                             <tbody>
 
 
-                                {/* Cash Entries */}
-                                {account === 'Cash' ? dbCashReceipt.map((item) => {
+                                {/*{account === 'Cash' ? dbAllEntries.map((item, index) => {
                                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
                                             {item.account}
@@ -225,11 +262,11 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                             {item.credit}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {item.balance}
+                                            {balance[index]}
                                         </td>
                                     </tr>
                                 }) : "" }
-                                {account === 'Cash' ? dbCashPayment.map((item) => {
+                                {account === 'Cash' ? dbAllEntries.map((item, index)  => {
                                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
 
                                         <td className="px-6 py-3">
@@ -245,16 +282,15 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                             {item.debit}
                                         </td>
                                         <td className="px-6 py-3">
-                                             {item.credit}
+                                            {item.credit}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {item.balance}
+                                            {balance[index]}
                                         </td>
                                     </tr>
                                 }) : "" }
 
 
-                                {/* Bank Entries */}
                                 {account === 'Bank' ? dbBankReceipt.map((item) => {
                                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
 
@@ -274,7 +310,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                             {item.credit}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {item.balance}
+    
                                         </td>
                                     </tr>
                                 }) : "" }
@@ -296,18 +332,17 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                             {item.credit}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {item.balance}
                                         </td>
                                     </tr>
-                                }) : "" }
+                                }) : "" }*/}
 
 
 
 
                                 {/* All Vouchers */}
-                                {dbAllEntries.map((item) => {
-                                    return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
+                                {dbAllEntries.map((item,index) => {
 
+                                    return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
                                             <div>{item.account}</div>
                                             <div>{item.desc}</div>
@@ -318,21 +353,17 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                         <td className="px-6 py-3">
                                             {moment(item.date).utc().format('DD-MM-YYYY')}
                                         </td>
-
-
-
-                                        {/* Currently  */}
                                         <td className="px-6 py-3">
-                                            {item.amount ? item.journalNo === 'CRV-1' ? item.amount : 0  : item.debit}
+                                            {item.debit}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {item.amount ? item.journalNo === 'CRV-1' ? 0 : item.amount : item.credit}
+                                            {item.credit}
                                         </td>
-                                        <td className="px-6 py-3">
+                                        <td className="px-6 py-3 bg-gray-50 text-blue-700 font-bold">
+                                            {balance[index]}
 
-                                            {dbAccount === true ?    item.credit-item.debit   :   item.debit-item.credit}
-                                            
                                         </td>
+
                                     </tr>
                                 })}
 
