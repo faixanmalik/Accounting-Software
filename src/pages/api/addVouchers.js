@@ -14,7 +14,6 @@ export default async function handler(req, res) {
         if( type === 'CPV'){
             const { paymentFrom, paymentTo, amount, date, journalNo, desc, account, type, debit, credit } = req.body;
             
-            
             let dbCPV = await CashPayment.findOne({ journalNo })
 
             if( dbCPV ){
