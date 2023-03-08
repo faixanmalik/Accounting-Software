@@ -6,7 +6,7 @@ const BankReceiptSchema = new mongoose.Schema({
     paymentTo:{type: String},
     amount:{type: Number},
     date:{type: Date},
-    journalNo:{type: Number, unique: true},
+    journalNo:{type: String, unique: true},
     desc:{type: String},
     bankAccountNo:{type: Number},
     account:{type: String},

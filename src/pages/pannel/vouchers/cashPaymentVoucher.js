@@ -228,7 +228,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                           {item.paymentTo}
                         </td>
                         <td className="px-6 py-3">
-                          {item.amount}
+                          {parseInt(item.amount).toLocaleString()}
                         </td>
                         <td className="px-6 py-3">
                           <Menu as="div" className=" inline-block text-left">

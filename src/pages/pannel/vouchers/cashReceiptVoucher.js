@@ -222,13 +222,13 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                           {moment(item.date).utc().format('DD-MM-YYYY')}
                         </td>
                         <td className="px-6 py-3">
-                          <div>{item.account}</div>
+                          {item.account}
                         </td>
                         <td className="px-6 py-3">
-                          <div>{item.receivedFrom}</div>
+                          {item.receivedFrom}
                         </td>
                         <td className="px-6 py-3">
-                          {item.amount}
+                          {parseInt(item.amount).toLocaleString()}
                         </td>
                         <td className="px-6 py-3">
                           <Menu as="div" className=" inline-block text-left">

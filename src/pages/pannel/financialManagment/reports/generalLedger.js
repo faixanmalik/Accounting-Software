@@ -20,7 +20,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     const [account, setAccount] = useState('')
     const [dbAccount, setDbAccount] = useState(false)
     const [balance, setBalance] = useState([])
-    const [initialBalance, setInitialBalance] = useState(0)
 
 
     useEffect(() => {
@@ -43,8 +42,8 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             setDbAccount(null)
         }
         balanceAmount()
-
-    }, [account, dbAccount, initialBalance])
+        
+    }, [account, dbAccount])
 
 
 
@@ -135,10 +134,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         }
                         else{
                             totalBalance = currentDebitEntry - currentCreditEntry;
-                        }
-
-
-                        
+                        } 
                     }
                     initialBalance = totalBalance;
                     result.push(totalBalance)
@@ -285,19 +281,19 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                             <div>{item.desc}</div>
                                         </td>
                                         <td className="px-6 py-3">
-                                            <div>{item.journalNo}</div>
+                                            {item.journalNo}
                                         </td>
                                         <td className="px-6 py-3">
                                             {moment(item.date).utc().format('DD-MM-YYYY')}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {item.debit}
+                                            {parseInt(item.debit).toLocaleString()}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {item.credit}
+                                            {parseInt(item.credit).toLocaleString()}
                                         </td>
                                         <td className="px-6 py-3 bg-gray-50 text-blue-700 font-bold">
-                                            {balance[index]}
+                                            {balance[index] && balance[index].toLocaleString()}
                                         </td>
                                     </tr>
                                 })}

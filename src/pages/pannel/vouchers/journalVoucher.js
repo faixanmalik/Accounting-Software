@@ -270,10 +270,10 @@ function classNames(...classes) {
                         {item.inputList[0].account}
                       </td>
                       <td className="px-6 py-3">
-                        {item.totalDebit}
+                        {parseInt(item.totalDebit).toLocaleString()}
                       </td>
                       <td className="px-6 py-3">
-                        {item.totalCredit}
+                        {parseInt(item.totalCredit).toLocaleString()}
                       </td>
                       <td className="px-6 py-3">
                         <Menu as="div" className=" inline-block text-left">
