@@ -53,7 +53,9 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     if(account != 'Cash' && account != 'Bank' ){
         allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
 
+        // Data filter
         const dbAll = allVouchers.filter((data) => {
+
             if(data.account){
                 if (data.account === `${account}`) {
                     return data.account;
@@ -65,10 +67,17 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         return data.account;
                     }
                 })
+
+
                 dbAllEntries = dbAllEntries.concat(journal);
             }
         })
+
+        // Date filter
+
+
         dbAllEntries = dbAllEntries.concat(dbAll);
+
     }
     else if(account === 'Cash'){
         allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
@@ -79,6 +88,9 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
         dbAllEntries = dbAllEntries.concat(allVouchers);
     }
+
+
+
 
 
 
@@ -107,7 +119,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         if(dbAllEntries.length > 0){
             const initalCreditEntry = parseInt(dbAllEntries[0].credit);
             let initialBalance = initalCreditEntry;
-
             
             for (let index = 0; index < dbAllEntries.length; index++) {
 
@@ -180,7 +191,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     <div className='w-full'>
         <form method="POST">
             <div className="overflow-idden shadow sm:rounded-md">
-                <div className="bg-white px-4 sm:p-5">
+                <div className="bg-white px-4 sm:p-3">
                     <div className="grid grid-cols-6 gap-6">
                         <div className="col-span-6 sm:col-span-1">
                             <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700">
@@ -229,7 +240,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 <option value={'Account Code'}>Account Code</option>
                             </select>
                         </div>
-                        <button className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
+                        <button type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
                     </div>
                 </div>
             </div>
@@ -238,8 +249,8 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
-            <div className="px-4 mt-10 sm:px-0 flex">
-                <h3 className="text-lg mx-auto font-bold leading-6 text-blue-800">General Ledger Summary</h3>
+            <div className="px-4 mt-4 sm:px-0 flex">
+                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">General Ledger Summary</h3>
             </div>
         </div>
         <div className="md:col-span-2">
@@ -274,17 +285,20 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                                 {/* All Vouchers */}
                                 {dbAllEntries.map((item,index) => {
+                                    console.log(item);
+
 
                                     return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
-                                            <div>{item.account}</div>
-                                            <div>{item.desc}</div>
+                                            <div className='text-black font-semibold'>{item.account}</div>
+                                            <div className='text-xs'>{item.desc}</div>
                                         </td>
                                         <td className="px-6 py-3">
                                             {item.journalNo}
                                         </td>
                                         <td className="px-6 py-3">
-                                            {moment(item.date).utc().format('DD-MM-YYYY')}
+                                            {!item.type && moment(item.date).format('DD-MM-YYYY')}
+                                            {item.type && moment(item.date).utc().format('DD-MM-YYYY')}
                                         </td>
                                         <td className="px-6 py-3">
                                             {parseInt(item.debit).toLocaleString()}
@@ -299,7 +313,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 })}
                             </tbody>
                         </table>
-                        {/*{ dbJournalVoucher.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}*/}
+                        { dbAllEntries.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
                 </div>
             </form>

@@ -196,66 +196,62 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
               <div className="overflow-hidden shadow sm:rounded-md">
               
                 <div className="overflow-x-auto shadow-sm">
-                  <table className="w-full text-sm text-left text-gray-500 ">
+                  <table className="w-full text-sm text-left text-gray-500">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="pl-3 py-3">
                             Sr
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            Bank Recipt No
+                        <th scope="col" className="px-3 py-3">
+                            Bank Receipt No
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-3 py-3">
                             Date
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-3 py-3">
                             Account
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            Payment To
-                        </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-3 py-3">
+                            Payment To &
                             Bank Branch
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            Bank Account No
+                        <th scope="col" className="px-3 py-3">
+                            Account No
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-3 py-3">
                             Amount
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                          Action
+                        <th scope="col" className="px-3 py-3">
+                            Action
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {dbVouchers.map((item, index)=>{ 
                       return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
-                        <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                          {index + 1}
+                        <th scope="row" className="px-3 py-3 font-medium text-gray-900 whitespace-nowrap">
+                          <div className='text-sm'>{index + 1}</div>
                         </th>
-                        <td className="px-6 py-3">
-                          {item.journalNo}
+                        <td className="px-3 py-3">
+                          <div className='text-sm'>{item.journalNo}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          {moment(item.date).utc().format('DD-MM-YYYY')}
+                        <td className="px-3 py-3">
+                          <div className='text-sm'>{moment(item.date).utc().format('DD-MM-YYYY')}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          <div>{item.account}</div>
+                        <td className="px-3 py-3">
+                          <div className='text-sm'>{item.account}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          <div>{item.paymentTo}</div>
+                        <td className="px-3 py-3">
+                          <div className='font-semibold'>{item.paymentTo}</div>
+                          <div className='text-xs'>{item.bankBranch}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          {item.bankBranch}
+                        <td className="px-3 py-3">
+                          <div className='text-sm'>{item.bankAccountNo}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          {item.bankAccountNo}
+                        <td className="px-3 py-3">
+                          <div className='text-sm text-black font-semibold'>{parseInt(item.amount).toLocaleString()}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          {parseInt(item.amount).toLocaleString()}
-                        </td>
-                        <td className="px-6 py-3">
+                        <td className="px-3 py-3">
                           <Menu as="div" className=" inline-block text-left">
                             <div>
                               <Menu.Button className="z-0">
@@ -285,12 +281,12 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                       
                     </tbody>
                   </table>
-                  {dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
+                  {dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
 
                 </div>
-                {!dbVouchers.length === 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
+                {/*{!dbVouchers.length === 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
                   <h1 className='text-sm text-indigo-700 mr-48'>Total Amount: $100</h1>
-                </div>: ''}
+                </div>: ''}*/}
                 
               </div>
             </form>

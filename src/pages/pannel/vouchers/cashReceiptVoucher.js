@@ -213,22 +213,22 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                       {dbVouchers.map((item, index)=>{ 
                       return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                         <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                          {index + 1}
+                          <div className='text-sm'>{index + 1}</div>
                         </th>
                         <td className="px-6 py-3">
-                          {item.journalNo}
+                          <div className='text-sm'>{item.journalNo}</div>
                         </td>
                         <td className="px-6 py-3">
-                          {moment(item.date).utc().format('DD-MM-YYYY')}
+                          <div className='text-sm'>{moment(item.date).utc().format('DD-MM-YYYY')}</div>
                         </td>
                         <td className="px-6 py-3">
-                          {item.account}
+                          <div className='text-sm'>{item.account}</div>
                         </td>
                         <td className="px-6 py-3">
-                          {item.receivedFrom}
+                          <div className='text-sm'>{item.receivedFrom}</div>
                         </td>
                         <td className="px-6 py-3">
-                          {parseInt(item.amount).toLocaleString()}
+                          <div className='text-sm text-black font-semibold'>{parseInt(item.amount).toLocaleString()}</div>
                         </td>
                         <td className="px-6 py-3">
                           <Menu as="div" className=" inline-block text-left">
@@ -260,11 +260,11 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                       
                     </tbody>
                   </table>
-                    {dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
+                    {dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                 </div>
-                {!dbVouchers.length === 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
+                {/*{!dbVouchers.length === 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
                   <h1 className='text-sm text-indigo-700 mr-48'>Total Amount: $100</h1>
-                </div>: ''}
+                </div>: ''}*/}
                 
               </div>
             </form>

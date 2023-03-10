@@ -278,10 +278,10 @@ export default async function handler(req, res) {
                 const dbDate = moment(dbData.journalDate).utc().format('YYYY-MM-DD')
                 
                 if( 
-                    memo === dbData.memo && 
-
+                    memo === dbData.memo 
+                    
                     //Input list 
-                    account === dbAccount 
+                    && account === dbAccount 
                     && desc === dbDesc 
                     && name === dbName 
                     && credit === dbCredit 

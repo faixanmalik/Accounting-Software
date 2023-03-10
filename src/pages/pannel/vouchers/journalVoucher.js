@@ -32,8 +32,8 @@ function classNames(...classes) {
 
     // JV
     const [inputList, setInputList] = useState([
-      { journalNo, account: '', desc: '', name: '' , credit: 0, debit: 0},
-      { journalNo, account: '', desc: '', name: '' , credit: 0, debit: 0},
+      { journalNo, date: journalDate, account: '', desc: '', name: '' , credit: 0, debit: 0},
+      { journalNo, date: journalDate, account: '', desc: '', name: '' , credit: 0, debit: 0},
     ]);
 
     // JV
@@ -58,6 +58,10 @@ function classNames(...classes) {
     // JV
     const submit = async(e)=>{
       e.preventDefault()
+      
+      inputList.forEach(item => {
+        item.date = journalDate;
+      });
 
       // fetch the data from form to makes a file in local system
       const data = { totalDebit , totalCredit, inputList, memo, journalDate, journalNo, attachment, type:'JV' };
@@ -96,7 +100,6 @@ function classNames(...classes) {
       const values = [...inputList];
       values[index][e.target.name] = e.target.value;
       setInputList(values);
-
 
 
       // total Debit
@@ -204,8 +207,8 @@ function classNames(...classes) {
               setJournalDate('')
               setJournalNo(`JV-${dbVouchers.length + 1}`)
               setInputList([
-                {journalNo : `JV-${dbVouchers.length + 1}` , account: '', desc: '', name: '' , credit: 0, debit: 0},
-                {journalNo : `JV-${dbVouchers.length + 1}` , account: '', desc: '', name: '' , credit: 0, debit: 0},
+                {journalNo : `JV-${dbVouchers.length + 1}`, date: journalDate, account: '', desc: '', name: '' , credit: 0, debit: 0},
+                {journalNo : `JV-${dbVouchers.length + 1}`, date: journalDate, account: '', desc: '', name: '' , credit: 0, debit: 0},
               ])
               setMemo('')
               setTotalDebit(0)
@@ -255,25 +258,25 @@ function classNames(...classes) {
                     {dbVouchers.map((item, index)=>{ 
                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                       <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                        {index + 1}
+                        <div className='text-sm'>{index + 1}</div>
                       </th>
                       <td className="px-6 py-3">
-                        {item.journalNo}
+                        <div className='text-sm'>{item.journalNo}</div>
                       </td>
                       <td className="px-6 py-3">
-                        {moment(item.journalDate).utc().format('DD-MM-YYYY')}
+                        <div className='text-sm'>{moment(item.journalDate).utc().format('DD-MM-YYYY')}</div>
                       </td>
                       <td className="px-6 py-3">
-                        {item.inputList[0].name}
+                        <div className='text-sm'>{item.inputList[0].name}</div>
                       </td>
                       <td className="px-6 py-3">
-                        {item.inputList[0].account}
+                        <div className='text-sm'>{item.inputList[0].account}</div>
                       </td>
                       <td className="px-6 py-3">
-                        {parseInt(item.totalDebit).toLocaleString()}
+                        <div className='text-sm text-black font-semibold'>{parseInt(item.totalDebit).toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-3">
-                        {parseInt(item.totalCredit).toLocaleString()}
+                        <div className='text-sm text-black font-semibold'>{parseInt(item.totalCredit).toLocaleString()}</div>
                       </td>
                       <td className="px-6 py-3">
                         <Menu as="div" className=" inline-block text-left">
@@ -305,7 +308,7 @@ function classNames(...classes) {
                     
                   </tbody>
                 </table>
-                { dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
+                { dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
               </div>
               
               {/*{!dbVouchers.length == 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
@@ -339,6 +342,7 @@ function classNames(...classes) {
                         <div className="bg-white px-4 py-5 sm:p-6">
 
                           <div className='flex space-x-4 mb-14'>
+
                             <div className="w-full">
                               <label htmlFor="journalDate" className="block text-sm font-medium text-gray-700">
                               Journal Date:
@@ -382,6 +386,8 @@ function classNames(...classes) {
                                 })}
                               </select>
                             </div>
+
+
                             <div className="w-1/4">
                               <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                                   Name
