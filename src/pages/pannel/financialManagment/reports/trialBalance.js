@@ -67,28 +67,25 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         return data.account;
                     }
                 })
-
-
                 dbAllEntries = dbAllEntries.concat(journal);
             }
         })
         dbAllEntries = dbAllEntries.concat(dbAll);
-
-        // Date filter
-        dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
     }
     else if(account === 'Cash'){
         allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
         dbAllEntries = dbAllEntries.concat(allVouchers);
-        
     }
     else if(account === 'Bank'){
         allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
         dbAllEntries = dbAllEntries.concat(allVouchers);
     }
 
+    // Date filter
+    dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-
+    //const filteredArray = dbAllEntries.filter((item, index) => index === dbAllEntries.length - 1);
+    //console.log(filteredArray);
 
 
 
@@ -248,7 +245,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
-                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">General Ledger Summary</h3>
+                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Trial Balance Summary</h3>
             </div>
         </div>
         <div className="md:col-span-2">
@@ -283,29 +280,30 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
                                 {/* All Vouchers */}
                                 {dbAllEntries.map((item,index) => {
-
-                                    return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
-                                        <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{item.account}</div>
-                                            <div className='text-xs'>{item.desc}</div>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            {item.journalNo}
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            {!item.type && moment(item.date).format('DD-MM-YYYY')}
-                                            {item.type && moment(item.date).utc().format('DD-MM-YYYY')}
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            {parseInt(item.debit).toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            {parseInt(item.credit).toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-3 bg-gray-50 text-blue-700 font-bold">
-                                            {balance[index] && balance[index].toLocaleString()}
-                                        </td>
-                                    </tr>
+                                    if(dbAllEntries.length - 1 === index){
+                                        return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
+                                            <td className="px-6 py-3">
+                                                <div className='text-black font-semibold'>{item.account}</div>
+                                                <div className='text-xs'>{item.desc}</div>
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                {item.journalNo}
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                {!item.type && moment(item.date).format('DD-MM-YYYY')}
+                                                {item.type && moment(item.date).utc().format('DD-MM-YYYY')}
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                {parseInt(item.debit).toLocaleString()}
+                                            </td>
+                                            <td className="px-6 py-3">
+                                                {parseInt(item.credit).toLocaleString()}
+                                            </td>
+                                            <td className="px-6 py-3 bg-gray-50 text-blue-700 font-bold">
+                                                {balance[index] && balance[index].toLocaleString()}
+                                            </td>
+                                        </tr>
+                                    }
                                 })}
                             </tbody>
                         </table>

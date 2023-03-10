@@ -346,10 +346,10 @@ const Sidebar2 = ({ showMobilemenu }) => {
               <MenuItem href="/pannel/financialManagment/reports/trialBalance" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/trialBalance' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Trial Balance
               </MenuItem>
+              <MenuItem href="/pannel/financialManagment/reports/journalReport" icon={<AiOutlineFundProjectionScreen className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/journalReport' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+                  Journal Report
+              </MenuItem>
             </SubMenu>
-            <MenuItem href="/pannel/financialManagment/reports/journalReport" icon={<AiOutlineFundProjectionScreen className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/journalReport' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Journal Report
-            </MenuItem>
           </SubMenu>
           
       

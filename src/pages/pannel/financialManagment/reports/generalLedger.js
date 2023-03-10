@@ -74,8 +74,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         })
         dbAllEntries = dbAllEntries.concat(dbAll);
 
-        // Date filter
-        dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
     }
     else if(account === 'Cash'){
         allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
@@ -87,9 +85,10 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         dbAllEntries = dbAllEntries.concat(allVouchers);
     }
 
+    // Date filter
+    dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-
-
+    
 
 
     
