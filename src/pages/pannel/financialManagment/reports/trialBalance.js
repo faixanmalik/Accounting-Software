@@ -11,7 +11,7 @@ import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
 
 
-const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
+const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
 
     // Cash Receipt
     const [fromDate, setFromDate] = useState('')
@@ -345,4 +345,4 @@ export async function getServerSideProps() {
     }
 }
 
-export default GeneralLedger
+export default TrialBalance
