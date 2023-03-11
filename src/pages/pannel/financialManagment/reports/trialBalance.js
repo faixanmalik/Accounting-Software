@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import mongoose from "mongoose";
-import moment from 'moment/moment';
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CashReceipt from 'models/CashReceipt';
@@ -13,10 +12,8 @@ import Charts from 'models/Charts';
 
 const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
 
-    // Cash Receipt
     const [fromDate, setFromDate] = useState('')
-    const [toDate, setToDate] = useState('') 
-    const [sortBy, setsortBy] = useState('')
+    const [toDate, setToDate] = useState('')
     const [account, setAccount] = useState('')
     const [dbAccount, setDbAccount] = useState(false)
     const [balance, setBalance] = useState([])
@@ -39,7 +36,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             }
         }
         else{
-            setDbAccount(null)
+            setDbAccount(false)
         }
         balanceAmount()
         
@@ -71,10 +68,12 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             }
         })
         dbAllEntries = dbAllEntries.concat(dbAll);
+
     }
     else if(account === 'Cash'){
         allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
         dbAllEntries = dbAllEntries.concat(allVouchers);
+        
     }
     else if(account === 'Bank'){
         allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
@@ -83,28 +82,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
     // Date filter
     dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    //const filteredArray = dbAllEntries.filter((item, index) => index === dbAllEntries.length - 1);
-    //console.log(filteredArray);
-
-
-
-    
-    const handleChange = (e) => {
-        if (e.target.name === 'sortBy') {
-            setsortBy(e.target.value)
-        }
-        else if (e.target.name === 'account') {
-            setAccount(e.target.value)
-        }
-        else if (e.target.name === 'fromDate') {
-            setFromDate(e.target.value)
-        }
-        else if (e.target.name === 'toDate') {
-            setToDate(e.target.value)
-        }
-    }
-
 
     
     const balanceAmount = async()=>{
@@ -129,18 +106,8 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         totalBalance = currentDebitEntry - currentCreditEntry;
                     }
                     else if(dbAccount === null){
-
-                        const dbchart = dbCharts.filter((data) => {
-                            if (data.accountName === dbAllEntries[index].account) {
-                                return data.account;
-                            }
-                        })
-                        if(dbchart[0].account === 'Incomes' || dbchart[0].account === 'Equity' || dbchart[0].account === 'Liabilities'){
-                            totalBalance = currentCreditEntry - currentDebitEntry;
-                        }
-                        else{
-                            totalBalance = currentDebitEntry - currentCreditEntry;
-                        } 
+                        
+                        totalBalance = currentDebitEntry - currentCreditEntry;
                     }
                     initialBalance = totalBalance;
                     result.push(totalBalance)
@@ -154,17 +121,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
                     }
                     else if(dbAccount === null){
-                        const dbchart = dbCharts.filter((data) => {
-                            if (data.accountName === dbAllEntries[index].account) {
-                                return data.account;
-                            }
-                        })
-                        if(dbchart[0].account === 'Incomes' || dbchart[0].account === 'Equity' || dbchart[0].account === 'Liabilities'){
-                            totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
-                        }
-                        else{
-                            totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
-                        }
+                        totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
                     }
                     
                     initialBalance = totalBalance;
@@ -174,8 +131,20 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             setBalance(result)
         }
     }
-    
 
+
+
+    const handleChange = (e) => {
+        if (e.target.name === 'account') {
+            setAccount(e.target.value)
+        }
+        else if (e.target.name === 'fromDate') {
+            setFromDate(e.target.value)
+        }
+        else if (e.target.name === 'toDate') {
+            setToDate(e.target.value)
+        }
+    }
 
 
     return (
@@ -225,16 +194,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                 })}
                             </select>
                         </div>
-                        <div className="col-span-6 sm:col-span-1">
-                            <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700">
-                                Sort by:
-                            </label>
-                            <select id="sortBy" name="sortBy" onChange={handleChange} value={sortBy} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                <option>select</option>
-                                <option value={'Account Name'}>Account Name</option>
-                                <option value={'Account Code'}>Account Code</option>
-                            </select>
-                        </div>
                         <button type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
                     </div>
                 </div>
@@ -260,19 +219,10 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                         Account
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Voucher No
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Date
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
                                         Debit
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         Credit
-                                    </th>
-                                    <th scope="col" className="px-6 py-3 text-blue-800 font-bold">
-                                        Balance
                                     </th>
                                 </tr>
                             </thead>
@@ -280,32 +230,23 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
                                 {/* All Vouchers */}
                                 {dbAllEntries.map((item,index) => {
+
                                     if(dbAllEntries.length - 1 === index){
-                                        return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
-                                            <td className="px-6 py-3">
-                                                <div className='text-black font-semibold'>{item.account}</div>
-                                                <div className='text-xs'>{item.desc}</div>
-                                            </td>
-                                            <td className="px-6 py-3">
-                                                {item.journalNo}
-                                            </td>
-                                            <td className="px-6 py-3">
-                                                {!item.type && moment(item.date).format('DD-MM-YYYY')}
-                                                {item.type && moment(item.date).utc().format('DD-MM-YYYY')}
-                                            </td>
-                                            <td className="px-6 py-3">
-                                                {parseInt(item.debit).toLocaleString()}
-                                            </td>
-                                            <td className="px-6 py-3">
-                                                {parseInt(item.credit).toLocaleString()}
-                                            </td>
-                                            <td className="px-6 py-3 bg-gray-50 text-blue-700 font-bold">
-                                                {balance[index] && balance[index].toLocaleString()}
-                                            </td>
-                                        </tr>
-                                    }
+                                    return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
+                                        <td className="px-6 py-3">
+                                            <div className='text-black font-semibold'>{account}</div>
+                                        </td>
+                                        <td className="px-6 py-3 text-blue-700 font-bold">
+                                            {dbAccount === false && balance[index] && balance[index].toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-3 text-blue-700 font-bold">
+                                            {dbAccount === true && balance[index] && balance[index].toLocaleString()}
+                                        </td>
+                                    </tr>}
                                 })}
+
                             </tbody>
+
                         </table>
                         { dbAllEntries.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>

@@ -89,26 +89,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     
-
-
-    
-    const handleChange = (e) => {
-        if (e.target.name === 'sortBy') {
-            setsortBy(e.target.value)
-        }
-        else if (e.target.name === 'account') {
-            setAccount(e.target.value)
-        }
-        else if (e.target.name === 'fromDate') {
-            setFromDate(e.target.value)
-        }
-        else if (e.target.name === 'toDate') {
-            setToDate(e.target.value)
-        }
-    }
-
-
-    
     const balanceAmount = async()=>{
 
         let result = [];
@@ -131,18 +111,8 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         totalBalance = currentDebitEntry - currentCreditEntry;
                     }
                     else if(dbAccount === null){
-
-                        const dbchart = dbCharts.filter((data) => {
-                            if (data.accountName === dbAllEntries[index].account) {
-                                return data.account;
-                            }
-                        })
-                        if(dbchart[0].account === 'Incomes' || dbchart[0].account === 'Equity' || dbchart[0].account === 'Liabilities'){
-                            totalBalance = currentCreditEntry - currentDebitEntry;
-                        }
-                        else{
-                            totalBalance = currentDebitEntry - currentCreditEntry;
-                        } 
+                        
+                        totalBalance = currentDebitEntry - currentCreditEntry;
                     }
                     initialBalance = totalBalance;
                     result.push(totalBalance)
@@ -156,17 +126,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
                     }
                     else if(dbAccount === null){
-                        const dbchart = dbCharts.filter((data) => {
-                            if (data.accountName === dbAllEntries[index].account) {
-                                return data.account;
-                            }
-                        })
-                        if(dbchart[0].account === 'Incomes' || dbchart[0].account === 'Equity' || dbchart[0].account === 'Liabilities'){
-                            totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
-                        }
-                        else{
-                            totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
-                        }
+                        totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
                     }
                     
                     initialBalance = totalBalance;
@@ -174,6 +134,23 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                 }
             }
             setBalance(result)
+        }
+    }
+
+
+
+    const handleChange = (e) => {
+        if (e.target.name === 'sortBy') {
+            setsortBy(e.target.value)
+        }
+        else if (e.target.name === 'account') {
+            setAccount(e.target.value)
+        }
+        else if (e.target.name === 'fromDate') {
+            setFromDate(e.target.value)
+        }
+        else if (e.target.name === 'toDate') {
+            setToDate(e.target.value)
         }
     }
     
