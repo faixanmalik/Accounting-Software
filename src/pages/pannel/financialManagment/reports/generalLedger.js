@@ -42,7 +42,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             setDbAccount(null)
         }
         balanceAmount()
-        
     }, [account, dbAccount])
 
 
@@ -50,7 +49,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     let dbAllEntries = [];
     let allVouchers = [];
 
-    if(account != 'Cash' && account != 'Bank' ){
+    if(account != 'Cash' && account != 'Bank'){
         allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
 
         // Data filter
@@ -67,32 +66,30 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         return data.account;
                     }
                 })
-
-
                 dbAllEntries = dbAllEntries.concat(journal);
             }
         })
         dbAllEntries = dbAllEntries.concat(dbAll);
-
     }
     else if(account === 'Cash'){
         allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
         dbAllEntries = dbAllEntries.concat(allVouchers);
-        
     }
     else if(account === 'Bank'){
         allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
         dbAllEntries = dbAllEntries.concat(allVouchers);
     }
-
+    
     // Date filter
     dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     
+
+
+
     const balanceAmount = async()=>{
 
         let result = [];
-
         if(dbAllEntries.length > 0){
             const initalCreditEntry = parseInt(dbAllEntries[0].credit);
             let initialBalance = initalCreditEntry;
@@ -136,6 +133,10 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             setBalance(result)
         }
     }
+
+
+
+
 
 
 
@@ -259,6 +260,21 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                                 {/* All Vouchers */}
                                 {dbAllEntries.map((item,index) => {
+
+                                    if(account != 'Cash' && account != 'Bank'){
+                                        if(item.type === 'CPV' || item.type === 'BPV'){
+                                            item.debit = item.amount;
+                                            item.credit = 0;
+                                        }
+                                    }
+                                    else{
+                                        if(item.type === 'CPV' || item.type === 'BPV'){
+                                            item.credit = item.amount;
+                                            item.debit = 0;
+                                        }
+                                    }
+
+
 
                                     return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">

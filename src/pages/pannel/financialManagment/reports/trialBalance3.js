@@ -14,23 +14,31 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
+    const [dbAccount, setDbAccount] = useState(false)
+    const [balance, setBalance] = useState([])
+
+
+
+    useEffect(() => {
+        balanceAmount()
+    }, []);
+
+
+
 
     
-    useEffect(() => {
-        //  balanceAmount()
-    }, [])
+    let All = [];
+    let allVouchers = [];
+    allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
 
 
-
-    let balance = [];
     dbCharts.forEach(element => {
-
         let dbAllEntries = [];
-        let allVouchers = [];
-        
+
         if(element.accountName != 'Cash' && element.accountName != 'Bank'){
-            allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
-        
+
+
+            // Data filter
             const dbAll = allVouchers.filter((data) => {
 
                 if(data.account){
@@ -50,67 +58,55 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             dbAllEntries = dbAllEntries.concat(dbAll);
 
         }
-        else if(element.accountName === 'Cash'){
-            allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
-            dbAllEntries = dbAllEntries.concat(allVouchers);
-        }
-        else if(element.accountName === 'Bank'){
-            allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
-            dbAllEntries = dbAllEntries.concat(allVouchers);
-        }
+        //else if(element.accountName === 'Cash'){
+        //    allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
+        //    dbAllEntries = dbAllEntries.concat(allVouchers);
+        //}
+        //else if(element.accountName === 'Bank'){
+        //    allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
+        //    dbAllEntries = dbAllEntries.concat(allVouchers);
+        //}
 
         // Date filter
         dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-
-        dbAllEntries.forEach(item => {
-            if(element.accountName != 'Cash' && element.accountName != 'Bank'){
-                if(item.type === 'CPV' || item.type === 'BPV'){
-                    item.debit = item.amount;
-                    item.credit = 0;
-                }
-            }
-            else{
-                if(item.type === 'CPV' || item.type === 'BPV'){
-                    item.credit = item.amount;
-                    item.debit = 0;
-                }
-            }
-        });
+        All.push(dbAllEntries);
+        console.log(dbAllEntries);
+    });
 
 
 
 
-        // Balance
-        var result = [];
-        if(dbAllEntries.length > 0){
-            const initalCreditEntry = parseInt(dbAllEntries[0].credit);
+    const balanceAmount = async()=>{
+
+        let result = [];
+        if(All.length > 0){
+            const initalCreditEntry = parseInt(All[0][0].credit);
             let initialBalance = initalCreditEntry;
             
-            for (let index = 0; index < dbAllEntries.length; index++) {
+            for (let index = 0; index < All.length; index++) {
 
-                const currentCreditEntry = parseInt(dbAllEntries[index].credit);
-                const currentDebitEntry = parseInt(dbAllEntries[index].debit);
+                const currentCreditEntry = parseInt(All[index][index] && All[index][index].credit);
+
+                const currentDebitEntry = parseInt(All[index][index] && All[index][index].credit);
                 
                 if(index <= 0){
                     let totalBalance;
-
-                    if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
+                    if(dbAccount === true){
                         totalBalance = currentCreditEntry - currentDebitEntry;
                     }
-                    else{ 
+                    else if(dbAccount === false){ 
                         totalBalance = currentDebitEntry - currentCreditEntry;
                     }
-
                     initialBalance = totalBalance;
                     result.push(totalBalance)
                 }
                 else{
                     let totalBalance;
-                    if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
+                    if(dbAccount === true){
                         totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
                     }
-                    else{
+                    else if(dbAccount === false){
                         totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
                     }
                     
@@ -118,56 +114,10 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                     result.push(totalBalance);
                 }
             }
+            setBalance(result)
+            //console.log(result);
         }
-        balance.push(result);
-    });    
-    
-
-    let dbAccount = [];
-    dbCharts.forEach(element => {
-        if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-            dbAccount.push(true)
-        }
-        else{
-            dbAccount.push(false)
-        }
-        
-    });
-
-
-
-    let debitEntry = [];
-    let creditEntry = [];
-    for (let index = 0; index < dbAccount.length; index++) {
-        const element = dbAccount[index];
-        if(element === false){
-            let debitSide = Math.abs(balance[index][balance[index].length-1])
-            if(debitSide){
-                debitEntry.push(debitSide);
-            }
-        }
-        else{
-            let creditSide = Math.abs(balance[index][balance[index].length-1])
-            if(creditSide){
-                creditEntry.push(creditSide);
-            }
-        }
-        
     }
-
-
-    let debitSum = 0;
-    debitEntry.forEach(element => {
-        debitSum += element;
-    });
-
-
-    let creditSum = 0;
-    creditEntry.forEach(element => {
-        creditSum += element;
-    });
-
-
 
 
 
@@ -179,8 +129,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             setToDate(e.target.value)
         }
     }
-
-    
 
 
     return (
@@ -255,47 +203,42 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
                                 {/* All Vouchers */}
                                 {dbCharts.map((item,index) => {
-                                    let dbAccount = [];
-                                    dbCharts.forEach(element => {
-                                        if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                                            dbAccount.push(true)
-                                        }
-                                        else{
-                                            dbAccount.push(false)
-                                        }
-                                        
-                                    });
 
                                     return <tr key={index} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
                                             <div className='text-black font-semibold'>{item.accountName}</div>
                                         </td>
                                         <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === false &&  balance[index][balance[index].length-1] && Math.abs(balance[index][balance[index].length-1]).toLocaleString()}
+                                            {dbAccount === false && "false"}
+
+                                            {/*{dbAccount === false && balance[index] && balance[index].toLocaleString()}*/}
                                         </td>
                                         <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === true && balance[index][balance[index].length-1] && Math.abs(balance[index][balance[index].length-1]).toLocaleString()}
+                                            {dbAccount === true && "truee"}
+
+                                            {/*{dbAccount === true && balance[index] && balance[index].toLocaleString()}*/}
                                         </td>
                                     </tr>
                                 })}
+                                {/*{dbAllEntries.map((item,index) => {
 
+                                    if(dbAllEntries.length - 1 === index){
+                                    return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
+                                        <td className="px-6 py-3">
+                                            <div className='text-black font-semibold'>{account}</div>
+                                        </td>
+                                        <td className="px-6 py-3 text-blue-700 font-bold">
+                                            {dbAccount === false && balance[index] && balance[index].toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-3 text-blue-700 font-bold">
+                                            {dbAccount === true && balance[index] && balance[index].toLocaleString()}
+                                        </td>
+                                    </tr>}
+                                })}*/}
                             </tbody>
-
                         </table>
-                        { dbCharts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+                        {/*{ dbAllEntries.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}*/}
                     </div>
-
-                
-                    <div className="flex justify-around bg-slate-100 px-4 py-3 text-right sm:px-6">
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} ml-80`}>Total Debit: 
-                            <span className={`font-bold ml-1 `}>${debitSum.toLocaleString()}</span>
-                        </h1>
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'  }`}>Total Credit: 
-                            <span className='font-bold ml-1'>${creditSum.toLocaleString()}</span>
-                        </h1>
-                    </div>
-
-
                 </div>
             </form>
         </div>
