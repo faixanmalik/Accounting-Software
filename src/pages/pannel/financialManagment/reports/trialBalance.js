@@ -15,11 +15,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
 
-    
-    useEffect(() => {
-        //  balanceAmount()
-    }, [])
-
 
 
     let balance = [];
@@ -152,7 +147,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                 creditEntry.push(creditSide);
             }
         }
-        
     }
 
 
@@ -167,9 +161,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
         creditSum += element;
     });
 
-
-
-
+    
 
     const handleChange = (e) => {
         if (e.target.name === 'fromDate') {

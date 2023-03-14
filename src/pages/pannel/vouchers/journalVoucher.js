@@ -261,7 +261,7 @@ function classNames(...classes) {
                         <div className='text-sm'>{index + 1}</div>
                       </th>
                       <td className="px-6 py-3">
-                        <div className='text-sm'>{item.journalNo}</div>
+                        <div className='text-sm text-black font-semibold'>{item.journalNo}</div>
                       </td>
                       <td className="px-6 py-3">
                         <div className='text-sm'>{moment(item.journalDate).utc().format('DD-MM-YYYY')}</div>

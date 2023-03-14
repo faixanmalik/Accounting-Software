@@ -276,14 +276,15 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
 
 
-                                    return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
-                                        <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{item.account}</div>
-                                            <div className='text-xs'>{item.desc}</div>
-                                        </td>
+                                    return <tr key={index} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
                                             {item.journalNo}
                                         </td>
+                                        <td className="px-6 py-3">
+                                            <div className='text-blue-700 font-bold'>{item.account}</div>
+                                            <div className='text-xs'>{item.desc}</div>
+                                        </td>
+                                        
                                         <td className="px-6 py-3">
                                             {!item.type && moment(item.date).format('DD-MM-YYYY')}
                                             {item.type && moment(item.date).utc().format('DD-MM-YYYY')}

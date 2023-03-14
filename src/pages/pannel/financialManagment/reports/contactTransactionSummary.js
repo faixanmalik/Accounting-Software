@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import mongoose from "mongoose";
+import moment from 'moment/moment';
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import CashReceipt from 'models/CashReceipt';
@@ -8,127 +9,110 @@ import BankReceipt from 'models/BankReceipt';
 import BankPayment from 'models/BankPayment';
 import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
+import Contact from 'models/Contact';
 
 
-const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
+const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbContacts }) => {
 
+    // Cash Receipt
     const [fromDate, setFromDate] = useState('')
-    const [toDate, setToDate] = useState('')
+    const [toDate, setToDate] = useState('') 
+    const [sortBy, setsortBy] = useState('')
+    const [contact, setContact] = useState('')
     const [dbAccount, setDbAccount] = useState(false)
     const [balance, setBalance] = useState([])
 
 
-
     useEffect(() => {
-        balanceAmount()
-    }, []);
-
-
-
-
-    
-    let All = [];
-    let allVouchers = [];
-    allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
-
-
-    dbCharts.forEach(element => {
-        let dbAllEntries = [];
-
-        if(element.accountName != 'Cash' && element.accountName != 'Bank'){
-
-
-            // Data filter
-            const dbAll = allVouchers.filter((data) => {
-
-                if(data.account){
-                    if (data.account === `${element.accountName}`) {
-                        return data.account;
-                    }
-                }
-                else {
-                    const journal = data.inputList.filter((data)=>{
-                        if (data.account === `${element.accountName}`) {
-                            return data.account;
-                        }
-                    })
-                    dbAllEntries = dbAllEntries.concat(journal);
+        if(contact != 'Cash' && contact != 'Bank' ){
+            const dbcontact = dbContacts.filter((data) => {
+                if (data.accountName === `${contact}`) {
+                    return data.account;
                 }
             })
-            dbAllEntries = dbAllEntries.concat(dbAll);
-
-        }
-        //else if(element.accountName === 'Cash'){
-        //    allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
-        //    dbAllEntries = dbAllEntries.concat(allVouchers);
-        //}
-        //else if(element.accountName === 'Bank'){
-        //    allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
-        //    dbAllEntries = dbAllEntries.concat(allVouchers);
-        //}
-
-        // Date filter
-        dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-        All.push(dbAllEntries);
-        console.log(dbAllEntries);
-    });
-
-
-
-
-    const balanceAmount = async()=>{
-
-        let result = [];
-        if(All.length > 0){
-            const initalCreditEntry = parseInt(All[0][0].credit);
-            let initialBalance = initalCreditEntry;
-            
-            for (let index = 0; index < All.length; index++) {
-
-                const currentCreditEntry = parseInt(All[index][index] && All[index][index].credit);
-
-                const currentDebitEntry = parseInt(All[index][index] && All[index][index].credit);
-                
-                if(index <= 0){
-                    let totalBalance;
-                    if(dbAccount === true){
-                        totalBalance = currentCreditEntry - currentDebitEntry;
-                    }
-                    else if(dbAccount === false){ 
-                        totalBalance = currentDebitEntry - currentCreditEntry;
-                    }
-                    initialBalance = totalBalance;
-                    result.push(totalBalance)
+            if(!dbcontact.length == 0){
+                if(dbcontact[0].account === 'Incomes' || dbcontact[0].account === 'Equity' || dbcontact[0].account === 'Liabilities'){
+                    setDbAccount(true)
                 }
                 else{
-                    let totalBalance;
-                    if(dbAccount === true){
-                        totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
-                    }
-                    else if(dbAccount === false){
-                        totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
-                    }
-                    
-                    initialBalance = totalBalance;
-                    result.push(totalBalance);
+                    setDbAccount(false)
                 }
             }
-            setBalance(result)
-            //console.log(result);
         }
+        else{
+            setDbAccount(null)
+        }
+    }, [contact, dbAccount])
+
+
+
+    let dbAllEntries = [];
+    let allVouchers = [];
+
+    if(contact){
+        allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
+
+        // Data filter
+        const dbAll = allVouchers.filter((data) => {
+
+            if(data.type === 'CRV'){
+                if (data.receivedFrom === `${contact}`) {
+                    return data.receivedFrom;
+                }
+            }
+            else if(data.type === 'CPV'){
+                if (data.paymentFrom === `${contact}`) {
+                    return data.paymentFrom;
+                }
+            }
+            else if(data.type === 'BRV'){
+                if (data.paymentTo === `${contact}`) {
+                    return data.paymentTo;
+                }
+            }
+            else if(data.type === 'BPV'){
+                if (data.paymentTo === `${contact}`) {
+                    return data.paymentTo;
+                }
+            }
+            else {
+                const journal = data.inputList.filter((data)=>{
+                    if (data.name === `${contact}`) {
+                        return data.name;
+                    }
+                })
+                dbAllEntries = dbAllEntries.concat(journal);
+            }
+        })
+        dbAllEntries = dbAllEntries.concat(dbAll);
     }
+    
+    // Date filter
+    dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+
+
+
+
 
 
 
     const handleChange = (e) => {
-        if (e.target.name === 'fromDate') {
+        if (e.target.name === 'sortBy') {
+            setsortBy(e.target.value)
+        }
+        else if (e.target.name === 'contact') {
+            setContact(e.target.value)
+        }
+        else if (e.target.name === 'fromDate') {
             setFromDate(e.target.value)
         }
         else if (e.target.name === 'toDate') {
             setToDate(e.target.value)
         }
     }
+    
+
 
 
     return (
@@ -167,6 +151,17 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                 className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             />
                         </div>
+                        <div className="col-span-6 sm:col-span-2">
+                            <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
+                                Contacts:
+                            </label>
+                            <select id="contact" name="contact" onChange={handleChange} value={contact} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <option>select contact</option>
+                                {dbContacts.map((item) => {
+                                    return <option key={item._id} value={item.name}>{item.name}</option>
+                                })}
+                            </select>
+                        </div>
                         <button type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
                     </div>
                 </div>
@@ -177,7 +172,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
-                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Trial Balance Summary</h3>
+                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">General Ledger Summary</h3>
             </div>
         </div>
         <div className="md:col-span-2">
@@ -189,7 +184,16 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
+                                        Voucher No
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Name
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
                                         Account
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Date
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         Debit
@@ -202,42 +206,36 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                             <tbody>
 
                                 {/* All Vouchers */}
-                                {dbCharts.map((item,index) => {
+                                {dbAllEntries.map((item, index) => {
 
                                     return <tr key={index} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{item.accountName}</div>
+                                            {item.journalNo}
                                         </td>
                                         <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount === false && "false"}
-
-                                            {/*{dbAccount === false && balance[index] && balance[index].toLocaleString()}*/}
+                                            {item.receivedFrom || item.paymentTo || item.paymentFrom  || item.name}
                                         </td>
-                                        <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount === true && "truee"}
-
-                                            {/*{dbAccount === true && balance[index] && balance[index].toLocaleString()}*/}
+                                        <td className="px-6 py-3">
+                                            <div className='text-black font-semibold'>{item.account}</div>
+                                            <div className='text-xs'>{item.desc}</div>
                                         </td>
+                                        
+                                        <td className="px-6 py-3">
+                                            {!item.type && moment(item.date).format('DD-MM-YYYY')}
+                                            {item.type && moment(item.date).utc().format('DD-MM-YYYY')}
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            {parseInt(item.debit).toLocaleString()}
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            {parseInt(item.credit).toLocaleString()}
+                                        </td>
+                                        
                                     </tr>
                                 })}
-                                {/*{dbAllEntries.map((item,index) => {
-
-                                    if(dbAllEntries.length - 1 === index){
-                                    return <tr key={item.journalNo} className="bg-white border-b hover:bg-gray-50">
-                                        <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{account}</div>
-                                        </td>
-                                        <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount === false && balance[index] && balance[index].toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount === true && balance[index] && balance[index].toLocaleString()}
-                                        </td>
-                                    </tr>}
-                                })}*/}
                             </tbody>
                         </table>
-                        {/*{ dbAllEntries.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}*/}
+                        { dbAllEntries.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
                 </div>
             </form>
@@ -257,7 +255,7 @@ export async function getServerSideProps() {
     let dbBankReceipt = await BankReceipt.find()
     let dbBankPayment = await BankPayment.find()
     let dbJournalVoucher = await JournalVoucher.find()
-    let dbCharts = await Charts.find()
+    let dbContacts = await Contact.find()
 
 
     // Pass data to the page via props
@@ -268,9 +266,9 @@ export async function getServerSideProps() {
             dbBankReceipt: JSON.parse(JSON.stringify(dbBankReceipt)),
             dbBankPayment: JSON.parse(JSON.stringify(dbBankPayment)),
             dbJournalVoucher: JSON.parse(JSON.stringify(dbJournalVoucher)),
-            dbCharts: JSON.parse(JSON.stringify(dbCharts)),
+            dbContacts: JSON.parse(JSON.stringify(dbContacts)),
         }
     }
 }
 
-export default TrialBalance
+export default ContactTransactionSummary

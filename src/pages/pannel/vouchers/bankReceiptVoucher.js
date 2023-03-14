@@ -233,7 +233,7 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                           <div className='text-sm'>{index + 1}</div>
                         </th>
                         <td className="px-3 py-3">
-                          <div className='text-sm'>{item.journalNo}</div>
+                          <div className='text-sm text-black font-semibold'>{item.journalNo}</div>
                         </td>
                         <td className="px-3 py-3">
                           <div className='text-sm'>{moment(item.date).utc().format('DD-MM-YYYY')}</div>
