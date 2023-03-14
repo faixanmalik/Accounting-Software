@@ -65,12 +65,7 @@ const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashRece
                     return data.paymentFrom;
                 }
             }
-            else if(data.type === 'BRV'){
-                if (data.paymentTo === `${contact}`) {
-                    return data.paymentTo;
-                }
-            }
-            else if(data.type === 'BPV'){
+            else if(data.type === 'BRV' || data.type === 'BPV'){
                 if (data.paymentTo === `${contact}`) {
                     return data.paymentTo;
                 }
@@ -172,7 +167,7 @@ const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashRece
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
-                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">General Ledger Summary</h3>
+                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Contact Transaction Summary</h3>
             </div>
         </div>
         <div className="md:col-span-2">

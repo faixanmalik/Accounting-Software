@@ -8,160 +8,207 @@ import BankReceipt from 'models/BankReceipt';
 import BankPayment from 'models/BankPayment';
 import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
+import moment from 'moment';
 
 
 const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
 
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
+    const [charts, setCharts] = useState([])
 
+    const [newBalance, setNewBalance] = useState([])
+    const [debitSum, setDebitSum] = useState(0)
+    const [creditSum, setCreditSum] = useState(0)
 
 
     let balance = [];
-    dbCharts.forEach(element => {
+    
+    const submit = ()=>{
 
-        let dbAllEntries = [];
-        let allVouchers = [];
-        
-        if(element.accountName != 'Cash' && element.accountName != 'Bank'){
-            allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
-        
-            const dbAll = allVouchers.filter((data) => {
+        dbCharts.forEach(element => {
 
-                if(data.account){
-                    if (data.account === `${element.accountName}`) {
+            let dbAllEntries = [];
+            let allVouchers = [];
+            
+            if(element.accountName != 'Cash' && element.accountName != 'Bank'){
+                allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
+            
+                const dbAll = allVouchers.filter((data) => {
+
+
+                    if(data.type === 'CPV' || data.type === 'CRV' || data.type === 'BPV' || data.type === 'BRV'){
+                        if (data.account === `${element.accountName}`) {
+                            if(fromDate && toDate){
+                                const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                                return dbDate >= fromDate && dbDate <= toDate;
+                            }
+                            else{
+                                return data.account;
+                            }
+                        }
+                    }
+                    else {
+                        const journal = data.inputList.filter((data)=>{
+                            if (data.account === `${element.accountName}`) {
+                                if(fromDate && toDate){
+                                    const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                                    return dbDate >= fromDate && dbDate <= toDate;
+                                }
+                                else{
+                                    return data.account;
+                                }
+                            }
+                        })
+                        dbAllEntries = dbAllEntries.concat(journal);
+                    }
+                })
+                dbAllEntries = dbAllEntries.concat(dbAll);
+            }
+            else if(element.accountName === 'Cash'){
+                allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
+                const newCash = allVouchers.filter((data)=>{
+
+                    if(fromDate && toDate){
+                        const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                        return dbDate >= fromDate && dbDate <= toDate;
+                    }
+                    else{
                         return data.account;
                     }
+                })
+                dbAllEntries = dbAllEntries.concat(newCash);
+            }
+            else if(element.accountName === 'Bank'){
+                allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
+                const newBank = allVouchers.filter((data)=>{
+                    if(fromDate && toDate){
+                        const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                        return dbDate >= fromDate && dbDate <= toDate;
+                    }
+                    else{
+                        return data.account;
+                    }
+                })
+                dbAllEntries = dbAllEntries.concat(newBank);
+            }
+
+            // Date filter
+            dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+
+            dbAllEntries.forEach(item => {
+                if(element.accountName != 'Cash' && element.accountName != 'Bank'){
+                    if(item.type === 'CPV' || item.type === 'BPV'){
+                        item.debit = item.amount;
+                        item.credit = 0;
+                    }
                 }
-                else {
-                    const journal = data.inputList.filter((data)=>{
-                        if (data.account === `${element.accountName}`) {
-                            return data.account;
+                else{
+                    if(item.type === 'CPV' || item.type === 'BPV'){
+                        item.credit = item.amount;
+                        item.debit = 0;
+                    }
+                }
+            });
+
+
+
+
+            // Balance
+            let result = [];
+            if(dbAllEntries.length > 0){
+                const initalCreditEntry = parseInt(dbAllEntries[0].credit);
+                let initialBalance = initalCreditEntry;
+                
+                for (let index = 0; index < dbAllEntries.length; index++) {
+
+                    const currentCreditEntry = parseInt(dbAllEntries[index].credit);
+                    const currentDebitEntry = parseInt(dbAllEntries[index].debit);
+                    
+                    if(index <= 0){
+                        let totalBalance;
+
+                        if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
+                            totalBalance = currentCreditEntry - currentDebitEntry;
                         }
-                    })
-                    dbAllEntries = dbAllEntries.concat(journal);
-                }
-            })
-            dbAllEntries = dbAllEntries.concat(dbAll);
+                        else{ 
+                            totalBalance = currentDebitEntry - currentCreditEntry;
+                        }
 
-        }
-        else if(element.accountName === 'Cash'){
-            allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
-            dbAllEntries = dbAllEntries.concat(allVouchers);
-        }
-        else if(element.accountName === 'Bank'){
-            allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
-            dbAllEntries = dbAllEntries.concat(allVouchers);
-        }
-
-        // Date filter
-        dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-
-        dbAllEntries.forEach(item => {
-            if(element.accountName != 'Cash' && element.accountName != 'Bank'){
-                if(item.type === 'CPV' || item.type === 'BPV'){
-                    item.debit = item.amount;
-                    item.credit = 0;
+                        initialBalance = totalBalance;
+                        result.push(totalBalance)
+                    }
+                    else{
+                        let totalBalance;
+                        if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
+                            totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
+                        }
+                        else{
+                            totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
+                        }
+                        
+                        initialBalance = totalBalance;
+                        result.push(totalBalance);
+                    }
                 }
             }
+            balance.push(result);
+            setCharts(dbCharts)
+        });
+        
+        
+
+        let dbAccount = [];
+        dbCharts.forEach(element => {
+            if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
+                dbAccount.push(true)
+            }
             else{
-                if(item.type === 'CPV' || item.type === 'BPV'){
-                    item.credit = item.amount;
-                    item.debit = 0;
-                }
+                dbAccount.push(false)
             }
         });
 
-
-
-
-        // Balance
-        var result = [];
-        if(dbAllEntries.length > 0){
-            const initalCreditEntry = parseInt(dbAllEntries[0].credit);
-            let initialBalance = initalCreditEntry;
-            
-            for (let index = 0; index < dbAllEntries.length; index++) {
-
-                const currentCreditEntry = parseInt(dbAllEntries[index].credit);
-                const currentDebitEntry = parseInt(dbAllEntries[index].debit);
-                
-                if(index <= 0){
-                    let totalBalance;
-
-                    if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                        totalBalance = currentCreditEntry - currentDebitEntry;
-                    }
-                    else{ 
-                        totalBalance = currentDebitEntry - currentCreditEntry;
-                    }
-
-                    initialBalance = totalBalance;
-                    result.push(totalBalance)
+        let debitEntry = [];
+        let creditEntry = [];
+        for (let index = 0; index < dbAccount.length; index++) {
+            const element = dbAccount[index];
+            if(element === false){
+                let debitSide = Math.abs(balance[index][balance[index].length-1])
+                if(debitSide){
+                    debitEntry.push(debitSide);
                 }
-                else{
-                    let totalBalance;
-                    if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                        totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
-                    }
-                    else{
-                        totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
-                    }
-                    
-                    initialBalance = totalBalance;
-                    result.push(totalBalance);
+            }
+            else{
+                let creditSide = Math.abs(balance[index][balance[index].length-1])
+                if(creditSide){
+                    creditEntry.push(creditSide);
                 }
             }
         }
-        balance.push(result);
-    });    
-    
 
-    let dbAccount = [];
-    dbCharts.forEach(element => {
-        if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-            dbAccount.push(true)
-        }
-        else{
-            dbAccount.push(false)
-        }
+        let totalDebit = 0;
+        debitEntry.forEach(element => {
+            totalDebit += element;
+        });
+        setDebitSum(totalDebit)
         
-    });
 
+        let totalCredit = 0;
+        creditEntry.forEach(element => {
+            totalCredit += element;
+        });
+        setCreditSum(totalCredit)
+        
 
-
-    let debitEntry = [];
-    let creditEntry = [];
-    for (let index = 0; index < dbAccount.length; index++) {
-        const element = dbAccount[index];
-        if(element === false){
-            let debitSide = Math.abs(balance[index][balance[index].length-1])
-            if(debitSide){
-                debitEntry.push(debitSide);
-            }
-        }
-        else{
-            let creditSide = Math.abs(balance[index][balance[index].length-1])
-            if(creditSide){
-                creditEntry.push(creditSide);
-            }
-        }
+        
+        setNewBalance(balance)
+        
     }
-
-
-    let debitSum = 0;
-    debitEntry.forEach(element => {
-        debitSum += element;
-    });
-
-
-    let creditSum = 0;
-    creditEntry.forEach(element => {
-        creditSum += element;
-    });
-
     
+
+
+
 
     const handleChange = (e) => {
         if (e.target.name === 'fromDate') {
@@ -211,7 +258,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                 className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             />
                         </div>
-                        <button type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
+                        <button onClick={submit} type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
                     </div>
                 </div>
             </div>
@@ -233,6 +280,9 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                                 <tr>
                                     <th scope="col" className="px-6 py-3">
+                                        Account Name
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
                                         Account
                                     </th>
                                     <th scope="col" className="px-6 py-3">
@@ -246,7 +296,8 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                             <tbody>
 
                                 {/* All Vouchers */}
-                                {dbCharts.map((item,index) => {
+                                {charts.map((item,index) => {
+
                                     let dbAccount = [];
                                     dbCharts.forEach(element => {
                                         if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
@@ -260,13 +311,16 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
                                     return <tr key={index} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{item.accountName}</div>
+                                            <div className='font-semibold'>{item.accountName}</div>
+                                        </td>
+                                        <td className="px-6 py-3">
+                                            <div className='text-black font-semibold'>{item.account}</div>
                                         </td>
                                         <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === false &&  balance[index][balance[index].length-1] && Math.abs(balance[index][balance[index].length-1]).toLocaleString()}
+                                            {dbAccount[index] === false &&  newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
                                         </td>
                                         <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === true && balance[index][balance[index].length-1] && Math.abs(balance[index][balance[index].length-1]).toLocaleString()}
+                                            {dbAccount[index] === true && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
                                         </td>
                                     </tr>
                                 })}
@@ -279,10 +333,10 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
                 
                     <div className="flex justify-around bg-slate-100 px-4 py-3 text-right sm:px-6">
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} ml-80`}>Total Debit: 
+                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} ml-auto mr-16`}>Total Debit: 
                             <span className={`font-bold ml-1 `}>${debitSum.toLocaleString()}</span>
                         </h1>
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'  }`}>Total Credit: 
+                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} mr-14`}>Total Credit: 
                             <span className='font-bold ml-1'>${creditSum.toLocaleString()}</span>
                         </h1>
                     </div>

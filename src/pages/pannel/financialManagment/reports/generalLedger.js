@@ -21,8 +21,12 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     const [dbAccount, setDbAccount] = useState(false)
     const [balance, setBalance] = useState([])
 
+    const [newEntry, setNewEntry] = useState([])
+    
+
 
     useEffect(() => {
+
         if(account != 'Cash' && account != 'Bank' ){
             const dbchart = dbCharts.filter((data) => {
                 if (data.accountName === `${account}`) {
@@ -41,47 +45,92 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         else{
             setDbAccount(null)
         }
-        balanceAmount()
     }, [account, dbAccount])
 
 
 
+
+
     let dbAllEntries = [];
-    let allVouchers = [];
+    
+    const submit = ()=>{
+        let allVouchers = [];
+        
+        if(account != 'Cash' && account != 'Bank'){
+            allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
 
-    if(account != 'Cash' && account != 'Bank'){
-        allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
+            // Data filter
+            const dbAll = allVouchers.filter((data) => {
 
-        // Data filter
-        const dbAll = allVouchers.filter((data) => {
+                if(data.type === 'CPV' || data.type === 'CRV' || data.type === 'BPV' || data.type === 'BRV'){
+                    if (data.account === `${account}`) {
 
-            if(data.account){
-                if (data.account === `${account}`) {
+                        if(fromDate && toDate){
+                            const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                            return dbDate >= fromDate && dbDate <= toDate;
+                        }
+                        else{
+                            return data.account;
+                        }
+                    }
+                }
+                else{
+                    const journal = data.inputList.filter((data)=>{
+
+                        if (data.account === `${account}`) {
+
+                            if(fromDate && toDate){
+                                const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                                return dbDate >= fromDate && dbDate <= toDate;
+                            }
+                            else{
+                                return data.account;
+                            }
+                        }
+                    })
+                    dbAllEntries = dbAllEntries.concat(journal);
+                }
+            })
+            dbAllEntries = dbAllEntries.concat(dbAll);
+        }
+        else if(account === 'Cash'){
+            allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
+            const newCash = allVouchers.filter((data)=>{
+
+                if(fromDate && toDate){
+                    const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                    return dbDate >= fromDate && dbDate <= toDate;
+                }
+                else{
                     return data.account;
                 }
-            }
-            else {
-                const journal = data.inputList.filter((data)=>{
-                    if (data.account === `${account}`) {
-                        return data.account;
-                    }
-                })
-                dbAllEntries = dbAllEntries.concat(journal);
-            }
-        })
-        dbAllEntries = dbAllEntries.concat(dbAll);
-    }
-    else if(account === 'Cash'){
-        allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
-        dbAllEntries = dbAllEntries.concat(allVouchers);
-    }
-    else if(account === 'Bank'){
-        allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
-        dbAllEntries = dbAllEntries.concat(allVouchers);
+            })
+            dbAllEntries = dbAllEntries.concat(newCash);
+        }
+        else if(account === 'Bank'){
+            allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
+
+            const newBank = allVouchers.filter((data)=>{
+                if(fromDate && toDate){
+                    const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                    return dbDate >= fromDate && dbDate <= toDate;
+                }
+                else{
+                    return data.account;
+                }
+            })
+            dbAllEntries = dbAllEntries.concat(newBank);
+        }
+        // Date filter
+        dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+        balanceAmount()
+        setNewEntry(dbAllEntries)
     }
     
-    // Date filter
-    dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+
+
 
     
 
@@ -164,7 +213,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
 
     <div className='w-full'>
-        <form method="POST">
+        <form>
             <div className="overflow-idden shadow sm:rounded-md">
                 <div className="bg-white px-4 sm:p-3">
                     <div className="grid grid-cols-6 gap-6">
@@ -215,7 +264,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 <option value={'Account Code'}>Account Code</option>
                             </select>
                         </div>
-                        <button type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
+                        <button onClick={submit} type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
                     </div>
                 </div>
             </div>
@@ -259,7 +308,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                             <tbody>
 
                                 {/* All Vouchers */}
-                                {dbAllEntries.map((item,index) => {
+                                { newEntry.map((item,index) => {
 
                                     if(account != 'Cash' && account != 'Bank'){
                                         if(item.type === 'CPV' || item.type === 'BPV'){
@@ -302,7 +351,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 })}
                             </tbody>
                         </table>
-                        { dbAllEntries.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+                        { newEntry.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
                 </div>
             </form>
