@@ -268,7 +268,6 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
                     <td className="px-6 py-1">
                       <h1 className='text-base text-gray-800 font-semibold -mb-1 mt-1'>{allCharts[item].accountName}</h1>
                       <h1 className='text-xs'>{allCharts[item].desc}</h1>
-                        
                     </td>
                     <td className="px-6 py-1">
                         {allCharts[item].account}

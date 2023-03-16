@@ -66,7 +66,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                     if (data.account === `${account}`) {
 
                         if(fromDate && toDate){
-                            const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                            const dbDate = moment(data.date).format('YYYY-MM-DD')
                             return dbDate >= fromDate && dbDate <= toDate;
                         }
                         else{
@@ -80,7 +80,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         if (data.account === `${account}`) {
 
                             if(fromDate && toDate){
-                                const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                                const dbDate = moment(data.date).format('YYYY-MM-DD')
                                 return dbDate >= fromDate && dbDate <= toDate;
                             }
                             else{
@@ -98,7 +98,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             const newCash = allVouchers.filter((data)=>{
 
                 if(fromDate && toDate){
-                    const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                    const dbDate = moment(data.date).format('YYYY-MM-DD')
                     return dbDate >= fromDate && dbDate <= toDate;
                 }
                 else{
@@ -112,7 +112,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
             const newBank = allVouchers.filter((data)=>{
                 if(fromDate && toDate){
-                    const dbDate = moment(data.date).utc().format('YYYY-MM-DD')
+                    const dbDate = moment(data.date).format('YYYY-MM-DD')
                     return dbDate >= fromDate && dbDate <= toDate;
                 }
                 else{
@@ -336,7 +336,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                         
                                         <td className="px-6 py-3">
                                             {!item.type && moment(item.date).format('DD-MM-YYYY')}
-                                            {item.type && moment(item.date).utc().format('DD-MM-YYYY')}
+                                            {item.type && moment(item.date).format('DD-MM-YYYY')}
                                         </td>
                                         <td className="px-6 py-3">
                                             {parseInt(item.debit).toLocaleString()}

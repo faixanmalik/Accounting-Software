@@ -346,8 +346,14 @@ const Sidebar2 = ({ showMobilemenu }) => {
               <MenuItem href="/pannel/financialManagment/reports/trialBalance" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/trialBalance' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Trial Balance
               </MenuItem>
-              <MenuItem href="/pannel/financialManagment/reports/contactTransactionSummary" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/trialBalance' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+              <MenuItem href="/pannel/financialManagment/reports/contactTransactionSummary" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/contactTransactionSummary' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Contact Transaction
+              </MenuItem>
+              <MenuItem href="/pannel/financialManagment/reports/profitAndLoss" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/profitAndLoss' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+                Profit And Loss
+              </MenuItem>
+              <MenuItem href="/pannel/financialManagment/reports/balanceSheet" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/financialManagment/reports/balanceSheet' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+                Balance Sheet
               </MenuItem>
             </SubMenu>
           </SubMenu>

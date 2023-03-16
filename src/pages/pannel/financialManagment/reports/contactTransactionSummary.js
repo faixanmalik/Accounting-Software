@@ -20,71 +20,78 @@ const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashRece
     const [sortBy, setsortBy] = useState('')
     const [contact, setContact] = useState('')
     const [dbAccount, setDbAccount] = useState(false)
-    const [balance, setBalance] = useState([])
-
-
-    useEffect(() => {
-        if(contact != 'Cash' && contact != 'Bank' ){
-            const dbcontact = dbContacts.filter((data) => {
-                if (data.accountName === `${contact}`) {
-                    return data.account;
-                }
-            })
-            if(!dbcontact.length == 0){
-                if(dbcontact[0].account === 'Incomes' || dbcontact[0].account === 'Equity' || dbcontact[0].account === 'Liabilities'){
-                    setDbAccount(true)
-                }
-                else{
-                    setDbAccount(false)
-                }
-            }
-        }
-        else{
-            setDbAccount(null)
-        }
-    }, [contact, dbAccount])
+    const [newEntry, setNewEntry] = useState([])
 
 
 
     let dbAllEntries = [];
-    let allVouchers = [];
+    const submit = ()=>{
 
-    if(contact){
-        allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
+        let allVouchers = [];
 
-        // Data filter
-        const dbAll = allVouchers.filter((data) => {
+        if(contact){
+            allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
 
-            if(data.type === 'CRV'){
-                if (data.receivedFrom === `${contact}`) {
-                    return data.receivedFrom;
-                }
-            }
-            else if(data.type === 'CPV'){
-                if (data.paymentFrom === `${contact}`) {
-                    return data.paymentFrom;
-                }
-            }
-            else if(data.type === 'BRV' || data.type === 'BPV'){
-                if (data.paymentTo === `${contact}`) {
-                    return data.paymentTo;
-                }
-            }
-            else {
-                const journal = data.inputList.filter((data)=>{
-                    if (data.name === `${contact}`) {
-                        return data.name;
+            // Data filter
+            const dbAll = allVouchers.filter((data) => {
+
+                if(data.type === 'CRV'){
+                    if (data.receivedFrom === `${contact}`) {
+
+                        if(fromDate && toDate){
+                            const dbDate = moment(data.date).format('YYYY-MM-DD')
+
+                            return dbDate >= fromDate && dbDate <= toDate;
+                        }
+                        else{
+                            return data.receivedFrom;
+                        }
                     }
-                })
-                dbAllEntries = dbAllEntries.concat(journal);
-            }
-        })
-        dbAllEntries = dbAllEntries.concat(dbAll);
+                }
+                else if(data.type === 'CPV'){
+                    if (data.paymentFrom === `${contact}`) {
+                        if(fromDate && toDate){
+                            const dbDate = moment(data.date).format('YYYY-MM-DD')
+                            return dbDate >= fromDate && dbDate <= toDate;
+                        }
+                        else{
+                            return data.paymentFrom;
+                        }
+                    }
+                }
+                else if(data.type === 'BRV' || data.type === 'BPV'){
+                    if (data.paymentTo === `${contact}`) {
+                        if(fromDate && toDate){
+                            const dbDate = moment(data.date).format('YYYY-MM-DD')
+                            return dbDate >= fromDate && dbDate <= toDate;
+                        }
+                        else{
+                            return data.paymentTo;
+                        }
+                    }
+                }
+                else {
+                    const journal = data.inputList.filter((data)=>{
+                        if (data.name === `${contact}`) {
+                            if(fromDate && toDate){
+                                const dbDate = moment(data.date).format('YYYY-MM-DD')
+                                return dbDate >= fromDate && dbDate <= toDate;
+                            }
+                            else{
+                                return data.name;
+                            }
+                        }
+                    })
+                    dbAllEntries = dbAllEntries.concat(journal);
+                }
+            })
+            dbAllEntries = dbAllEntries.concat(dbAll);
+        }
+        
+        // Date filter
+        dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        setNewEntry(dbAllEntries)
     }
-    
-    // Date filter
-    dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
 
 
 
@@ -93,10 +100,7 @@ const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashRece
 
 
     const handleChange = (e) => {
-        if (e.target.name === 'sortBy') {
-            setsortBy(e.target.value)
-        }
-        else if (e.target.name === 'contact') {
+        if (e.target.name === 'contact') {
             setContact(e.target.value)
         }
         else if (e.target.name === 'fromDate') {
@@ -157,7 +161,7 @@ const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashRece
                                 })}
                             </select>
                         </div>
-                        <button type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
+                        <button onClick={submit} type='button' className='bg-blue-800 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>
                     </div>
                 </div>
             </div>
@@ -201,7 +205,7 @@ const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashRece
                             <tbody>
 
                                 {/* All Vouchers */}
-                                {dbAllEntries.map((item, index) => {
+                                {newEntry.map((item, index) => {
 
                                     return <tr key={index} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
@@ -230,7 +234,7 @@ const ContactTransactionSummary = ({ dbJournalVoucher, dbCashPayment, dbCashRece
                                 })}
                             </tbody>
                         </table>
-                        { dbAllEntries.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+                        { newEntry.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
                 </div>
             </form>

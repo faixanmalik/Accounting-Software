@@ -9,29 +9,76 @@ import BankPayment from 'models/BankPayment';
 import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
 import moment from 'moment';
-import ProfitAndLoss from './profitAndLoss';
 
 
-const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
+const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts, name }) => {
+
 
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
-    const [charts, setCharts] = useState([])
-
+    
     const [newBalance, setNewBalance] = useState([])
-    const [debitSum, setDebitSum] = useState(0)
     const [creditSum, setCreditSum] = useState(0)
+    
+    
+    
+    const [charts, setCharts] = useState([])
+    const [grossProfitEntry, setGrossProfitEntry] = useState([])
+    const [profitFromOperEntry, setProfitFromOperEntry] = useState([])
+    const [profitBeforeTaxEntry, setProfitBeforeTaxEntry] = useState([])
 
 
     useEffect(() => {
-      submit()
+        submit()
+        setEntries()
     }, [])
     
 
 
+
+    const setEntries = ()=>{
+        const gpEntry = dbCharts.filter((data)=>{
+            // Gross Profit
+            if(data.accountName === 'Sales'){
+                return data.accountName;
+            }
+            else if(data.accountName === 'Cost of Goods Sold'){
+                return data.accountName;
+            }
+        })
+
+        const profitFromOperEntry = dbCharts.filter((data)=>{
+            // Gross Profit
+            if(data.subAccount === 'Administration Expenses'){
+                return data.accountName;
+            }
+            else if(data.accountName === 'Distribution Expenses'){
+                return data.accountName;
+            }
+        })
+
+        const profitBeforeTaxEntry = dbCharts.filter((data)=>{
+            // Gross Profit
+            if(data.subAccount === 'Finance Cost'){
+                return data.accountName;
+            }
+        })
+
+
+        setGrossProfitEntry(gpEntry)
+        setProfitFromOperEntry(profitFromOperEntry)
+        setProfitBeforeTaxEntry(profitBeforeTaxEntry)
+    }
+
+
+
+
+    
     let balance = [];
     
     const submit = ()=>{
+
+        setEntries();
 
         dbCharts.forEach(element => {
 
@@ -120,8 +167,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             });
 
 
-
-
+       
             // Balance
             let result = [];
             if(dbAllEntries.length > 0){
@@ -161,7 +207,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                 }
             }
             balance.push(result);
-            setCharts(dbCharts)
         });
         
         
@@ -176,29 +221,14 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             }
         });
 
-        let debitEntry = [];
         let creditEntry = [];
         for (let index = 0; index < dbAccount.length; index++) {
-            const element = dbAccount[index];
-            if(element === false){
-                let debitSide = Math.abs(balance[index][balance[index].length-1])
-                if(debitSide){
-                    debitEntry.push(debitSide);
-                }
-            }
-            else{
-                let creditSide = Math.abs(balance[index][balance[index].length-1])
-                if(creditSide){
-                    creditEntry.push(creditSide);
-                }
+                
+            let creditSide = Math.abs(balance[index][balance[index].length-1])
+            if(creditSide){
+                creditEntry.push(creditSide);
             }
         }
-
-        let totalDebit = 0;
-        debitEntry.forEach(element => {
-            totalDebit += element;
-        });
-        setDebitSum(totalDebit)
         
 
         let totalCredit = 0;
@@ -206,14 +236,10 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             totalCredit += element;
         });
         setCreditSum(totalCredit)
-        
-
-        
+    
         setNewBalance(balance)
         
     }
-    
-
 
 
 
@@ -275,7 +301,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
-                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Trial Balance Summary</h3>
+                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Profit & Loss Summary</h3>
             </div>
         </div>
         <div className="md:col-span-2">
@@ -293,58 +319,170 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                         Account
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Debit
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Credit
+                                        Amount
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
 
-                                {/* All Vouchers */}
-                                {charts.map((item,index) => {
 
-                                    let dbAccount = [];
-                                    dbCharts.forEach(element => {
-                                        if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                                            dbAccount.push(true)
+                            
+                            {/* All Vouchers */}
+                            {grossProfitEntry.map((item,index) => {
+
+                                let firstEntry= 0;
+                                if(newBalance[0]){
+                                    let fEntry = newBalance[0][newBalance[0].length-1];
+                                    if(fEntry === undefined){
+                                        firstEntry += 0;
+                                    }
+                                    else{
+                                        firstEntry += fEntry;
+                                    }
+                                }
+
+                                let secondEntry = 0;
+                                if(newBalance[1]){
+                                    let sEntry = newBalance[1][newBalance[1].length-1];
+                                    if(sEntry === undefined){
+                                        secondEntry += 0;
+                                    }
+                                    else{
+                                        secondEntry += sEntry;
+                                    }
+                                }
+
+
+                            return <tbody key={index}>
+                                <tr className="bg-white border-b hover:bg-gray-50">
+                                    <td className="px-6 py-3">
+                                        <div className='font-semibold'>{item.accountName}</div>
+                                    </td>
+                                    <td className="px-6 py-3">
+                                        <div className='text-black font-semibold'>{item.subAccount}</div>
+                                    </td>
+                                    <td className="px-6 py-3 text-blue-700 font-bold">
+                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
+                                    </td>
+                                </tr>
+
+                            
+                                {grossProfitEntry.length-1 === index ? <div className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
+                                    <h1 className='text-sm text-green-700 -mr-32'>Gross Profit:
+                                        <span className='font-bold ml-1'>${ firstEntry + secondEntry }</span>
+                                    </h1>
+                                </div>: ''}
+                                    
+                            </tbody>})}
+
+
+
+                            {profitFromOperEntry.map((item,index) => {
+
+
+                                let firstEntry= 0;
+                                if(profitFromOperEntry.length - 1 === index){
+                                    if(newBalance[index]){
+                                        let fEntry = newBalance[index][newBalance[index].length-1];
+                                        if(fEntry === undefined){
+                                            firstEntry += 0;
                                         }
                                         else{
-                                            dbAccount.push(false)
+                                            firstEntry += fEntry;
                                         }
-                                    });
+                                    }
+                                }
 
-                                    return <tr key={index} className="bg-white border-b hover:bg-gray-50">
-                                        <td className="px-6 py-3">
-                                            <div className='font-semibold'>{item.accountName}</div>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{item.account}</div>
-                                        </td>
-                                        <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === false &&  newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === true && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
-                                        </td>
-                                    </tr>
-                                })}
 
-                            </tbody>
+                                let secondEntry = 0;
+                                if(newBalance[1]){
+                                    let sEntry = newBalance[1][newBalance[1].length-1];
+                                    if(sEntry === undefined){
+                                        secondEntry += 0;
+                                    }
+                                    else{
+                                        secondEntry += sEntry;
+                                    }
+                                }
+
+
+                                return <tbody key={index}>
+
+                                <tr className="bg-white border-b hover:bg-gray-50">
+                                    <td className="px-6 py-3">
+                                        <div className='font-semibold'>{item.accountName}</div>
+                                    </td>
+                                    <td className="px-6 py-3">
+                                        <div className='text-black font-semibold'>{item.subAccount}</div>
+                                    </td>
+                                    <td className="px-6 py-3 text-blue-700 font-bold">
+                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
+                                    </td>
+                                </tr>
+
+                            
+                                {profitFromOperEntry.length-1 === index ? <tr className="flex -mr-96 float-right bg-slate-100 px-4 py-3 sm:px-6">
+                                    <h1 className='text-sm text-green-700 -mr-32'>Profit From Operations:
+                                        <span className='font-bold ml-1'>${ firstEntry - secondEntry }</span>
+                                    </h1>
+                                </tr>: ''}
+                                    
+                            </tbody>})}
+
+
+
+
+                            {profitBeforeTaxEntry.map((item,index) => {
+
+                                let firstEntry= 0;
+                                if(newBalance[0]){
+                                    let fEntry = newBalance[0][newBalance[0].length-1];
+                                    if(fEntry === undefined){
+                                        firstEntry += 0;
+                                    }
+                                    else{
+                                        firstEntry += fEntry;
+                                    }
+                                }
+
+                                let secondEntry = 0;
+                                if(newBalance[1]){
+                                    let sEntry = newBalance[1][newBalance[1].length-1];
+                                    if(sEntry === undefined){
+                                        secondEntry += 0;
+                                    }
+                                    else{
+                                        secondEntry += sEntry;
+                                    }
+                                }
+
+                            return <tbody key={index}>
+
+                                <tr className="bg-white border-b hover:bg-gray-50">
+                                    <td className="px-6 py-3">
+                                        <div className='font-semibold'>{item.accountName}</div>
+                                    </td>
+                                    <td className="px-6 py-3">
+                                        <div className='text-black font-semibold'>{item.subAccount}</div>
+                                    </td>
+                                    <td className="px-6 py-3 text-blue-700 font-bold">
+                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
+                                    </td>
+                                </tr>
+
+                            
+                                {profitBeforeTaxEntry.length-1 === index ? <tr className="flex -mr-96 float-right bg-slate-100 px-4 py-3 sm:px-6">
+                                    <h1 className='text-sm text-green-700 -mr-32'>Profit Before Tax:
+                                        <span className='font-bold ml-1'>${ firstEntry - secondEntry }</span>
+                                    </h1>
+                                </tr>: ''}
+                                    
+                            </tbody>})}
+
+
 
                         </table>
-                        { dbCharts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
-                    </div>
 
-                
-                    <div className="flex justify-around bg-slate-100 px-4 py-3 text-right sm:px-6">
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} ml-auto mr-16`}>Total Debit: 
-                            <span className={`font-bold ml-1 `}>${debitSum.toLocaleString()}</span>
-                        </h1>
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} mr-14`}>Total Credit: 
-                            <span className='font-bold ml-1'>${creditSum.toLocaleString()}</span>
-                        </h1>
+                        { grossProfitEntry.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
 
 
@@ -382,4 +520,4 @@ export async function getServerSideProps() {
     }
 }
 
-export default TrialBalance
+export default ProfitAndLoss
