@@ -22,20 +22,17 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     const [profitFromOperations, setProfitFromOperations] = useState(0)
     const [profitBeforeTax, setProfitBeforeTax] = useState(0)
     
-
-
-
-
-    useEffect(() => {
-        submit()
-        ProfitLossBalance()
-
-    }, [])
+    const [fDate, setFDate] = useState('')
+    const [tDate, setTDate] = useState('')
     
 
-    
+
     let balance = [];
     const submit = ()=>{
+        setFDate(moment(fromDate).format('D MMM YYYY'))
+        setTDate(moment(toDate).format('D MMM YYYY'))
+
+
         dbCharts.forEach(element => {
 
             let dbAllEntries = [];
@@ -164,9 +161,8 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             }
             balance.push(result);
         });
-        
         setNewBalance(balance)
-        
+        ProfitLossBalance()
     }
 
 
@@ -190,9 +186,9 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         let distributionExpensesArray = [];
         let financeCostArray = [];
 
+        
 
         {dbCharts.map((item,index) => {
-            
             if(item.subAccount === 'Revenue'){
                 let sales = balance[index] && balance[index][balance[index].length-1]
                 if(sales){
@@ -239,15 +235,51 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                 }
             }
         })
+    
+        
+
+        // individual Calculate
+        let salesSum = 0;
+        salesArray.forEach(element => {
+            salesSum += parseInt(element)
+        });
+
+        let costOfGoodsSoldSum = 0;
+        costOfGoodsSoldArray.forEach(element => {
+            costOfGoodsSoldSum += parseInt(element)
+        });
+
+        let administrationSum = 0;
+        administrationArray.forEach(element => {
+            administrationSum += parseInt(element)
+        });
 
 
-        setGrossProfit(parseInt(salesArray) - parseInt(costOfGoodsSoldArray))
+        let distributionSum = 0;
+        distributionExpensesArray.forEach(element => {
+            distributionSum += parseInt(element)
+        });
 
-        let Expenses =  parseInt(administrationArray) + parseInt(distributionExpensesArray)
-        setProfitFromOperations(grossProfit - Expenses)
 
-        setProfitBeforeTax(profitFromOperations - parseInt(financeCostArray))
+        let financeCostSum = 0;
+        financeCostArray.forEach(element => {
+            financeCostSum += parseInt(element)
+        });
+
+        // Total calculate
+        setGrossProfit(parseInt(salesSum) - parseInt(costOfGoodsSoldSum))
+
+        let expenses =  parseInt(administrationSum) + parseInt(distributionSum)
+        setProfitFromOperations( (parseInt(salesSum) - parseInt(costOfGoodsSoldSum)) - expenses)
+        
+        setProfitBeforeTax( (parseInt(salesSum) - parseInt(costOfGoodsSoldSum)) -
+        expenses - parseInt(financeCostSum))
     }}
+
+
+
+    
+
 
 
     return (
@@ -296,7 +328,12 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
-                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Profit & Loss Summary</h3>
+                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">
+                    Profit & Loss Summary
+                    {fDate && tDate &&
+                        <span className='text-sm ml-1'>({fDate} to {tDate})</span>
+                    }
+                </h3>
             </div>
         </div>
         <div className="md:col-span-2">
@@ -322,21 +359,32 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                             
                             {/* All Vouchers */}
-                            {dbCharts.map((item,index) => {
+                            {newBalance.length != 0 &&  dbCharts.map((item,index) => {
 
-                            // Array sorting with nameOrder order
-                            const nameOrder = ['Revenue', 'Cost of sales', 'Administration Expenses', 'Distribution Expenses', 'Finance Cost']; 
-                            dbCharts.sort((a, b) => nameOrder.indexOf(a.subAccount) - nameOrder.indexOf(b.subAccount));
+                                
+                                // Array sorting with nameOrder order
+                                let nameOrder = ['Revenue', 'Cost of sales', 'Administration Expenses', 'Distribution Expenses', 'Finance Cost']; 
 
+                                dbCharts.sort((a, b) => {
+                                    const aIndex = nameOrder.indexOf(a.subAccount);
+                                    const bIndex = nameOrder.indexOf(b.subAccount);
+                                    if (aIndex === -1 || bIndex === -1) {
+                                      return 0; // fallback to no sorting
+                                    }
+                                    return aIndex - bIndex;
+                                  });
 
+                                  
+
+                                
                             if(item.subAccount === 'Revenue' || item.subAccount === 'Cost of sales' ||item.subAccount === 'Administration Expenses' ||item.subAccount === 'Distribution Expenses' ||item.subAccount === 'Finance Cost' ){
                             return <tbody key={index}>
                                 <tr className="bg-white border-b hover:bg-gray-50">
-                                    <td className="px-6 py-3">
-                                        <div className='font-semibold'>{item.accountName}</div>
+                                    <td className="px-6 py-3 font-semibold">
+                                        {item.accountName}
                                     </td>
-                                    <td className="px-6 py-3">
-                                        <div className='text-black font-semibold'>{item.subAccount}</div>
+                                    <td className="px-6 py-3 text-black font-semibold">
+                                        {item.subAccount}
                                     </td>
                                     <td className="px-6 py-3 text-blue-700 font-bold">
                                         {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
@@ -369,118 +417,10 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                             </tbody>
                             }})}
-
-
-
-                            {/*{profitFromOperEntry.map((item,index) => {
-
-
-                                let firstEntry= 0;
-                                if(profitFromOperEntry.length - 1 === index){
-                                    if(newBalance[index]){
-                                        let fEntry = newBalance[index][newBalance[index].length-1];
-                                        if(fEntry === undefined){
-                                            firstEntry += 0;
-                                        }
-                                        else{
-                                            firstEntry += fEntry;
-                                        }
-                                    }
-                                }
-
-
-                                let secondEntry = 0;
-                                if(newBalance[1]){
-                                    let sEntry = newBalance[1][newBalance[1].length-1];
-                                    if(sEntry === undefined){
-                                        secondEntry += 0;
-                                    }
-                                    else{
-                                        secondEntry += sEntry;
-                                    }
-                                }
-
-
-                                return <tbody key={index}>
-
-                                <tr className="bg-white border-b hover:bg-gray-50">
-                                    <td className="px-6 py-3">
-                                        <div className='font-semibold'>{item.accountName}</div>
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <div className='text-black font-semibold'>{item.subAccount}</div>
-                                    </td>
-                                    <td className="px-6 py-3 text-blue-700 font-bold">
-                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
-                                    </td>
-                                </tr>
-
-                            
-                                {profitFromOperEntry.length-1 === index ? <tr className="flex -mr-96 float-right bg-slate-100 px-4 py-3 sm:px-6">
-                                    <h1 className='text-sm text-green-700 -mr-32'>Profit From Operations:
-                                        <span className='font-bold ml-1'>${ firstEntry - secondEntry }</span>
-                                    </h1>
-                                </tr>: ''}
-                                    
-                            </tbody>})}
-
-
-
-
-                            {profitBeforeTaxEntry.map((item,index) => {
-
-                                let firstEntry= 0;
-                                if(newBalance[0]){
-                                    let fEntry = newBalance[0][newBalance[0].length-1];
-                                    if(fEntry === undefined){
-                                        firstEntry += 0;
-                                    }
-                                    else{
-                                        firstEntry += fEntry;
-                                    }
-                                }
-
-                                let secondEntry = 0;
-                                if(newBalance[1]){
-                                    let sEntry = newBalance[1][newBalance[1].length-1];
-                                    if(sEntry === undefined){
-                                        secondEntry += 0;
-                                    }
-                                    else{
-                                        secondEntry += sEntry;
-                                    }
-                                }
-
-                            return <tbody key={index}>
-
-                                <tr className="bg-white border-b hover:bg-gray-50">
-                                    <td className="px-6 py-3">
-                                        <div className='font-semibold'>{item.accountName}</div>
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <div className='text-black font-semibold'>{item.subAccount}</div>
-                                    </td>
-                                    <td className="px-6 py-3 text-blue-700 font-bold">
-                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
-                                    </td>
-                                </tr>
-
-                            
-                                {profitBeforeTaxEntry.length-1 === index ? <tr className="flex -mr-96 float-right bg-slate-100 px-4 py-3 sm:px-6">
-                                    <h1 className='text-sm text-green-700 -mr-32'>Profit Before Tax:
-                                        <span className='font-bold ml-1'>${ firstEntry - secondEntry }</span>
-                                    </h1>
-                                </tr>: ''}
-                                    
-                            </tbody>})}*/}
-
-
-
                         </table>
 
-                        { dbCharts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+                        { newBalance.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
-
 
                 </div>
             </form>

@@ -22,16 +22,17 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     const [debitSum, setDebitSum] = useState(0)
     const [creditSum, setCreditSum] = useState(0)
 
-
-    useEffect(() => {
-      submit()
-    }, [])
+    const [fDate, setFDate] = useState('')
+    const [tDate, setTDate] = useState('')
     
 
 
     let balance = [];
     
     const submit = ()=>{
+
+        setFDate(moment(fromDate).format('D MMM YYYY'))
+        setTDate(moment(toDate).format('D MMM YYYY'))
 
         dbCharts.forEach(element => {
 
@@ -207,10 +208,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
         });
         setCreditSum(totalCredit)
         
-
-        
         setNewBalance(balance)
-        
     }
     
 
@@ -275,7 +273,13 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
-                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Trial Balance Summary</h3>
+                {/*<h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Trial Balance Summary ( {fromDate} to {toDate} )</h3>*/}
+                <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">
+                    Trial Balance Summary  
+                    {fDate && tDate &&
+                        <span className='text-sm ml-1'>({fDate} to {tDate})</span>
+                    }
+                </h3>
             </div>
         </div>
         <div className="md:col-span-2">
@@ -290,7 +294,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                         Account Name
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Account
+                                        Sub-Account
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         Debit
@@ -320,7 +324,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                             <div className='font-semibold'>{item.accountName}</div>
                                         </td>
                                         <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{item.account}</div>
+                                            <div className='text-black font-semibold'>{item.subAccount}</div>
                                         </td>
                                         <td className="px-6 py-3 text-blue-700 font-bold">
                                             {dbAccount[index] === false &&  newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
