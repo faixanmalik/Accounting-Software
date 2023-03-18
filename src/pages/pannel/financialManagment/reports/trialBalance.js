@@ -31,8 +31,10 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     
     const submit = ()=>{
 
-        setFDate(moment(fromDate).format('D MMM YYYY'))
-        setTDate(moment(toDate).format('D MMM YYYY'))
+        if(fromDate && toDate){
+            setFDate(moment(fromDate).format('D MMM YYYY'))
+            setTDate(moment(toDate).format('D MMM YYYY'))
+        }
 
         dbCharts.forEach(element => {
 
@@ -338,18 +340,18 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                             </tbody>
 
                         </table>
-                        { dbCharts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+                        { charts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
 
                 
-                    <div className="flex justify-around bg-slate-100 px-4 py-3 text-right sm:px-6">
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} ml-auto mr-16`}>Total Debit: 
+                    {charts.length != 0  ? <div className="flex justify-around bg-slate-100 px-4 py-3 text-right sm:px-6">
+                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} ml-auto mr-10`}>Total Debit: 
                             <span className={`font-bold ml-1 `}>${debitSum.toLocaleString()}</span>
                         </h1>
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} mr-14`}>Total Credit: 
+                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} mr-10`}>Total Credit: 
                             <span className='font-bold ml-1'>${creditSum.toLocaleString()}</span>
                         </h1>
-                    </div>
+                    </div> : ''}
 
 
                 </div>

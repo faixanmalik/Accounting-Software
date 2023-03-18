@@ -11,8 +11,7 @@ import Charts from 'models/Charts';
 import moment from 'moment';
 
 
-const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts, name }) => {
-
+const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts  }) => {
 
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
@@ -26,11 +25,18 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     const [tDate, setTDate] = useState('')
     
 
+    useEffect(() => {
+      submit()
+    }, [])
+    
+
 
     let balance = [];
     const submit = ()=>{
-        setFDate(moment(fromDate).format('D MMM YYYY'))
-        setTDate(moment(toDate).format('D MMM YYYY'))
+        if(fromDate && toDate){
+            setFDate(moment(fromDate).format('D MMM YYYY'))
+            setTDate(moment(toDate).format('D MMM YYYY'))
+        }
 
 
         dbCharts.forEach(element => {
@@ -120,7 +126,6 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             });
 
 
-       
             // Balance
             let result = [];
             if(dbAllEntries.length > 0){
@@ -141,7 +146,6 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         else{ 
                             totalBalance = currentDebitEntry - currentCreditEntry;
                         }
-
                         initialBalance = totalBalance;
                         result.push(totalBalance)
                     }
@@ -186,8 +190,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         let distributionExpensesArray = [];
         let financeCostArray = [];
 
-        
-
+    
         {dbCharts.map((item,index) => {
             if(item.subAccount === 'Revenue'){
                 let sales = balance[index] && balance[index][balance[index].length-1]
@@ -359,8 +362,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                             
                             {/* All Vouchers */}
-                            {newBalance.length != 0 &&  dbCharts.map((item,index) => {
-
+                            {dbCharts.map((item,index) => {
                                 
                                 // Array sorting with nameOrder order
                                 let nameOrder = ['Revenue', 'Cost of sales', 'Administration Expenses', 'Distribution Expenses', 'Finance Cost']; 
@@ -373,6 +375,17 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                     }
                                     return aIndex - bIndex;
                                   });
+
+                                  const administrationIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Administration Expenses');
+                                  const financeIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Finance Cost');
+                                  let lastIndex = -1;
+
+                                    for (let i = dbCharts.length - 1; i >= 0; i--) {
+                                    if (dbCharts[i].subAccount === 'Finance Cost') {
+                                        lastIndex = i;
+                                        break;
+                                    }
+                                    }
 
                                   
 
@@ -392,7 +405,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 </tr>
 
                             
-                                {item.subAccount === 'Cost of sales'
+                                {index === administrationIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${grossProfit > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Gross {grossProfit > 0 ? 'Profit' : 'loss'};
                                         <span className='font-bold ml-1'>${ grossProfit }</span>
@@ -400,7 +413,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 </tr>: ''}
 
 
-                                {item.subAccount === 'Distribution Expenses'
+                                {index === financeIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${profitFromOperations > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitFromOperations > 0 ? 'Profit' : 'loss'} From Operations:
                                         <span className='font-bold ml-1'>${ profitFromOperations }</span>
@@ -408,7 +421,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 </tr>: ''}
 
 
-                                {item.subAccount === 'Finance Cost'
+                                {index === lastIndex
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${profitBeforeTax > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitBeforeTax > 0 ? 'Profit' : 'loss'} Before Tax:
                                         <span className='font-bold ml-1'>${ profitBeforeTax }</span>
@@ -416,7 +429,8 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 </tr>: ''}
 
                             </tbody>
-                            }})}
+                            }
+                            })}
                         </table>
 
                         { newBalance.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
