@@ -4,8 +4,6 @@ import Contact from 'models/Contact';
 import FinancialYear from 'models/FinancialYear';
 import Product from 'models/Product';
 import BankAccount from 'models/BankAccount';
-import PurchaseOrder from 'models/PurchaseOrder';
-import InwardGatePass from 'models/InwardGatePass';
 import CashPayment from 'models/CashPayment';
 import CashReceipt from 'models/CashReceipt';
 import BankPayment from 'models/BankPayment';
@@ -49,20 +47,6 @@ export default async function handler(req, res) {
             await BankAccount.findByIdAndDelete( id )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        else if (delPath === 'purchaseOrder'){
-            const { id } = req.body;
-
-            await PurchaseOrder.findByIdAndDelete( id )
-            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
-        }
-        else if (delPath === 'inwardGatePass'){
-            const { id } = req.body;
-            
-            await InwardGatePass.findByIdAndDelete( id )
-            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
-        }
-
-
 
         else if (delPath === 'cashPaymentVoucher'){
             const { id } = req.body;

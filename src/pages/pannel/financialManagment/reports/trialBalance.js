@@ -9,7 +9,6 @@ import BankPayment from 'models/BankPayment';
 import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
 import moment from 'moment';
-import ProfitAndLoss from './profitAndLoss';
 
 
 const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
@@ -24,7 +23,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
     const [fDate, setFDate] = useState('')
     const [tDate, setTDate] = useState('')
-    
 
 
     let balance = [];
@@ -321,6 +319,8 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                         }
                                     });
 
+                                    if(item.accountName != 'Profit for the year'){
+
                                     return <tr key={index} className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-6 py-3">
                                             <div className='font-semibold'>{item.accountName}</div>
@@ -335,6 +335,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                             {dbAccount[index] === true && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
                                         </td>
                                     </tr>
+                                    }
                                 })}
 
                             </tbody>

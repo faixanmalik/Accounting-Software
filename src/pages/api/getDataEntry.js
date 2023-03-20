@@ -2,9 +2,7 @@
 import BankAccount from 'models/BankAccount';
 import Contact from 'models/Contact';
 import FinancialYear from 'models/FinancialYear';
-import InwardGatePass from 'models/InwardGatePass';
 import Product from 'models/Product';
-import PurchaseOrder from 'models/PurchaseOrder';
 import Charts from 'models/Charts'
 import JournalVoucher from 'models/JournalVoucher';
 import BankPayment from 'models/BankPayment';
@@ -76,28 +74,7 @@ export default async function handler(req, res) {
             }
 
         }
-        else if( getDataPath === 'purchaseOrder' ){
-            const { id } = req.body;
-            let data = await PurchaseOrder.findById(id)
-            if(data){
-                res.status(200).json({ success: true, data}) 
-            } 
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-
-        }
-        else if( getDataPath === 'InwardGatePass' ){
-            const { id } = req.body;
-            let data = await InwardGatePass.findById(id)
-            if(data){
-                res.status(200).json({ success: true, data}) 
-            } 
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-
-        }
+        
         else if( getDataPath === 'cashPaymentVoucher' ){
             const { id } = req.body;
             let data = await CashPayment.findById(id)

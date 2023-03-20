@@ -9,14 +9,19 @@ import ProductsComponent from "@/pannel/components/dashboard/Products";
 import mongoose from "mongoose";
 import Product from '../../models/Product';
 import Contact from "../../models/Contact";
+import Charts from "models/Charts";
+import CashReceipt from "models/CashReceipt";
+import CashPayment from "models/CashPayment";
+import BankReceipt from "models/BankReceipt";
+import BankPayment from "models/BankPayment";
+import JournalVoucher from "models/JournalVoucher";
 
 
-export default function Home({customer, product, supplier}) {
+export default function Home({customer, product, supplier, dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt}) {
 
   const noOfCustomers = customer.length;
   const noOfProducts = product.length;
   const noOfSuppliers = supplier.length;
-  
 
   return (
     <>
@@ -63,7 +68,7 @@ export default function Home({customer, product, supplier}) {
           <Col sm="6" lg="3">
             <TopCards
               bg="bg-light-info text-into"
-              href='/pannel/manageJournalEntries'
+              href='/pannel/financialManagment/reports/profitAndLoss'
               title="Sales"
               subtitle="Total Sales"
               amount="$210"
@@ -74,7 +79,7 @@ export default function Home({customer, product, supplier}) {
         {/***Sales & Feed***/}
         <Row>
           <Col sm="12" lg="12">
-            <SalesChart />
+            <SalesChart dbCharts={dbCharts} dbJournalVoucher={dbJournalVoucher} dbBankPayment={dbBankPayment} dbBankReceipt={dbBankReceipt} dbCashPayment={dbCashPayment} dbCashReceipt={dbCashReceipt}/>
           </Col>
         </Row>
 
@@ -113,14 +118,25 @@ export async function getServerSideProps() {
   let customer = await Contact.find({"type": "Customer"})
   let supplier = await Contact.find({"type": "Supplier"})
   let product = await Product.find()
+  let dbCharts = await Charts.find()
+  let dbCashReceipt = await CashReceipt.find()
+  let dbCashPayment = await CashPayment.find()
+  let dbBankReceipt = await BankReceipt.find()
+  let dbBankPayment = await BankPayment.find()
+  let dbJournalVoucher = await JournalVoucher.find()
    
   // Pass data to the page via props
   return {
      props: {
       customer: JSON.parse(JSON.stringify(customer)),
       product: JSON.parse(JSON.stringify(product)),
-      supplier: JSON.parse(JSON.stringify(supplier))
+      supplier: JSON.parse(JSON.stringify(supplier)),
+      dbCharts: JSON.parse(JSON.stringify(dbCharts)),
+      dbCashReceipt: JSON.parse(JSON.stringify(dbCashReceipt)),
+      dbCashPayment: JSON.parse(JSON.stringify(dbCashPayment)),
+      dbBankReceipt: JSON.parse(JSON.stringify(dbBankReceipt)),
+      dbBankPayment: JSON.parse(JSON.stringify(dbBankPayment)),
+      dbJournalVoucher: JSON.parse(JSON.stringify(dbJournalVoucher)),
      }
-     
     }
 }

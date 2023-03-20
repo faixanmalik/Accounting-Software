@@ -5,8 +5,6 @@ import Charts from '../../../models/Charts'
 import moment from 'moment';
 import Product from 'models/Product';
 import BankAccount from 'models/BankAccount';
-import PurchaseOrder from 'models/PurchaseOrder';
-import InwardGatePass from 'models/InwardGatePass';
 import CashPayment from 'models/CashPayment';
 import CashReceipt from 'models/CashReceipt';
 import BankPayment from 'models/BankPayment';
@@ -110,49 +108,6 @@ export default async function handler(req, res) {
                 }
                 else{
                     await BankAccount.findByIdAndUpdate(id, { bankBranch: bankBranch, accountNo: accountNo, accountType: accountType, accountDesc: accountDesc, accountTitle:accountTitle , chartsOfAccount: chartsOfAccount,  borrowingLimit: borrowingLimit })
-                    res.status(200).json({ success: true, message: "Update Successfully!" }) 
-                }
-            }
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-        }
-        else if (editPath === 'purchaseOrder'){
-            const { id, contact, date, deliveryDate, orderNo,  reference, currency, amountsAre, item,  desc, qty, unitPrice, discount, account ,  taxRate, amount} = req.body;
-
-            let dbPurchaseOrder = await PurchaseOrder.findById(id)
-
-            if(dbPurchaseOrder){
-                const dbDate = moment(dbPurchaseOrder.date).utc().format('YYYY-MM-DD')
-                const dbDeliveryDate = moment(dbPurchaseOrder.deliveryDate).utc().format('YYYY-MM-DD')
-                
-                if( contact === dbPurchaseOrder.contact  && date === dbDate  && deliveryDate === dbDeliveryDate  && orderNo === dbPurchaseOrder.orderNo  && reference === dbPurchaseOrder.reference  && currency === dbPurchaseOrder.currency  && amountsAre === dbPurchaseOrder.amountsAre  && item === dbPurchaseOrder.item  && desc === dbPurchaseOrder.desc  && qty === dbPurchaseOrder.qty  && unitPrice === dbPurchaseOrder.unitPrice  && discount === dbPurchaseOrder.discount  && account === dbPurchaseOrder.account  && taxRate === dbPurchaseOrder.taxRate  && amount === dbPurchaseOrder.amount ){
-                    res.status(400).json({ success: false, message: "Already found!" }) 
-                }
-                else{
-                    await PurchaseOrder.findByIdAndUpdate(id, { contact: contact, date: date, deliveryDate: deliveryDate, orderNo: orderNo, reference:reference , currency: currency,   amountsAre: amountsAre,  item: item,  desc: desc,  qty: qty,  unitPrice: unitPrice,  discount: discount,  account: account,  taxRate: taxRate,  amount: amount, })
-                    res.status(200).json({ success: true, message: "Update Successfully!" }) 
-                }
-            }
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-        }
-
-        else if (editPath === 'inwardGatePass'){
-            const { id, transactionType, igpDate, deliveryChallanNo, venderName,   poNumber, poDate, VehicleNo, driverName, remarks, item, poQty,  receivedQty } = req.body;
-
-            let dbData = await InwardGatePass.findById(id)
-
-            if(dbData){
-                const dbDate = moment(dbData.igpDate).utc().format('YYYY-MM-DD')
-                const dbPoDate = moment(dbData.poDate).utc().format('YYYY-MM-DD')
-                
-                if( transactionType === dbData.transactionType && igpDate === dbDate && deliveryChallanNo === dbData.deliveryChallanNo && venderName === dbData.venderName && poNumber === dbData.poNumber && poDate === dbPoDate && VehicleNo === dbData.VehicleNo && driverName === dbData.driverName && remarks === dbData.remarks && item === dbData.item && poQty === dbData.poQty && receivedQty === dbData.receivedQty){
-                    res.status(400).json({ success: false, message: "Already found!" }) 
-                }
-                else{
-                    await InwardGatePass.findByIdAndUpdate(id, {  transactionType: transactionType, deliveryChallanNo : deliveryChallanNo, venderName : venderName, poNumber : poNumber, VehicleNo : VehicleNo, driverName : driverName, remarks : remarks, item : item, poQty : poQty, receivedQty : receivedQty, igpDate : dbDate , poDate : dbPoDate})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }

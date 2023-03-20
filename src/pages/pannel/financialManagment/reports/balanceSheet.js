@@ -375,7 +375,7 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
         setProfitBeforeTax(next)
 
 
-        // // calculate current Total entries 
+        // calculate current Total entries 
         setTotalAssets(parseInt(fixedAssetsSum) + parseInt(currentAssetsSum))
 
         let totalEquity = next + parseInt(Math.abs(equitySum));
