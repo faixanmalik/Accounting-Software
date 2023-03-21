@@ -15,13 +15,15 @@ import CashPayment from "models/CashPayment";
 import BankReceipt from "models/BankReceipt";
 import BankPayment from "models/BankPayment";
 import JournalVoucher from "models/JournalVoucher";
+import AssetsChart from "@/pannel/components/dashboard/AssetsChart";
 
 
-export default function Home({customer, product, supplier, dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt}) {
+export default function Home({customer, product, supplier, employees, dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt}) {
 
   const noOfCustomers = customer.length;
   const noOfProducts = product.length;
   const noOfSuppliers = supplier.length;
+  const noOfEmployees = employees.length;
 
   return (
     <>
@@ -37,22 +39,22 @@ export default function Home({customer, product, supplier, dbCharts, dbJournalVo
         <Row>
           <Col sm="6" lg="3">
             <TopCards
-              bg="bg-light-success text-success"
-              href='/pannel/businessSetup/contactList'
-              title="Customer"
-              subtitle="Total Customer"
-              amount={noOfCustomers}
-              icon="bi bi-people"
-            />
-          </Col>
-          <Col sm="6" lg="3">
-            <TopCards
               bg="bg-light-danger text-danger"
               href='/pannel/businessSetup/productAndServices'
               title="Products"
               subtitle="Total Products"
               amount={noOfProducts}
               icon="bi bi-bag"
+            />
+          </Col>
+          <Col sm="6" lg="3">
+            <TopCards
+              bg="bg-light-success text-success"
+              href='/pannel/businessSetup/contactList'
+              title="Customer"
+              subtitle="Total Customer"
+              amount={noOfCustomers}
+              icon="bi bi-people"
             />
           </Col>
           <Col sm="6" lg="3">
@@ -69,10 +71,10 @@ export default function Home({customer, product, supplier, dbCharts, dbJournalVo
             <TopCards
               bg="bg-light-info text-into"
               href='/pannel/financialManagment/reports/profitAndLoss'
-              title="Sales"
-              subtitle="Total Sales"
-              amount="$210"
-              icon="bi bi-bag"
+              title="Employees"
+              subtitle="Total employee"
+              amount={noOfEmployees}
+              icon="bi bi-people"
             />
           </Col>
         </Row>
@@ -83,8 +85,17 @@ export default function Home({customer, product, supplier, dbCharts, dbJournalVo
           </Col>
         </Row>
 
-        {/***Table ***/}
         <Row>
+          <Col sm="12" lg="12">
+            <AssetsChart dbCharts={dbCharts} dbJournalVoucher={dbJournalVoucher} dbBankPayment={dbBankPayment} dbBankReceipt={dbBankReceipt} dbCashPayment={dbCashPayment} dbCashReceipt={dbCashReceipt}/>
+          </Col>
+        </Row>
+
+
+
+        {/* That add may be in future */}
+        {/***Table ***/}
+        {/*<Row>
           <Col lg="6" xxl="8" sm="12">
             <CustomerComponent />
           </Col>
@@ -100,7 +111,7 @@ export default function Home({customer, product, supplier, dbCharts, dbJournalVo
           <Col lg="6" xxl="8" sm="12">
           <TodayOverview />
           </Col>
-        </Row>
+        </Row>*/}
 
 
       </div>
@@ -117,6 +128,7 @@ export async function getServerSideProps() {
   }
   let customer = await Contact.find({"type": "Customer"})
   let supplier = await Contact.find({"type": "Supplier"})
+  let employees = await Contact.find({"type": "Employee"})
   let product = await Product.find()
   let dbCharts = await Charts.find()
   let dbCashReceipt = await CashReceipt.find()
@@ -131,6 +143,7 @@ export async function getServerSideProps() {
       customer: JSON.parse(JSON.stringify(customer)),
       product: JSON.parse(JSON.stringify(product)),
       supplier: JSON.parse(JSON.stringify(supplier)),
+      employees: JSON.parse(JSON.stringify(employees)),
       dbCharts: JSON.parse(JSON.stringify(dbCharts)),
       dbCashReceipt: JSON.parse(JSON.stringify(dbCashReceipt)),
       dbCashPayment: JSON.parse(JSON.stringify(dbCashPayment)),
