@@ -4,9 +4,11 @@ import Head from 'next/head';
 
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useRouter } from 'next/router';
 
 
 function Myaccount() {
+  const router = useRouter()
 
   useEffect(() => {
     const myUser = JSON.parse(localStorage.getItem('myUser'))
@@ -155,13 +157,13 @@ function Myaccount() {
   return (
     <>
     <Head>
-      <title>MyAccount_Hunting_Store</title>
+      <title>MyAccount_Accounting_Software</title>
       <meta name="description" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
    </Head>
      {/* React tostify */}
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable theme="light"/>
 
-    <section className="text-gray-600 body-font relative">
+    <section className="text-gray-600 bg-white body-font relative">
   <div className="container px-5 py-10 mx-auto">
     <div className="flex flex-col text-center w-full mb-12">
       <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Contact Us</h1>
@@ -221,8 +223,8 @@ function Myaccount() {
 
           </div>
 
-          <div className="px-2 mt-3 md:mt-5 w-full bg-gray-50 rounded-md">
-            <button type='submit' className="flex ml-auto items-center bg-indigo-600 text-white rounded-xl font-semibold border-0 py-3 px-10 focus:outline-none hover:bg-indigo-700 text-lg mt-4 md:mt-0">Save</button>
+          <div className="p-2 mt-3 md:mt-5 w-full bg-gray-50 rounded-md">
+            <button type='submit' className="flex ml-auto items-center bg-indigo-600 text-white rounded-xl font-semibold border-0 py-2 px-8 focus:outline-none hover:bg-indigo-700 text-lg md:mt-0">Save</button>
           </div>
         </div>
       </form>
@@ -259,10 +261,10 @@ function Myaccount() {
               </div>
             </div>
           </div>
-            <h1 id="checkPassword" className= 'text-sm text-red-600 ml-3 sm:ml-auto sm:mr-5 md:mr-0 lg:mr-24 xl:mr-40'></h1>
+            <h1 id="checkPassword" className= 'text-sm text-red-600 ml-10 sm:ml-auto sm:mr-5 md:mr-0 lg:mr-24 xl:mr-28'></h1>
 
-          <div className="px-2 mt-3 md:mt-5 w-full bg-gray-50 rounded-md">
-            <button type='submit' className="flex ml-auto items-center bg-indigo-600 text-white rounded-xl font-semibold border-0 py-3 px-10 focus:outline-none hover:bg-indigo-700 text-lg mt-4 md:mt-0">Save</button>
+          <div className="p-2 mt-3 md:mt-5 w-full bg-gray-50 rounded-md">
+            <button type='submit' className="flex ml-auto items-center bg-indigo-600 text-white rounded-xl font-semibold border-0 py-2 px-8 focus:outline-none hover:bg-indigo-700 text-lg md:mt-0">Save</button>
           </div>
         </div>
         </form>

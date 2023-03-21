@@ -8,6 +8,8 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Bank from 'models/BankAccount';
 import Charts from 'models/Charts';
+import { ProSidebarProvider } from 'react-pro-sidebar';
+import FullLayout from '@/pannel/layouts/FullLayout';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -152,6 +154,16 @@ const BankAccount = ({dbBankAccount, charts}) => {
 
   return (
     <>
+    <ProSidebarProvider>
+    <style jsx global>{`
+        footer {
+          display: none;
+        }
+        header {
+          display: none;
+        }
+      `}</style>
+    <FullLayout>
     {/* React tostify */}
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
 
@@ -374,6 +386,8 @@ const BankAccount = ({dbBankAccount, charts}) => {
         </div>
       </Dialog>
     </Transition.Root>
+    </FullLayout>
+    </ProSidebarProvider>
 
     </>
   )

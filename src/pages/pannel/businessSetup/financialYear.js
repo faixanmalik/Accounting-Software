@@ -6,6 +6,8 @@ import Financial from 'models/FinancialYear';
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
+import { ProSidebarProvider } from 'react-pro-sidebar';
+import FullLayout from '@/pannel/layouts/FullLayout';
 
 
 function classNames(...classes) {
@@ -145,6 +147,16 @@ const FinancialYear = ({financial}) => {
 
   return (
     <>
+    <ProSidebarProvider>
+    <style jsx global>{`
+        footer {
+          display: none;
+        }
+        header {
+          display: none;
+        }
+      `}</style>
+    <FullLayout>
     {/* React tostify */}
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
 
@@ -318,6 +330,9 @@ const FinancialYear = ({financial}) => {
         </div>
       </Dialog>
     </Transition.Root>
+
+    </FullLayout>
+    </ProSidebarProvider>
 
     </>
   )

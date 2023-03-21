@@ -7,6 +7,8 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Contact from 'models/Contact';
+import { ProSidebarProvider } from 'react-pro-sidebar';
+import FullLayout from '@/pannel/layouts/FullLayout';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -195,6 +197,16 @@ const ContactList = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
 
   return (
     <>
+    <ProSidebarProvider>
+    <style jsx global>{`
+        footer {
+          display: none;
+        }
+        header {
+          display: none;
+        }
+      `}</style>
+    <FullLayout>
     {/* React tostify */}
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
 
@@ -454,6 +466,9 @@ const ContactList = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
         </div>
       </Dialog>
     </Transition.Root>
+
+    </FullLayout>
+    </ProSidebarProvider>
 
     </>
   )

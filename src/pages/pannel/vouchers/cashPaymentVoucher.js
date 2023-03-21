@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Vouchers from 'models/CashPayment';
 import Contact from 'models/Contact';
 import Charts from 'models/Charts';
+import { ProSidebarProvider } from 'react-pro-sidebar';
+import FullLayout from '@/pannel/layouts/FullLayout';
 
 
 function classNames(...classes) {
@@ -155,6 +157,17 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
   return (
       <>
+      <ProSidebarProvider>
+      <style jsx global>{`
+        footer {
+          display: none;
+        }
+        header {
+          display: none;
+        }
+      `}</style>
+      <FullLayout>
+
       {/* React tostify */}
       <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
   
@@ -415,7 +428,11 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
           </div>
         </Dialog>
       </Transition.Root>
-  
+
+      </FullLayout>
+      </ProSidebarProvider>
+                                  
+
       </>
   )
 }
