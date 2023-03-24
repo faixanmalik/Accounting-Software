@@ -9,6 +9,7 @@ var jwt = require('jsonwebtoken');
 const handler = async (req,res)=>{
     if (req.method == 'POST'){
         let user = await User.findOne({"email": req.body.email})
+        console.log(user)
 
         if (user){
             // Decryptossword
@@ -16,7 +17,7 @@ const handler = async (req,res)=>{
             var encryptedPassword = bytes.toString(CryptoJS.enc.Utf8);
             if (req.body.email === user.email && req.body.password === encryptedPassword){
                 var token = jwt.sign({ email:user.email, name:user.name}, process.env.JWT_SECRET);
-                res.status(200).json({ success: true, message: "Succesfully Log In!", token, email:user.email })
+                res.status(200).json({ success: true, message: "Succesfully Log In!", token, email:user.email, businessName: user.businessName })
             }
             else{
                 res.status(400).json({ success: false, message: "Invalid Credentials!" })

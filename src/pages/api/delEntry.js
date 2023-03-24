@@ -1,7 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import Charts from 'models/Charts';
 import Contact from 'models/Contact';
-import FinancialYear from 'models/FinancialYear';
 import Product from 'models/Product';
 import BankAccount from 'models/BankAccount';
 import CashPayment from 'models/CashPayment';
@@ -27,12 +26,6 @@ export default async function handler(req, res) {
             const { id } = req.body;
             
             await Contact.findByIdAndDelete( id )
-            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
-        }
-        else if (delPath === 'financialYear'){
-            const { id } = req.body;
-            
-            await FinancialYear.findByIdAndDelete( id )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
         else if (delPath === 'productAndServices'){

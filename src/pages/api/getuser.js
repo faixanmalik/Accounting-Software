@@ -7,6 +7,7 @@ var jwt = require('jsonwebtoken');
 const handler = async (req,res)=>{
 
     if (req.method == 'POST'){
+        
         let token = req.body.token;
         let user = jwt.verify(token, process.env.JWT_SECRET);
         let dbuser = await User.findOne({"email": user.email})

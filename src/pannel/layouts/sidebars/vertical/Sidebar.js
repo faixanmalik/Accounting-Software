@@ -234,21 +234,8 @@ const Sidebar2 = ({ showMobilemenu }) => {
           <MenuItem icon={<BiHomeAlt className='text-lg'/>} className={ location === '/' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'} href="/" >
               Dashboard
           </MenuItem>
-
-        
-          <SubMenu label={'User Mangment'} icon={<AiOutlineUser className='text-lg'/>}>
-            <MenuItem icon={<BiUserCheck className='text-lg'/>} >User Details</MenuItem>
-            <MenuItem icon={<BiUserCircle className='text-lg'/>} >User Authentication</MenuItem>
-            <MenuItem icon={<AiOutlineUserSwitch className='text-lg'/>} >Reistriction Area</MenuItem>
-          </SubMenu> 
     
           <SubMenu label="Business Setup" icon={<IoBusinessOutline className='text-lg'/>}>
-            <MenuItem href="/pannel/businessSetup/business" icon={<IoBusinessOutline className='text-lg'/>} className={ location === '/pannel/businessSetup/business' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Business
-            </MenuItem>
-            <MenuItem href="/pannel/businessSetup/financialYear" icon={<SlCalender className='text-lg'/>} className={ location === '/pannel/businessSetup/financialYear' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Financial Year
-            </MenuItem>
             <MenuItem href="/pannel/businessSetup/chartsOfAccount" icon={<IoPieChartSharp className='text-lg'/>} className={ location === '/pannel/businessSetup/chartsOfAccount' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Charts of Accounts
             </MenuItem>
@@ -258,14 +245,8 @@ const Sidebar2 = ({ showMobilemenu }) => {
             <MenuItem href="/pannel/businessSetup/productAndServices" icon={<MdProductionQuantityLimits className='text-lg'/>} className={ location === '/pannel/businessSetup/productAndServices' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Product and Services
             </MenuItem>
-            <MenuItem href="/pannel/businessSetup/fixedAssets" icon={<HiOutlineCash className='text-lg'/>} className={ location === '/pannel/businessSetup/fixedAssets' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Fixed Assets
-            </MenuItem>
             <MenuItem href="/pannel/businessSetup/bankAccount" icon={<BsBank className='text-lg'/>} className={ location === '/pannel/businessSetup/bankAccounts' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Bank Accounts
-            </MenuItem>
-            <MenuItem href="/pannel/businessSetup/taxRates" icon={<HiOutlineReceiptTax className='text-lg'/>} className={ location === '/pannel/businessSetup/taxRates' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Tax Rates
             </MenuItem>
           </SubMenu>
         
@@ -285,6 +266,12 @@ const Sidebar2 = ({ showMobilemenu }) => {
             <MenuItem href="/pannel/vouchers/journalVoucher" icon={<MdOutlineInventory2 className='text-lg'/>} className={ location === '/pannel/purchaseModule/purchaseOverview' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Journal Voucher
             </MenuItem> 
+          </SubMenu>
+
+          <SubMenu label="Payroll" icon={<HiOutlineDocumentReport className='text-lg'/>}>
+            <MenuItem href="/pannel/payroll/employees" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/payroll/employees' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+              Employees
+            </MenuItem>
           </SubMenu>
           
           <SubMenu label="Reports" icon={<HiOutlineDocumentReport className='text-lg'/>}>

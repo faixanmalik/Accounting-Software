@@ -35,10 +35,9 @@ function Login() {
       body: JSON.stringify(data),
     })
       let response = await res.json()
-
       if (response.success === true) {
         toast.success(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-        localStorage.setItem('myUser', JSON.stringify({token: response.token, email: response.email}))
+        localStorage.setItem('myUser', JSON.stringify({token: response.token, email: response.email, businessName: response.businessName}))
         setTimeout(() => {
             router.push(`${process.env.NEXT_PUBLIC_HOST}/pannel`);
         }, 1500);

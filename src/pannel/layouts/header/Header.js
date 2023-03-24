@@ -19,7 +19,10 @@ import LogoWhite from "../../assets/images/logos/amplelogowhite.svg";
 import user1 from "../../assets/images/users/user1.jpg";
 import { useRouter } from "next/router";
 
+
 const Header = ({ showMobmenu }) => {
+
+
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
@@ -30,9 +33,7 @@ const Header = ({ showMobmenu }) => {
 
 
 
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [user, setUser] = useState({value: null})
+  const [businessName, setBusinessName] = useState('')
 
   const router = useRouter()
 
@@ -40,7 +41,7 @@ const Header = ({ showMobmenu }) => {
   useEffect(() => {
     const myUser = JSON.parse(localStorage.getItem('myUser'))
     if(myUser){
-      fetchUser( myUser.token);
+      setBusinessName(myUser.businessName)
     }
     else{
       router.push(`${process.env.NEXT_PUBLIC_HOST}`);
@@ -53,22 +54,6 @@ const Header = ({ showMobmenu }) => {
     localStorage.removeItem("myUser");
     setUser({value:null});
     router.push(`${process.env.NEXT_PUBLIC_HOST}`);
-  }
-
-
-  const fetchUser = async(token) =>{
-    // fetch the data from form to makes a file in local system
-    const data = { token: token  };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      let response = await res.json()
-      setEmail(response.email)
-      setName(response.firstname + ' ' + response.lastname)
   }
 
   return (
@@ -98,26 +83,11 @@ const Header = ({ showMobmenu }) => {
 
       <Collapse navbar isOpen={isOpen}>
         <Nav className="me-auto" navbar>
-          <NavItem>
-            <Link href={'/'} className="nav-link">
-              Starter
-            </Link>
-          </NavItem>
-          <NavItem>
-            <Link href={'/about'} className="nav-link">
-              About
-            </Link>
-          </NavItem>
+
           <UncontrolledDropdown inNavbar nav>
-            <DropdownToggle caret nav>
-              DD Menu
+            <DropdownToggle nav>
+              <h1 className="text-white text-lg my-auto">Hey! {businessName}</h1>
             </DropdownToggle>
-            <DropdownMenu end>
-              <DropdownItem>Option 1</DropdownItem>
-              <DropdownItem>Option 2</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem>Reset</DropdownItem>
-            </DropdownMenu>
           </UncontrolledDropdown>
         </Nav>
         <Dropdown isOpen={dropdownOpen} toggle={toggle}>
@@ -143,5 +113,4 @@ const Header = ({ showMobmenu }) => {
     </Navbar>
   );
 };
-
 export default Header;

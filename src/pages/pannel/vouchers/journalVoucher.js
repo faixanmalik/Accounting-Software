@@ -408,7 +408,10 @@ function classNames(...classes) {
                               <select id="name" name="name" onChange={ e => change(e, index) } value={inputList.name} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                                 <option>select contacts</option>
                                 {dbContacts.map((item)=>{
-                                  return <option key={item._id} value={item.name}>{item.name}</option>
+                                  console.log(item)
+                                  return <option key={item._id} value={item.name}>{item.name} -
+                                    <span>{item.type}</span>
+                                  </option>
                                 })}
                               </select>
                             </div> 
