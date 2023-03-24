@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Navbar,
@@ -16,6 +17,7 @@ import {
 } from "reactstrap";
 import LogoWhite from "../../assets/images/logos/amplelogowhite.svg";
 import user1 from "../../assets/images/users/user1.jpg";
+import { useRouter } from "next/router";
 
 const Header = ({ showMobmenu }) => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -25,6 +27,49 @@ const Header = ({ showMobmenu }) => {
   const Handletoggle = () => {
     setIsOpen(!isOpen);
   };
+
+
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [user, setUser] = useState({value: null})
+
+  const router = useRouter()
+
+
+  useEffect(() => {
+    const myUser = JSON.parse(localStorage.getItem('myUser'))
+    if(myUser){
+      fetchUser( myUser.token);
+    }
+    else{
+      router.push(`${process.env.NEXT_PUBLIC_HOST}`);
+    }
+  }, [])
+
+
+  // Logout function
+  const logout = ()=>{
+    localStorage.removeItem("myUser");
+    setUser({value:null});
+    router.push(`${process.env.NEXT_PUBLIC_HOST}`);
+  }
+
+
+  const fetchUser = async(token) =>{
+    // fetch the data from form to makes a file in local system
+    const data = { token: token  };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      let response = await res.json()
+      setEmail(response.email)
+      setName(response.firstname + ' ' + response.lastname)
+  }
 
   return (
     <Navbar color="secondary" dark expand="md">
@@ -89,12 +134,9 @@ const Header = ({ showMobmenu }) => {
           </DropdownToggle>
           <DropdownMenu>
             <DropdownItem header>Info</DropdownItem>
-            <DropdownItem>My Account</DropdownItem>
-            <DropdownItem>Edit Profile</DropdownItem>
+            <DropdownItem href="/myaccount">Edit Profile</DropdownItem>
             <DropdownItem divider />
-            <DropdownItem>My Balance</DropdownItem>
-            <DropdownItem>Inbox</DropdownItem>
-            <DropdownItem>Logout</DropdownItem>
+            <DropdownItem onClick={logout}>Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>
       </Collapse>

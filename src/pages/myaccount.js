@@ -164,14 +164,14 @@ function Myaccount() {
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable theme="light"/>
 
     <section className="text-gray-600 bg-white body-font relative">
-  <div className="container px-5 py-10 mx-auto">
-    <div className="flex flex-col text-center w-full mb-12">
+  <div className="container px-5 py-10 pb-52 mx-auto">
+    <div className="flex flex-col text-center w-full mb-7">
       <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Contact Us</h1>
     </div>
     <div className="lg:w-10/12 md:w-2/3 mx-auto">
 
       {/* Account Details */}
-      <h1 className='pb-5 text-xl font-sans font-semibold text-indigo-700'>1. Account Details</h1>
+      <h1 className='pb-4 text-xl font-sans font-semibold text-indigo-700'>1. Account Details</h1>
       <form method='POST' onSubmit={submit}>
         <div className="flex flex-wrap -m-2">
           <div className='w-full sm:flex'>

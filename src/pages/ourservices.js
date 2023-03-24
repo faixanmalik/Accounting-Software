@@ -5,7 +5,7 @@ function OurServices() {
   return (
    <>
    <Head>
-      <title>Hunting_Store</title>
+      <title>Accounting_Software</title>
       <meta name="description" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
    </Head>
    <section className="pt-10 lg:pt-14 pb-12 lg:pb-10">

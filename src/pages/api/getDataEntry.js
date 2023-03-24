@@ -9,13 +9,14 @@ import BankPayment from 'models/BankPayment';
 import BankReceipt from 'models/BankReceipt';
 import CashPayment from 'models/CashPayment';
 import CashReceipt from 'models/CashReceipt';
+import Business from 'models/Business';
 
 
 export default async function handler(req, res) {
 
     if (req.method == 'POST'){
 
-        const { getDataPath } = req.body;
+        const { getDataPath, path } = req.body;
 
 
         if( getDataPath === 'chartsOfAccounts'){
@@ -119,6 +120,17 @@ export default async function handler(req, res) {
         else if( getDataPath === 'journalVoucher' ){
             const { id } = req.body;
             let data = await JournalVoucher.findById(id)
+
+            if(data){
+                res.status(200).json({ success: true, data}) 
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if( path === 'business' ){
+            const { id } = req.body;
+            let data = await Business.findById(id)
 
             if(data){
                 res.status(200).json({ success: true, data}) 

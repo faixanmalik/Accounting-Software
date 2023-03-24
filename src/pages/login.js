@@ -8,8 +8,6 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 
-
-
 function Login() {
   const router = useRouter()  
 
@@ -19,8 +17,6 @@ function Login() {
     }
   }, [])
 
-
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -28,7 +24,6 @@ function Login() {
   const submit = async (e) => {
     e.preventDefault()
     
-
     // fetch the data from form to makes a file in local system
     const data = { email, password };
 
@@ -54,14 +49,11 @@ function Login() {
       if (response.success == "none"){
         toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
         setTimeout(() => {
-            router.push(`${process.env.NEXT_PUBLIC_HOST}/signup`);
+          router.push(`${process.env.NEXT_PUBLIC_HOST}/signup`);
         }, 1500);
       }
-
-
       setEmail('')
       setPassword('')
-
   }
 
   const handleChange = (e) => {
@@ -75,13 +67,10 @@ function Login() {
   }
 
 
-
-
-
   return (
    <> 
    <Head>
-      <title>Login_Hunting_Store</title>
+      <title>Login_Accounting_Software</title>
       <meta name="description" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0" />
    </Head>
   {/* React tostify */}

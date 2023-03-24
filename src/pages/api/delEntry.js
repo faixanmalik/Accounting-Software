@@ -14,7 +14,7 @@ import JournalVoucher from 'models/JournalVoucher';
 export default async function handler(req, res) {
 
     if (req.method == 'POST'){
-        const { delPath } = req.body;
+        const { delPath, path } = req.body;
 
         if(delPath === 'chartsOfAccounts'){
             const { id } = req.body;
@@ -77,6 +77,12 @@ export default async function handler(req, res) {
             const { id } = req.body;
             
             await JournalVoucher.findByIdAndDelete( id )
+            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
+        }
+        else if (path === 'business'){
+            const { id } = req.body;
+            
+            await Business.findByIdAndDelete( id )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
 

@@ -67,9 +67,9 @@ function Contact() {
     {/* React tostify */}
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
 
-      <section className="text-gray-600 body-font">
+      <section className="text-gray-600 bg-white body-font">
         <div className="container px-5 py-10 mx-auto">
-          <div className="flex flex-col text-center w-full mb-12">
+          <div className="flex flex-col text-center w-full mb-7">
             <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Contact Us</h1>
             <p className="lg:w-2/3 mx-auto leading-relaxed text-base">How May I Assit You.</p>
           </div>
@@ -100,13 +100,9 @@ function Contact() {
                   </div>
                 </div>
                 <div className="p-2 w-full">
-                  <button type='submit' className="flex mx-auto items-center bg-indigo-600 text-white rounded-xl font-semibold border-0 py-3 px-10 focus:outline-none hover:bg-indigo-700 text-lg mt-4 md:mt-0">Submit</button>
+                  <button type='submit' className="flex mx-auto items-center bg-indigo-600 text-white rounded-xl font-semibold border-0 py-2 px-10 focus:outline-none hover:bg-indigo-700 text-lg mt-4 md:mt-0">Submit</button>
                 </div>
-
-              
-
-
-
+                
               <div className="p-2 w-full pt-8 mt-8 border-t border-gray-200 text-center">
                 <a className="text-indigo-500">example@email.com</a>
                 <p className="leading-normal my-5">49 Smith St.

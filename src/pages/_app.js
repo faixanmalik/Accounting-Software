@@ -1,6 +1,7 @@
 import { useState , useEffect } from 'react'
 import '@/styles/globals.css'
 import "../styles/style.scss";
+
 // React top loading bar
 import LoadingBar from 'react-top-loading-bar'
 import { useRouter } from 'next/router';
@@ -18,7 +19,7 @@ export default function App({ Component, pageProps }) {
   const [user, setUser] = useState({value: null})
   const [key, setKey] = useState(0)
 
-  //  Use Effect for retain same items in shopping Cart
+  //  Use Effect for routerChange
   useEffect(() => {
     router.events.on('routeChangeStart', ()=>{
       setProgress(75);
@@ -27,11 +28,11 @@ export default function App({ Component, pageProps }) {
       setProgress(100);
     }, []);
 
-  let myUser = JSON.parse(localStorage.getItem("myUser"));
-  if( myUser ){
-    setUser({value: myUser.token , email: myUser.email, name: myUser.name });
-    setKey(Math.random());
-  }
+    let myUser = JSON.parse(localStorage.getItem("myUser"));
+    if( myUser ){
+      setUser({value: myUser.token , email: myUser.email, name: myUser.name });
+      setKey(Math.random());
+    }
 
   }, [router.query])
 
@@ -46,11 +47,9 @@ export default function App({ Component, pageProps }) {
 
 
   return <>
-
     <Navbar key={key} user={user} logout={logout}/>
     <LoadingBar color='#0800FF' height={3} progress={progress} waitingTime={300} onLoaderFinished={() => setProgress(0)}/>  
-    <Component {...pageProps} />
+    <Component {...pageProps}/>
     <Footer/>
-  
   </>
 }

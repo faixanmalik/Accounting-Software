@@ -21,7 +21,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function Example({logout , user }) {
+export default function Example({ logout , user }) {
   const [open, setOpen] = useState(false)
 
 
@@ -93,7 +93,7 @@ export default function Example({logout , user }) {
               {/* Logo */}
               <div className="ml-4 flex lg:ml-0">
                 <Link href={'/'}>
-                  <span className="sr-only">Hunting_Store</span>
+                  <span className="sr-only">Accounting_Software</span>
                   <img className="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt=""/>
                 </Link>
               </div>

@@ -26,6 +26,7 @@ export default function Home({customer, product, supplier, employees, dbCharts, 
   const noOfProducts = product.length;
   const noOfSuppliers = supplier.length;
   const noOfEmployees = employees.length;
+  
 
   return (
     <>

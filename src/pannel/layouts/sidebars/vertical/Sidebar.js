@@ -243,6 +243,9 @@ const Sidebar2 = ({ showMobilemenu }) => {
           </SubMenu> 
     
           <SubMenu label="Business Setup" icon={<IoBusinessOutline className='text-lg'/>}>
+            <MenuItem href="/pannel/businessSetup/business" icon={<IoBusinessOutline className='text-lg'/>} className={ location === '/pannel/businessSetup/business' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+                Business
+            </MenuItem>
             <MenuItem href="/pannel/businessSetup/financialYear" icon={<SlCalender className='text-lg'/>} className={ location === '/pannel/businessSetup/financialYear' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
                 Financial Year
             </MenuItem>

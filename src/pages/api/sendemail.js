@@ -10,7 +10,8 @@ const handler = async (req,res)=>{
     let company = 'localhost:3000'
     const email = req.body.email;
 
-
+    
+    
     const token = jwt.sign({ email }, process.env.JWT_SECRET);
     // To save data in database
     const forgot= new Forgot({
