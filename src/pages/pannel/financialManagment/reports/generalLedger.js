@@ -45,7 +45,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             }
         }
         else{
-            setDbAccount(null)
+            setDbAccount(false)
         }
     }, [account, dbAccount])
 
@@ -57,7 +57,8 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     
     const submit = ()=>{
         let allVouchers = [];
-        
+       
+
         if(account != 'Cash' && account != 'Bank'){
             allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
 
@@ -125,6 +126,29 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         }
         // Date filter
         dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        dbAllEntries.forEach(item => {
+            if(account != 'Cash' && account != 'Bank'){
+                if(item.type === 'CPV' || item.type === 'BPV'){
+                    item.debit = item.amount;
+                    item.credit = 0;
+                }
+                else if(item.type === 'CRV' || item.type === 'BRV'){
+                    item.credit = item.amount;
+                    item.debit = 0;
+                }
+            }
+            else{
+                if(item.type === 'CPV' || item.type === 'BPV'){
+                    item.credit = item.amount;
+                    item.debit = 0;
+                }
+                else if(item.type === 'CRV' || item.type === 'BRV'){
+                    item.debit = item.amount;
+                    item.credit = 0;
+                }
+            }
+        });
 
         balanceAmount()
         setNewEntry(dbAllEntries)
@@ -158,10 +182,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                     else if(dbAccount === false){ 
                         totalBalance = currentDebitEntry - currentCreditEntry;
                     }
-                    else if(dbAccount === null){
-                        
-                        totalBalance = currentDebitEntry - currentCreditEntry;
-                    }
                     initialBalance = totalBalance;
                     result.push(totalBalance)
                 }
@@ -171,9 +191,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
                     }
                     else if(dbAccount === false){
-                        totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
-                    }
-                    else if(dbAccount === null){
                         totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
                     }
                     
@@ -321,20 +338,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                                 {/* All Vouchers */}
                                 { newEntry.map((item,index) => {
-
-                                    if(account != 'Cash' && account != 'Bank'){
-                                        if(item.type === 'CPV' || item.type === 'BPV'){
-                                            item.debit = item.amount;
-                                            item.credit = 0;
-                                        }
-                                    }
-                                    else{
-                                        if(item.type === 'CPV' || item.type === 'BPV'){
-                                            item.credit = item.amount;
-                                            item.debit = 0;
-                                        }
-                                    }
-
 
 
                                     return <tr key={index} className="bg-white border-b hover:bg-gray-50">

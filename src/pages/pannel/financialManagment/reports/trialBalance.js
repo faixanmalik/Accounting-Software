@@ -113,11 +113,19 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         item.debit = item.amount;
                         item.credit = 0;
                     }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.credit = item.amount;
+                        item.debit = 0;
+                    }
                 }
                 else{
                     if(item.type === 'CPV' || item.type === 'BPV'){
                         item.credit = item.amount;
                         item.debit = 0;
+                    }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.debit = item.amount;
+                        item.credit = 0;
                     }
                 }
             });
@@ -142,7 +150,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
                             totalBalance = currentCreditEntry - currentDebitEntry;
                         }
-                        else{ 
+                        else{
                             totalBalance = currentDebitEntry - currentCreditEntry;
                         }
 
@@ -184,29 +192,39 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
         for (let index = 0; index < dbAccount.length; index++) {
             const element = dbAccount[index];
             if(element === false){
-                let debitSide = Math.abs(balance[index][balance[index].length-1])
+                let debitSide = balance[index][balance[index].length-1]
                 if(debitSide){
-                    debitEntry.push(debitSide);
+                    if(debitSide > 0){
+                        debitEntry.push(debitSide);
+                    }
+                    else{
+                        creditEntry.push(debitSide);
+                    }
                 }
             }
             else{
-                let creditSide = Math.abs(balance[index][balance[index].length-1])
+                let creditSide = balance[index][balance[index].length-1]
                 if(creditSide){
-                    creditEntry.push(creditSide);
+                    if(creditSide > 0){
+                        creditEntry.push(creditSide);
+                    }
+                    else{
+                        debitEntry.push(creditSide);
+                    }
                 }
             }
         }
 
         let totalDebit = 0;
         debitEntry.forEach(element => {
-            totalDebit += element;
+            totalDebit += Math.abs(element);
         });
         setDebitSum(totalDebit)
         
 
         let totalCredit = 0;
         creditEntry.forEach(element => {
-            totalCredit += element;
+            totalCredit += Math.abs(element);
         });
         setCreditSum(totalCredit)
         
@@ -286,7 +304,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
     <div className="md:grid md:grid-cols-1 md:gap-6">
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
-                {/*<h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">Trial Balance Summary ( {fromDate} to {toDate} )</h3>*/}
                 <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">
                     Trial Balance Summary  
                     {fDate && tDate &&
@@ -325,10 +342,20 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                     let dbAccount = [];
                                     dbCharts.forEach(element => {
                                         if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                                            dbAccount.push(true)
+                                            if(newBalance[index][newBalance[index].length-1] > 0){
+                                                dbAccount.push(true)
+                                            }
+                                            else{
+                                                dbAccount.push(false)
+                                            }
                                         }
                                         else{
-                                            dbAccount.push(false)
+                                            if(newBalance[index][newBalance[index].length-1] > 0){
+                                                dbAccount.push(false)
+                                            }
+                                            else{
+                                                dbAccount.push(true)
+                                            }
                                         }
                                     });
 

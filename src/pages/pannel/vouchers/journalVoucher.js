@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import mongoose from "mongoose";
 import moment from 'moment/moment';
 import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -12,16 +12,25 @@ import Contact from 'models/Contact';
 import Charts from 'models/Charts';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
+import Employees from 'models/Employees';
 
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
   }
 
-  const JournalVoucher = ({ dbVouchers, dbCharts, dbContacts }) => {
+  const JournalVoucher = ({ dbVouchers, dbCharts, dbContacts, dbEmployees }) => {
     
     const [open, setOpen] = useState(false)
     const [id, setId] = useState('')
+    const [contacts, setContacts] = useState([])
+
+
+    useEffect(() => {
+      setContacts(dbContacts, dbEmployees)
+      console.log(contacts)
+    }, [])
+    
 
     // JV
     const [journalDate, setJournalDate] = useState('')
@@ -408,9 +417,7 @@ function classNames(...classes) {
                               <select id="name" name="name" onChange={ e => change(e, index) } value={inputList.name} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                                 <option>select contacts</option>
                                 {dbContacts.map((item)=>{
-                                  console.log(item)
-                                  return <option key={item._id} value={item.name}>{item.name} -
-                                    <span>{item.type}</span>
+                                  return <option key={item._id} value={item.name}>{item.name} - {item.type}
                                   </option>
                                 })}
                               </select>
@@ -551,6 +558,7 @@ export async function getServerSideProps() {
   }
   let dbVouchers = await Voucher.find()
   let dbContacts = await Contact.find()
+  let dbEmployees = await Employees.find()
   let dbCharts = await Charts.find()
 
   // Pass data to the page via props
@@ -559,6 +567,7 @@ export async function getServerSideProps() {
       dbVouchers: JSON.parse(JSON.stringify(dbVouchers)),
       dbContacts: JSON.parse(JSON.stringify(dbContacts)), 
       dbCharts: JSON.parse(JSON.stringify(dbCharts)), 
+      dbEmployees: JSON.parse(JSON.stringify(dbEmployees)), 
     }
   }
 }   

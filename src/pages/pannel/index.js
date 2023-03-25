@@ -14,6 +14,7 @@ import JournalVoucher from "models/JournalVoucher";
 import AssetsChart from "@/pannel/components/dashboard/AssetsChart";
 import { ProSidebarProvider } from "react-pro-sidebar";
 import FullLayout from "@/pannel/layouts/FullLayout";
+import Employees from "models/Employees";
 
 
 export default function Home({customer, product, supplier, employees, dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt}) {
@@ -78,7 +79,7 @@ export default function Home({customer, product, supplier, employees, dbCharts, 
           <Col sm="6" lg="3">
             <TopCards
               bg="bg-light-info text-into"
-              href='/pannel/financialManagment/reports/profitAndLoss'
+              href='/pannel/payroll/employees'
               title="Employees"
               subtitle="Total employee"
               amount={noOfEmployees}
@@ -113,7 +114,7 @@ export async function getServerSideProps() {
   }
   let customer = await Contact.find({"type": "Customer"})
   let supplier = await Contact.find({"type": "Supplier"})
-  let employees = await Contact.find({"type": "Employee"})
+  let employees = await Employees.find()
   let product = await Product.find()
   let dbCharts = await Charts.find()
   let dbCashReceipt = await CashReceipt.find()

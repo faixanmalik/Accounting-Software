@@ -15,14 +15,13 @@ function classNames(...classes) {
 }
 
 
-const ContactList = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
+const ContactList = ({dbContact, dbCustomer, dbSupplier}) => {
 
   // Filter Usestates
   const [all, setAll] = useState(dbContact)
   const [allContacts, setAllContacts] = useState(dbContact)
   const [customer, setCustomer] = useState(dbCustomer)
   const [supplier, setSupplier] = useState(dbSupplier)
-  const [employee, setEmployee] = useState(dbEmployee)
 
   const [open, setOpen] = useState(false)
 
@@ -223,7 +222,6 @@ const ContactList = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
             <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAll(allContacts)}}>All Accounts</button>
             <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAll(customer)}}>Customer</button>
             <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAll(supplier)}}>Supplier</button>
-            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAll(employee)}}>Employee</button>
           </div>
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
@@ -358,7 +356,6 @@ const ContactList = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
                                         <option>Select Contact Type</option>
                                         <option value={'Customer'}>Customer</option>
                                         <option value={'Supplier'}>Supplier</option>
-                                        <option value={'Employee'}>Employee</option>
                                       </select>
                                     </div>
 
@@ -483,7 +480,6 @@ export async function getServerSideProps() {
   let dbContact = await Contact.find()
   let dbCustomer = await Contact.find({type: "Customer"})
   let dbSupplier = await Contact.find({type: "Supplier"})
-  let dbEmployee = await Contact.find({type: "Employee"})
   
 
   // Pass data to the page via props
@@ -492,7 +488,6 @@ export async function getServerSideProps() {
       dbContact: JSON.parse(JSON.stringify(dbContact)),
       dbCustomer: JSON.parse(JSON.stringify(dbCustomer)),
       dbSupplier: JSON.parse(JSON.stringify(dbSupplier)),
-      dbEmployee: JSON.parse(JSON.stringify(dbEmployee)),
       }
   }
 }

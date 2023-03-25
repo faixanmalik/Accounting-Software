@@ -123,11 +123,19 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         item.debit = item.amount;
                         item.credit = 0;
                     }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.credit = item.amount;
+                        item.debit = 0;
+                    }
                 }
                 else{
                     if(item.type === 'CPV' || item.type === 'BPV'){
                         item.credit = item.amount;
                         item.debit = 0;
+                    }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.debit = item.amount;
+                        item.credit = 0;
                     }
                 }
             });
@@ -533,7 +541,7 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                         {profitBeforeTax.toLocaleString()}
                                     </td>:
                                     <td className="px-6 py-3 text-blue-700 font-bold">
-                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
+                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && newBalance[index][newBalance[index].length-1].toLocaleString()}
                                     </td>}
 
                                 </tr>

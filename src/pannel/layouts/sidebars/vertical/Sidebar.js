@@ -222,8 +222,6 @@ const Sidebar2 = ({ showMobilemenu }) => {
 
       <div className="pt-4 mt-2">
 
-
-
       <Sidebar width='255px' className='-ml-3'>
       <Menu className='bg-white'>
         <div className='justify-center flex mb-3'>
@@ -231,40 +229,40 @@ const Sidebar2 = ({ showMobilemenu }) => {
         </div>
         
         <Menu>
-          <MenuItem icon={<BiHomeAlt className='text-lg'/>} className={ location === '/' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'} href="/" >
-              Dashboard
+          <MenuItem icon={<BiHomeAlt className='text-lg'/>} className={ location === '/pannel' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'} href="/pannel" >
+            Dashboard
           </MenuItem>
     
           <SubMenu label="Business Setup" icon={<IoBusinessOutline className='text-lg'/>}>
             <MenuItem href="/pannel/businessSetup/chartsOfAccount" icon={<IoPieChartSharp className='text-lg'/>} className={ location === '/pannel/businessSetup/chartsOfAccount' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Charts of Accounts
+              Charts of Accounts
             </MenuItem>
             <MenuItem href="/pannel/businessSetup/contactList" icon={<AiOutlineContacts className='text-lg'/>} className={ location === '/pannel/businessSetup/contactList' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Contact List
+              Contact List
             </MenuItem>
             <MenuItem href="/pannel/businessSetup/productAndServices" icon={<MdProductionQuantityLimits className='text-lg'/>} className={ location === '/pannel/businessSetup/productAndServices' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Product and Services
+              Product and Services
             </MenuItem>
             <MenuItem href="/pannel/businessSetup/bankAccount" icon={<BsBank className='text-lg'/>} className={ location === '/pannel/businessSetup/bankAccounts' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Bank Accounts
+              Bank Accounts
             </MenuItem>
           </SubMenu>
         
           <SubMenu label="Vouchers" icon={<RiBankCardLine className='text-lg'/>}>
             <MenuItem href="/pannel/vouchers/cashPaymentVoucher" icon={<HiOutlineCash className='text-lg'/>} className={ location === '/pannel/purchaseModule/purchaseOrder' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Cash Payment Voucher
+              Cash Payment Voucher
             </MenuItem>
             <MenuItem href="/pannel/vouchers/cashReceiptVoucher" icon={<HiOutlineBanknotes className='text-lg'/>} className={ location === '/pannel/purchaseModule/inwardGatePass' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Cash Receipt Voucher
+              Cash Receipt Voucher
             </MenuItem>
             <MenuItem href="/pannel/vouchers/bankPaymentVoucher" icon={<RiBankLine className='text-lg'/>} className={ location === '/pannel/purchaseModule/inwardGatePass' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Bank Payment Voucher
+              Bank Payment Voucher
             </MenuItem>
             <MenuItem href="/pannel/vouchers/bankReceiptVoucher" icon={<AiOutlineBank className='text-lg'/>} className={ location === '/pannel/purchaseModule/inwardGatePass' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Bank Receipt Voucher
+              Bank Receipt Voucher
             </MenuItem>
             <MenuItem href="/pannel/vouchers/journalVoucher" icon={<MdOutlineInventory2 className='text-lg'/>} className={ location === '/pannel/purchaseModule/purchaseOverview' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-                Journal Voucher
+              Journal Voucher
             </MenuItem> 
           </SubMenu>
 
