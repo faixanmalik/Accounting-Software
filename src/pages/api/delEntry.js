@@ -8,6 +8,7 @@ import CashReceipt from 'models/CashReceipt';
 import BankPayment from 'models/BankPayment';
 import BankReceipt from 'models/BankReceipt';
 import JournalVoucher from 'models/JournalVoucher';
+import Employees from 'models/Employees';
 
 
 export default async function handler(req, res) {
@@ -76,6 +77,12 @@ export default async function handler(req, res) {
             const { id } = req.body;
             
             await Business.findByIdAndDelete( id )
+            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
+        }
+        else if (path === 'employees'){
+            const { id } = req.body;
+            
+            await Employees.findByIdAndDelete( id )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
 

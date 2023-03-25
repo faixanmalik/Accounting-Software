@@ -9,13 +9,14 @@ import CashReceipt from 'models/CashReceipt';
 import BankPayment from 'models/BankPayment';
 import BankReceipt from 'models/BankReceipt';
 import JournalVoucher from 'models/JournalVoucher';
+import Employees from 'models/Employees';
 
 
 export default async function handler(req, res) {
 
     if (req.method == 'POST'){
 
-        const { editPath } = req.body;
+        const { editPath, path } = req.body;
         
         if(editPath === 'chartsOfAccounts'){
 
@@ -236,6 +237,35 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
+        else if (path === 'employees'){
+            const { id, name, fatherName, dob, email, cnic,  phoneNo, citizenship, gender, 
+                maritalStatus, designation, department, workShift, workHour, employmentMode, 
+                payPolicy, basicPay, paymentMode, status, hireDate, siteName, joiningDate, 
+                country, streetAddress, city, state, zip } = req.body;
+
+            let dbData = await Employees.findById(id)
+
+            if(dbData){
+                const dbDob = moment(dbData.dob).utc().format('YYYY-MM-DD')
+                const dbHireDate = moment(dbData.hireDate).utc().format('YYYY-MM-DD')
+                const dbJoiningDate = moment(dbData.joiningDate).utc().format('YYYY-MM-DD')
+
+                
+                if( name === dbData.name  && fatherName === dbData.fatherName  && zip === dbData.zip  && state === dbData.state  && city === dbData.city  && streetAddress === dbData.streetAddress  && country === dbData.country  && joiningDate === dbJoiningDate  && siteName === dbData.siteName  && hireDate === dbHireDate  && status === dbData.status  && paymentMode === dbData.paymentMode  && basicPay === dbData.basicPay  && payPolicy === dbData.payPolicy  && employmentMode === dbData.employmentMode  && workHour === dbData.workHour  && workShift === dbData.workShift  && department === dbData.department  && designation === dbData.designation  
+                    && maritalStatus === dbData.maritalStatus && dob === dbDob  && email === dbData.email  && cnic === dbData.cnic  && phoneNo === dbData.phoneNo  && citizenship === dbData.citizenship  && gender === dbData.gender){
+                    res.status(400).json({ success: false, message: "Already found!" }) 
+                }
+                else{
+                    await Employees.findByIdAndUpdate(id, {  name: name, fatherName : fatherName, zip : zip, state : state, city : city, streetAddress : streetAddress, country : country, joiningDate : joiningDate , siteName : siteName, hireDate : hireDate, status : status, paymentMode : paymentMode, basicPay : basicPay, payPolicy : payPolicy, employmentMode : employmentMode , workHour : workHour, workShift : workShift, department : department, designation : designation, 
+                        maritalStatus : maritalStatus, dob : dob, email : email, cnic : cnic, phoneNo : phoneNo, citizenship : citizenship, gender : gender})
+                    res.status(200).json({ success: true, message: "Update Successfully!" }) 
+                }
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+
 
 
 

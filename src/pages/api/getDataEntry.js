@@ -9,6 +9,7 @@ import BankReceipt from 'models/BankReceipt';
 import CashPayment from 'models/CashPayment';
 import CashReceipt from 'models/CashReceipt';
 import Business from 'models/Business';
+import Employees from 'models/Employees';
 
 
 export default async function handler(req, res) {
@@ -118,6 +119,17 @@ export default async function handler(req, res) {
         else if( path === 'business' ){
             const { id } = req.body;
             let data = await Business.findById(id)
+
+            if(data){
+                res.status(200).json({ success: true, data}) 
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if( path === 'employees' ){
+            const { id } = req.body;
+            let data = await Employees.findById(id)
 
             if(data){
                 res.status(200).json({ success: true, data}) 

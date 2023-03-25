@@ -6,7 +6,7 @@ import { Dialog, Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Contact from 'models/Contact';
+import Employee from 'models/Employees';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
 
@@ -15,20 +15,12 @@ function classNames(...classes) {
 }
 
 
-const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
-
-  // Filter Usestates
-  const [all, setAll] = useState(dbContact)
-  const [allContacts, setAllContacts] = useState(dbContact)
-  const [customer, setCustomer] = useState(dbCustomer)
-  const [supplier, setSupplier] = useState(dbSupplier)
-  const [employee, setEmployee] = useState(dbEmployee)
+const Employees = ({dbEmployee}) => {
 
   const [open, setOpen] = useState(false)
 
   // Add States
   const [name, setName] = useState('')
-  const [type, setType] = useState('')
   const [email, setEmail] = useState('')
   const [phoneNo, setPhoneNo] = useState('')
   const [country, setCountry] = useState('United States')
@@ -36,19 +28,13 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
   const [zip, setZip] = useState('')
-  const [taxRigNo, setTaxRigNo] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('Cash')
-  const [terms, setTerms] = useState('Due on receipt')
-  const [openingBalance, setOpeningBalance] = useState('')
-  const [date, setDate] = useState('')
-
   const [gender, setGender] = useState('')
   const [designation, setDesignation] = useState('')
   const [department, setDepartment] = useState('')
   const [dob, setDob] = useState('')
   const [citizenship, setCitizenship] = useState('')
   const [maritalStatus, setMaritalStatus] = useState('')
-  const [fatherName, setfatherName] = useState('')
+  const [fatherName, setFatherName] = useState('')
   const [payPolicy, setPayPolicy] = useState('')
   const [basicPay, setBasicPay] = useState('')
   const [employmentMode, setEmploymentMode] = useState('')
@@ -72,11 +58,59 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
     if(e.target.name === 'name'){
       setName(e.target.value)
     }
-    else if(e.target.name === 'type'){
-      setType(e.target.value)
-    }
     else if(e.target.name === 'email'){
       setEmail(e.target.value)
+    }
+    else if(e.target.name === 'cnic'){
+      setCnic(e.target.value)
+    }
+    else if(e.target.name === 'joiningDate'){
+      setJoiningDate(e.target.value)
+    }
+    else if(e.target.name === 'siteName'){
+      setSiteName(e.target.value)
+    }
+    else if(e.target.name === 'hireDate'){
+      setHireDate(e.target.value)
+    }
+    else if(e.target.name === 'workHour'){
+      setWorkHour(e.target.value)
+    }
+    else if(e.target.name === 'workShift'){
+      setWorkShift(e.target.value)
+    }
+    else if(e.target.name === 'employmentMode'){
+      setEmploymentMode(e.target.value)
+    }
+    else if(e.target.name === 'status'){
+      setStatus(e.target.value)
+    }
+    else if(e.target.name === 'paymentMode'){
+      setPaymentMode(e.target.value)
+    }
+    else if(e.target.name === 'basicPay'){
+      setBasicPay(e.target.value)
+    }
+    else if(e.target.name === 'designation'){
+      setDesignation(e.target.value)
+    }
+    else if(e.target.name === 'payPolicy'){
+      setPayPolicy(e.target.value)
+    }
+    else if(e.target.name === 'maritalStatus'){
+      setMaritalStatus(e.target.value)
+    }
+    else if(e.target.name === 'fatherName'){
+      setFatherName(e.target.value)
+    }
+    else if(e.target.name === 'citizenship'){
+      setCitizenship(e.target.value)
+    }
+    else if(e.target.name === 'dob'){
+      setDob(e.target.value)
+    }
+    else if(e.target.name === 'department'){
+      setDepartment(e.target.value)
     }
     else if(e.target.name === 'phoneNo'){
       setPhoneNo(e.target.value)
@@ -96,51 +130,38 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
     else if(e.target.name === 'zip'){
       setZip(e.target.value)
     }
-    else if(e.target.name === 'taxRigNo'){
-      setTaxRigNo(e.target.value)
-    }
-    else if(e.target.name === 'paymentMethod'){
-      setPaymentMethod(e.target.value)
-    }
-    else if(e.target.name === 'terms'){
-      setTerms(e.target.value)
-    }
-    else if(e.target.name === 'openingBalance'){
-      setOpeningBalance(e.target.value)
-    }
-    else if(e.target.name === 'date'){
-      setDate(e.target.value)
+    else if(e.target.name === 'gender'){
+      setGender(e.target.value)
     }
   }
 
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, name, type,  email, phoneNo, country, streetAddress, city, state, zip, taxRigNo, paymentMethod, terms , openingBalance, date ,  editPath: 'employees'};
+    const data = { id, name, fatherName, dob, email, cnic,  phoneNo, citizenship, gender, maritalStatus, designation, department, workShift, workHour, employmentMode, payPolicy, basicPay, paymentMode, status, hireDate, siteName, joiningDate, country, streetAddress, city, state, zip, path:'employees' }
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     })
-      let response = await res.json()
-      
-      if (response.success === true) {
-        window.location.reload();
-      }
 
-    else {
-        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-    }
+    let response = await res.json()
       
+    if (response.success === true) {
+      window.location.reload();
+    }
+    else {
+      toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+    }
     
   }
 
   const delEntry = async(id)=>{
 
-    const data = { id , delPath: 'employees' };
+    const data = { id , path: 'employees' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
       method: 'POST',
       headers: { 
@@ -154,15 +175,14 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
         window.location.reload();
       }
       else {
-          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
       }
-    
   }
 
   const getData = async (id) =>{
     setOpen(true)
 
-    const data = { id, getDataPath: 'employees' };
+    const data = { id, path: 'employees' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
       method: 'POST',
       headers: {
@@ -172,24 +192,40 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
     })
       let response = await res.json()
 
-      const date = moment(response.contact.date).utc().format('YYYY-MM-DD')
+      
       if (response.success === true){
 
-        setId(response.contact._id)
-        setName(response.contact.name)
-        setType(response.contact.type)
-        setEmail(response.contact.email)
-        setPhoneNo(response.contact.phoneNo)
-        setCountry(response.contact.country)
-        setStreetAddress(response.contact.streetAddress)
-        setCity(response.contact.city)
-        setState(response.contact.state)
-        setZip(response.contact.zip)
-        setTaxRigNo(response.contact.taxRigNo)
-        setTerms(response.contact.terms)
-        setOpeningBalance(response.contact.openingBalance)
-        setPaymentMethod(response.contact.paymentMethod)
-        setDate(date)
+        const dDate = moment(response.data.dob).utc().format('YYYY-MM-DD')
+        const jDate = moment(response.data.joiningDate).utc().format('YYYY-MM-DD')
+        const hDate = moment(response.data.hireDate).utc().format('YYYY-MM-DD')
+
+        setId(response.data._id)
+        setName(response.data.name)
+        setEmail(response.data.email)
+        setCnic(response.data.cnic)
+        setJoiningDate(jDate)
+        setSiteName(response.data.siteName)
+        setHireDate(hDate)
+        setWorkHour(response.data.workHour)
+        setWorkShift(response.data.workShift)
+        setEmploymentMode(response.data.employmentMode)
+        setStatus(response.data.status)
+        setPaymentMode(response.data.paymentMode)
+        setBasicPay(response.data.basicPay)
+        setDesignation(response.data.designation)
+        setPayPolicy(response.data.payPolicy)
+        setMaritalStatus(response.data.maritalStatus)
+        setFatherName(response.data.fatherName)
+        setCitizenship(response.data.citizenship)
+        setDob(dDate)
+        setDepartment(response.data.department)
+        setPhoneNo(response.data.phoneNo)
+        setCountry(response.data.country)
+        setStreetAddress(response.data.streetAddress)
+        setCity(response.data.city)
+        setState(response.data.state)
+        setZip(response.data.zip)
+        setGender(response.data.gender)
       }
   }
 
@@ -197,8 +233,8 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
     e.preventDefault()
     
     // fetch the data from form to makes a file in local system
-    const data = { name, type,  email, phoneNo, country, streetAddress, city, state, zip, taxRigNo, paymentMethod, terms , openingBalance, date };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addContact`, {
+    const data = { name, fatherName, dob, email, cnic,  phoneNo, citizenship, gender, maritalStatus, designation, department, workShift, workHour, employmentMode, payPolicy, basicPay, paymentMode, status, hireDate, siteName, joiningDate, country, streetAddress, city, state, zip, path:'employees' };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -211,7 +247,7 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
         window.location.reload();
       }
       else {
-          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
       }
   }
 
@@ -235,7 +271,35 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
         <div className="md:col-span-1">
           <div className="px-4 sm:px-0 flex">
             <h3 className="text-lg font-medium leading-6 text-gray-900">Employees</h3>
-            <button onClick={()=>{ setOpen(true), setName(''), setEmail(''), setPhoneNo(''), setCountry('United States'), setStreetAddress(''), setCity(''), setState(''), setZip(''), setTaxRigNo(''), setTerms('Due on receipt'), setOpeningBalance(''), setPaymentMethod('Cash'), setDate('')}} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
+            <button onClick={()=>{
+              setOpen(true), 
+              setName('')
+              setEmail('')
+              setCnic('')
+              setJoiningDate('')
+              setSiteName('')
+              setHireDate()
+              setWorkHour('')
+              setWorkShift('')
+              setEmploymentMode('')
+              setStatus('')
+              setPaymentMode('')
+              setBasicPay('')
+              setDesignation('')
+              setPayPolicy('')
+              setMaritalStatus('')
+              setFatherName('')
+              setCitizenship('')
+              setDob('')
+              setDepartment('')
+              setPhoneNo('')
+              setCountry('')
+              setStreetAddress('')
+              setCity('')
+              setState('')
+              setZip('')
+              setGender('')
+              }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
                New
             </button>
           </div>
@@ -254,16 +318,13 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
                           Name
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          Type
+                          Designation
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          Email
+                          SiteName
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          Phone no
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Balance
+                          Salary
                       </th>
                       <th scope="col" className="px-6 py-3">
                           <span className="">Action</span>
@@ -273,25 +334,22 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
 
                 <tbody>
                   
-                  {Object.keys(all).map((item, index)=>{
-                    return <tr key={all[item]._id} className="bg-white border-b hover:bg-gray-50">
+                  {dbEmployee.map((item, index)=>{
+                    return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                     <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {index + 1}
                     </td>
                     <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {all[item].name}
+                        {item.name}
                     </td>
                     <td className="px-6 py-4">
-                        {all[item].type}
+                        {item.designation}
                     </td>
                     <td className="px-6 py-4">
-                        {all[item].email}
+                        {item.siteName}
                     </td>
                     <td className="px-6 py-4">
-                        {all[item].phoneNo}
-                    </td>
-                    <td className="px-6 py-4">
-                        {all[item].openingBalance}
+                        {item.basicPay}
                     </td>
                     <td className="px-6 py-4">
                       <Menu as="div" className=" inline-block text-left">
@@ -305,11 +363,11 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
                             <div className="py-1 z-20">
                               
                               <Menu.Item>{({ active }) => (
-                                  <div onClick={()=>{getData(all[item]._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Edit</div>
+                                  <div onClick={()=>{getData(item._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Edit</div>
                                 )}
                               </Menu.Item>
                               <Menu.Item>{({ active }) => (
-                                  <div onClick={()=>{delEntry(all[item]._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Delete</div>
+                                  <div onClick={()=>{delEntry(item._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Delete</div>
                                 )}
                               </Menu.Item>
                          
@@ -323,7 +381,7 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
                 </tbody>
 
               </table>
-                {all.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
+                {/*{all.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}*/}
             </div>
             </div>
           </form>
@@ -368,7 +426,7 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
 
                                     <div className="col-span-2">
                                       <label htmlFor="fatherName" className="block text-sm font-medium text-gray-700">Father Name:</label>
-                                      <input onChange={handleChange} value={fatherName} type="text" name="fatherName" id="fatherName" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"  required/>
+                                      <input onChange={handleChange} value={fatherName} type="text" name="fatherName" id="fatherName" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3 lg:col-span-2">
@@ -376,7 +434,6 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
                                       </label>
                                       <input onChange={handleChange} value={dob} type="date" name="dob" id="dob" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
                                     </div>
-
                                     
                                     <div className="col-span-6 sm:col-span-2">
                                       <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
@@ -398,7 +455,7 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
 
                                     <div className="col-span-6 sm:col-span-2">
                                         <label htmlFor="citizenship" className="block text-sm font-medium text-gray-700">Citizenship:</label>
-                                        <input type="text" onChange={handleChange} name="citizenship" id="citizenship" value={citizenship} className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
+                                        <input type="text" onChange={handleChange} name="citizenship" id="citizenship" value={citizenship} className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-2">
@@ -500,13 +557,13 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
 
                                     <div className="col-span-1 mt-3">
                                       <label htmlFor="workHour" className="block text-sm font-medium text-gray-700">Work Hour:</label>
-                                      <input onChange={handleChange} value={workHour} type="number" name="workHour" id="workHour" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"  required/>
+                                      <input onChange={handleChange} value={workHour} type="number" name="workHour" id="workHour" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3 lg:col-span-1 mt-3">
                                       <label htmlFor="hireDate" className="block text-sm font-medium text-gray-700">Hire Date:
                                       </label>
-                                      <input onChange={handleChange} value={hireDate} type="date" name="hireDate" id="hireDate" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
+                                      <input onChange={handleChange} value={hireDate} type="date" name="hireDate" id="hireDate" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
                                     </div>
 
                                     
@@ -536,24 +593,24 @@ const Employees = ({dbContact, dbCustomer, dbSupplier, dbEmployee}) => {
 
                                     <div className="col-span-6 mt-3">
                                       <label htmlFor="streetAddress" className="block text-sm font-medium text-gray-700">Street Address</label>
-                                      <input onChange={handleChange} value={streetAddress} type="text" name="streetAddress" id="streetAddress" autoComplete="streetAddress" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"  required/>
+                                      <input onChange={handleChange} value={streetAddress} type="text" name="streetAddress" id="streetAddress" autoComplete="streetAddress" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-6 lg:col-span-2">
                                       <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
-                                      <input onChange={handleChange} value={city} type="text" name="city" id="city" autoComplete="address-level2" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-s requiredm"
+                                      <input onChange={handleChange} value={city} type="text" name="city" id="city" autoComplete="address-level2" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                       />
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                                       <label htmlFor="state" className="block text-sm font-medium text-gray-700">State / Province</label>
-                                      <input onChange={handleChange} value={state} type="text" name="state" id="state" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-s requiredm"
+                                      <input onChange={handleChange} value={state} type="text" name="state" id="state" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                       />
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                                       <label htmlFor="zip" className="block text-sm font-medium text-gray-700">ZIP / Postal code</label>
-                                      <input onChange={handleChange} value={zip} type="number" name="zip" id="zip" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
+                                      <input onChange={handleChange} value={zip} type="number" name="zip" id="zip" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
                                     </div>
 
                                 </div>
@@ -596,18 +653,11 @@ export async function getServerSideProps() {
     mongoose.set("strictQuery", false);
     await mongoose.connect(process.env.MONGO_URI)
   }
-  let dbContact = await Contact.find()
-  let dbCustomer = await Contact.find({type: "Customer"})
-  let dbSupplier = await Contact.find({type: "Supplier"})
-  let dbEmployee = await Contact.find({type: "Employee"})
+  let dbEmployee = await Employee.find()
   
-
   // Pass data to the page via props
   return {
-     props: { 
-      dbContact: JSON.parse(JSON.stringify(dbContact)),
-      dbCustomer: JSON.parse(JSON.stringify(dbCustomer)),
-      dbSupplier: JSON.parse(JSON.stringify(dbSupplier)),
+     props: {
       dbEmployee: JSON.parse(JSON.stringify(dbEmployee)),
     }
   }
