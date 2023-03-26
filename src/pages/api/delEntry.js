@@ -14,75 +14,64 @@ import Employees from 'models/Employees';
 export default async function handler(req, res) {
 
     if (req.method == 'POST'){
-        const { delPath, path } = req.body;
+        const { path } = req.body;
 
-        if(delPath === 'chartsOfAccounts'){
-            const { id } = req.body;
-
-            await Charts.findByIdAndDelete( id )
-            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
-
-        }
-        else if (delPath === 'contactList'){
-            const { id } = req.body;
-            
-            await Contact.findByIdAndDelete( id )
+        if(path === 'chartsOfAccounts'){
+            const { selectedIds } = req.body;
+            await Charts.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        else if (delPath === 'productAndServices'){
-            const { id } = req.body;
+        else if (path === 'bankAccount'){
+            const { selectedIds } = req.body;
+            await BankAccount.deleteMany( { _id: { $in: selectedIds } } )
+            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
             
-            await Product.findByIdAndDelete( id )
+        }
+        else if (path === 'contactList'){
+            const { selectedIds } = req.body;
+            await Contact.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        else if (delPath === 'bankAccount'){
-            const { id } = req.body;
-            
-            await BankAccount.findByIdAndDelete( id )
+        else if (path === 'productAndServices'){
+            const { selectedIds } = req.body;
+            await Product.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-
-        else if (delPath === 'cashPaymentVoucher'){
-            const { id } = req.body;
-            
-            await CashPayment.findByIdAndDelete( id )
+        
+        
+        else if (path === 'bankPaymentVoucher'){
+            const { selectedIds } = req.body;
+            await BankPayment.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        else if (delPath === 'cashReceiptVoucher'){
-            const { id } = req.body;
-            
-            await CashReceipt.findByIdAndDelete( id )
-            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
-        }
-        else if (delPath === 'bankPaymentVoucher'){
-            const { id } = req.body;
-            
-            await BankPayment.findByIdAndDelete( id )
-            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
-        }
-        else if (delPath === 'bankReceiptVoucher'){
-            const { id } = req.body;
-            
-            await BankReceipt.findByIdAndDelete( id )
+        else if (path === 'bankReceiptVoucher'){
+            const { selectedIds } = req.body;
+            await BankReceipt.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
 
-        else if (delPath === 'journalVoucher'){
-            const { id } = req.body;
-            
-            await JournalVoucher.findByIdAndDelete( id )
+
+        else if (path === 'cashPaymentVoucher'){
+            const { selectedIds } = req.body;
+            await CashPayment.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        else if (path === 'business'){
-            const { id } = req.body;
-            
-            await Business.findByIdAndDelete( id )
+        else if (path === 'cashReceiptVoucher'){
+            const { selectedIds } = req.body;
+            await CashReceipt.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
+
+        else if (path === 'journalVoucher'){
+            const { selectedIds } = req.body;
+            await JournalVoucher.deleteMany( { _id: { $in: selectedIds } } )
+            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
+        }
+        
+
         else if (path === 'employees'){
-            const { id } = req.body;
-            
-            await Employees.findByIdAndDelete( id )
+            const { selectedIds } = req.body;
+            await Employees.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
 

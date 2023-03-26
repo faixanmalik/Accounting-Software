@@ -11,6 +11,7 @@ import Contact from 'models/Contact';
 import Charts from 'models/Charts';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 
 function classNames(...classes) {
@@ -23,6 +24,16 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
   const [open, setOpen] = useState(false)
   const [id, setId] = useState('')
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  function handleRowCheckboxChange(e, id) {
+    if (e.target.checked) {
+      setSelectedIds([...selectedIds, id]);
+    } else {
+      setSelectedIds(selectedIds.filter(rowId => rowId !== id));
+    }
+  }
+  
 
   // Cash Receipt
   const [date, setDate] = useState('')
@@ -88,7 +99,7 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
   const getData = async (id) =>{
     setOpen(true)
 
-    const data = { id, getDataPath: 'cashReceiptVoucher' };
+    const data = { id, path: 'cashReceiptVoucher' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
       method: 'POST',
       headers: {
@@ -115,7 +126,7 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, receivedIn, receivedFrom, amount, date, journalNo, desc , account, editPath: 'cashReceiptVoucher'};
+    const data = { id, receivedIn, receivedFrom, amount, date, journalNo, desc , account, path: 'cashReceiptVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -134,9 +145,9 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
       }
   }
 
-  const delEntry = async(id)=>{
+  const delEntry = async()=>{
 
-    const data = { id , delPath: 'cashReceiptVoucher' };
+    const data = { selectedIds , path: 'cashReceiptVoucher' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
       method: 'POST',
       headers: { 
@@ -193,6 +204,9 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
             </div>
           </div>
           <div className="mt-2 md:col-span-2 md:mt-0">
+            <div className='flex justify-end -mt-3 mb-3 mr-10'>
+              <button type='button' onClick={delEntry} className="font-medium ml-52 text-red-600 dark:text-red-500 hover:underline"><AiOutlineDelete className='text-xl'/></button>
+            </div>
             <form method="POST">
               <div className="overflow-hidden shadow sm:rounded-md">
                 
@@ -200,8 +214,10 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                   <table className="w-full text-sm text-left text-gray-500 ">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                       <tr>
-                        <th scope="col" className="px-6 py-3">
-                            Sr
+                        <th scope="col" className="p-4">
+                          <div className="flex items-center">
+                            <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                          </div>
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Cash Receipt No
@@ -226,9 +242,11 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                     <tbody>
                       {dbVouchers.map((item, index)=>{ 
                       return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
-                        <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                          <div className='text-sm'>{index + 1}</div>
-                        </th>
+                        <td className="w-4 p-4">
+                          <div className="flex items-center">
+                            <input id="checkbox-table-search-1" type="checkbox" onChange={e => handleRowCheckboxChange(e, item._id)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                          </div>
+                        </td>
                         <td className="px-6 py-3">
                           <div className='text-sm text-black font-semibold'>{item.journalNo}</div>
                         </td>
@@ -244,30 +262,8 @@ const CashReceiptVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                         <td className="px-6 py-3">
                           <div className='text-sm text-black font-semibold'>{parseInt(item.amount).toLocaleString()}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          <Menu as="div" className=" inline-block text-left">
-                            <div>
-                              <Menu.Button className="z-0">
-                                <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
-                              </Menu.Button>
-                            </div>
-                            <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
-                              <Menu.Items className="absolute right-20 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                <div className="py-1 z-20">
-                                  
-                                <Menu.Item>{({ active }) => (
-                                    <div onClick={()=>{getData(item._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Edit</div>
-                                  )}
-                                </Menu.Item>
-                                <Menu.Item>{({ active }) => (
-                                    <div onClick={()=>{delEntry(item._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Delete</div>
-                                  )}
-                                </Menu.Item>
-                            
-                                </div>
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
+                        <td className="flex items-center px-6 mr-5 py-4 space-x-4">
+                          <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
                         </td>
                             
                       </tr>})}

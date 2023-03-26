@@ -74,7 +74,7 @@ export default async function handler(req, res) {
             }
         }
         else if( type === 'JV'){
-            const { totalDebit , totalCredit, inputList, memo, journalDate, journalNo, attachment, type } = req.body;
+            const { totalDebit , totalCredit, inputList, name, dec, memo, journalDate, journalNo, attachment, type } = req.body;
 
             let dbJV = await JournalVoucher.findOne({ journalNo })
 
@@ -82,7 +82,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Already Found!" }) 
             }
             else{
-                let newEntry = new JournalVoucher( { totalDebit , totalCredit, inputList, memo, journalDate, journalNo, attachment, type } );
+                let newEntry = new JournalVoucher( { totalDebit , totalCredit, inputList , name, dec , memo, journalDate, journalNo, attachment, type } );
                 await newEntry.save();
                 
                 res.status(200).json({ success: true, message: "Entry Added !" }) 

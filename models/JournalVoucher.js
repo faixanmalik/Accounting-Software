@@ -7,6 +7,8 @@ const JournalVoucherSchema = new mongoose.Schema({
     memo:{type: String},
     journalDate: {type: Date},
     journalNo: {type: String, unique: true},
+    name: {type: String},
+    desc: {type: String},
     attachment: {type: Buffer},
     type:{type: String, required: true},
 

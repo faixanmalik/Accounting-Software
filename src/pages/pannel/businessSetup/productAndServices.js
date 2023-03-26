@@ -10,6 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 
 function classNames(...classes) {
@@ -20,6 +21,16 @@ const ProductAndServices = ({product, charts}) => {
 
   const [open, setOpen] = useState(false)
   const [id, setId] = useState('')
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  function handleRowCheckboxChange(e, id) {
+    if (e.target.checked) {
+      setSelectedIds([...selectedIds, id]);
+    } else {
+      setSelectedIds(selectedIds.filter(rowId => rowId !== id));
+    }
+  }
+
 
 
   const [code, setCode] = useState('')
@@ -87,29 +98,28 @@ const ProductAndServices = ({product, charts}) => {
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { code, name, purchaseStatus, costPrice, purchaseAccount, purchaseTaxRate, purchaseDesc , salesStatus,  salesPrice, salesAccount, salesTaxRate, salesDesc  };
+    const data = { code, name, purchaseStatus, costPrice, purchaseAccount, purchaseTaxRate, purchaseDesc , salesStatus,  salesPrice, salesAccount, salesTaxRate, salesDesc, path: 'productAndServices'  };
 
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addProduct`, {
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     })
-      let response = await res.json()
-
-        if (response.success === true) {
-          window.location.reload();
-        }
-        else {
-          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-        }
+    let response = await res.json()
+    if (response.success === true) {
+      window.location.reload();
+    }
+    else {
+      toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+    }
   }
 
   const getData = async (id) =>{
     setOpen(true)
 
-    const data = { id, getDataPath: 'productAndServices' };
+    const data = { id, path: 'productAndServices' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
       method: 'POST',
       headers: {
@@ -140,9 +150,9 @@ const ProductAndServices = ({product, charts}) => {
       }
   }
 
-  const delEntry = async(id)=>{
+  const delEntry = async()=>{
 
-    const data = { id, delPath: 'productAndServices' };
+    const data = { selectedIds, path: 'productAndServices' };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
       method: 'POST',
@@ -205,8 +215,7 @@ const ProductAndServices = ({product, charts}) => {
         <div className="md:col-span-1">
           <div className="px-4 sm:px-0 flex">
             <h3 className="text-lg font-medium leading-6 text-gray-900">Product and Services</h3>
-            <button onClick={
-                ()=>{
+            <button onClick={()=>{
                     setOpen(true);
                     setCode('');
                     setName('');
@@ -224,6 +233,9 @@ const ProductAndServices = ({product, charts}) => {
           </div>
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
+          <div className='flex justify-end -mt-3 mb-3 mr-14'>
+            <button type='button' onClick={delEntry} className="font-medium ml-52 text-red-600 dark:text-red-500 hover:underline"><AiOutlineDelete className='text-xl'/></button>
+          </div>
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
             
@@ -231,6 +243,11 @@ const ProductAndServices = ({product, charts}) => {
             <table className="w-full text-sm text-left text-gray-500 ">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
+                        <th scope="col" className="p-4">
+                          <div className="flex items-center">
+                            <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                          </div>
+                        </th>
                         <th scope="col" className="px-6 py-3">
                             SL
                         </th>
@@ -258,49 +275,33 @@ const ProductAndServices = ({product, charts}) => {
                     
                     {product.map((item, index)=>{
                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
+                    <td className="w-4 p-4">
+                      <div className="flex items-center">
+                        <input id="checkbox-table-search-1" type="checkbox" onChange={e => handleRowCheckboxChange(e, item._id)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                      </div>
+                    </td>
                     <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                        {index + 1}
+                      {index + 1}
                     </th>
                     <td className="px-6 py-3">
-                        {item.code}
+                      {item.code}
                     </td>
                     <td className="px-6 py-3">
-                        {item.name}
+                      {item.name}
                     </td>
                     <td className="px-6 py-3">
-                        ${item.costPrice}
+                      ${item.costPrice}
                     </td>
                     <td className="px-6 py-3">
-                        ${item.salesPrice}
+                      ${item.salesPrice}
                     </td>
                     <td className="px-6 py-3">
-                        {item.qty}
+                      {item.qty}
                     </td>
-                    <td className="px-6 py-3">
-                        <Menu as="div" className=" inline-block text-left">
-                        <div>
-                            <Menu.Button className="z-0">
-                            <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
-                            </Menu.Button>
-                        </div>
-                        <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
-                            <Menu.Items className="absolute right-16 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <div className="py-1 z-20">
-                                <Menu.Item>{({ active }) => (
-                                    <div onClick={()=>{getData(item._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'block px-4 py-2 text-sm hover:no-underline' )}>Edit</div>
-                                )}
-                                </Menu.Item>
-                                <Menu.Item>{({ active }) => (
-                                    <div onClick={()=>{delEntry(item._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'block px-4 py-2 text-sm hover:no-underline' )}>Delete</div>
-                                )}
-                                </Menu.Item>
-                                
-                            </div>
-                            </Menu.Items>
-                        </Transition>
-                        </Menu>
+                    <td className="flex items-center px-6 mr-5 py-4 space-x-4">
+                      <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
                     </td>
-                    </tr>})}
+                  </tr>})}
                 </tbody>
             </table>
             {product.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}

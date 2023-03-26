@@ -10,6 +10,7 @@ import Bank from 'models/BankAccount';
 import Charts from 'models/Charts';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -32,7 +33,15 @@ const BankAccount = ({dbBankAccount, charts}) => {
 
 
   // id For delete contact
-  const [id, setId] = useState('')
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  function handleRowCheckboxChange(e, id) {
+    if (e.target.checked) {
+      setSelectedIds([...selectedIds, id]);
+    } else {
+      setSelectedIds(selectedIds.filter(rowId => rowId !== id));
+    }
+  }
   
 
   const handleChange = (e) => {
@@ -62,7 +71,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id,  bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit,  editPath: 'bankAccount'};
+    const data = { id,  bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit,  path: 'bankAccount'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -81,9 +90,9 @@ const BankAccount = ({dbBankAccount, charts}) => {
       }
   }
 
-  const delEntry = async(id)=>{
+  const delEntry = async()=>{
 
-    const data = { id , delPath: 'bankAccount' };
+    const data = { selectedIds , path: 'bankAccount' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
       method: 'POST',
       headers: { 
@@ -105,7 +114,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
   const getData = async (id) =>{
     setOpen(true)
 
-    const data = { id, getDataPath: 'bankAccount' };
+    const data = { id, path: 'bankAccount' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
       method: 'POST',
       headers: {
@@ -133,8 +142,8 @@ const BankAccount = ({dbBankAccount, charts}) => {
     e.preventDefault()
     
     // fetch the data from form to makes a file in local system
-    const data = { bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addBankAccount`, {
+    const data = { bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit, path:'bankAccount' };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -142,7 +151,6 @@ const BankAccount = ({dbBankAccount, charts}) => {
       body: JSON.stringify(data),
     })
       let response = await res.json()
-      console.log(response)
 
       if(response.success === true){
         window.location.reload();
@@ -187,83 +195,74 @@ const BankAccount = ({dbBankAccount, charts}) => {
           </div>
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
+          <div className='flex justify-end -mt-3 mb-3 mr-10'>
+            <button type='button' onClick={delEntry} className="font-medium ml-52 text-red-600 dark:text-red-500 hover:underline"><AiOutlineDelete className='text-xl'/></button>
+          </div>
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
             <div className="overflow-x-auto shadow-sm">
               <table className="w-full text-sm text-left text-gray-500 ">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
-                      <th scope="col" className="px-6 py-3">
-                          Sr.
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Branh Name
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Account Title
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Account Number
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Account Type
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Charts of Account
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          <span className="">Action</span>
-                      </th>
+                    <th scope="col" className="p-4">
+                      <div className="flex items-center">
+                        <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                      </div>
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Sr.
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Branh Name
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Account Title
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Account Number
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Account Type
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Charts of Account
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        <span className="">Action</span>
+                    </th>
                   </tr>
                 </thead>
 
                 <tbody>
                   
-                  {Object.keys(dbBankAccount).map((item, index)=>{
-                    return <tr key={dbBankAccount[item]._id} className="bg-white border-b hover:bg-gray-50">
+                  {dbBankAccount.map((item, index)=>{
+                    return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
+                    <td className="w-4 p-4">
+                      <div className="flex items-center">
+                        <input id="checkbox-table-search-1" type="checkbox" onChange={e => handleRowCheckboxChange(e, item._id)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                      </div>
+                    </td>
                     <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {index + 1}
                     </td>
                     <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {dbBankAccount[item].bankBranch}
+                        {item.bankBranch}
                     </td>
                     <td className="px-6 py-4">
-                        {dbBankAccount[item].accountTitle}
+                        {item.accountTitle}
                     </td>
                     <td className="px-6 py-4">
-                        {dbBankAccount[item].accountNo}
+                        {item.accountNo}
                     </td>
                     <td className="px-6 py-4">
-                        {dbBankAccount[item].accountType}
+                        {item.accountType}
                     </td>
                     <td className="px-6 py-4">
-                        {dbBankAccount[item].chartsOfAccount}
+                        {item.chartsOfAccount}
                     </td>
-                    <td className="px-6 py-4">
-                      <Menu as="div" className=" inline-block text-left">
-                        <div>
-                          <Menu.Button className="z-0">
-                            <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
-                          </Menu.Button>
-                        </div>
-                        <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
-                          <Menu.Items className="absolute right-20 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <div className="py-1 z-20">
-                              
-                              <Menu.Item>{({ active }) => (
-                                  <div onClick={()=>{getData(dbBankAccount[item]._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Edit</div>
-                                )}
-                              </Menu.Item>
-                              <Menu.Item>{({ active }) => (
-                                  <div onClick={()=>{delEntry(dbBankAccount[item]._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Delete</div>
-                                )}
-                              </Menu.Item>
-                         
-                            </div>
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </td>
+                    <td className="flex items-center px-6 mr-5 py-4 space-x-4">
+                        <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
+                      </td>
                   </tr>})}
 
                 </tbody>

@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, Fragment, useEffect } from 'react'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment/moment'
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 
 function classNames(...classes) {
@@ -16,19 +17,28 @@ function classNames(...classes) {
 }
 
 
-const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbIncomes, dbExpenses}) => {
+const ChartsOfAccounts = ({dbAllCharts}) => {
 
 
   const [open, setOpen] = useState(false)
 
   // Filter Usestates
-  const [allCharts, setAllCharts] = useState(dbAllCharts)
-  const [charts, setCharts] = useState(dbAllCharts)
-  const [assets, setAssets] = useState(dbAssets)
-  const [liabilities, setLiabilities] = useState(dbLiabilities)
-  const [equity, setEquity] = useState(dbEquity)
-  const [incomes, setIncomes] = useState(dbIncomes)
-  const [expenses, setexpenses] = useState(dbExpenses)
+  const [allCharts, setallCharts] = useState(dbAllCharts)
+  const [filterCharts, setFilterCharts] = useState('allCharts')
+
+  useEffect(() => {
+    const all = dbAllCharts.filter((data) => {
+      if(filterCharts === 'allCharts'){
+        return data.account;
+      }
+      else{
+        if(data.account === `${filterCharts}`){
+          return data.account;
+        }
+      }
+    })
+    setallCharts(all)
+  }, [filterCharts]);
 
 
 
@@ -40,6 +50,17 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
   const [balance, setBalance] = useState('')
   const [asof, setAsof] = useState('')
   const [desc, setDesc] = useState('')
+
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  function handleRowCheckboxChange(e, id) {
+    if (e.target.checked) {
+      setSelectedIds([...selectedIds, id]);
+    } else {
+      setSelectedIds(selectedIds.filter(rowId => rowId !== id));
+    }
+  }
+
 
   const subAcc = ()=>{
     if (account === 'Assets'){
@@ -93,7 +114,7 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
   const getData = async (id) =>{
     setOpen(true)
 
-    const data = { id, getDataPath: 'chartsOfAccounts' };
+    const data = { id, path: 'chartsOfAccounts' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
       method: 'POST',
       headers: {
@@ -105,7 +126,6 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
       const date = moment(response.charts.asof).utc().format('YYYY-MM-DD')
 
       if (response.success === true){
-
         setAccountCode(response.charts.accountCode)
         setAccount(response.charts.account)
         setAccountName(response.charts.accountName)
@@ -119,10 +139,10 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
       }
 
   }
+  
+  const delEntry = async()=>{
 
-  const delEntry = async(id)=>{
-
-    const data = { id, delPath: 'chartsOfAccounts' };
+    const data = { selectedIds, path: 'chartsOfAccounts' };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
       method: 'POST',
@@ -132,12 +152,11 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
       body: JSON.stringify(data),
     })
       let response = await res.json()
-      
       if (response.success === true) {
         window.location.reload();
       }
       else {
-          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
       }
     
   }
@@ -145,7 +164,7 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
   const editEntry = async(e)=>{
     e.preventDefault();
 
-    const data = { accountCode, account, accountName, balance , asof,  desc, subAccount , editPath: 'chartsOfAccounts' };
+    const data = { accountCode, account, accountName, balance , asof,  desc, subAccount , path:'chartsOfAccounts' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
       headers: {
@@ -170,11 +189,11 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { account, accountCode, accountName, balance , asof,  desc, subAccount };
+    const data = { account, accountCode, accountName, balance , asof,  desc, subAccount, path:'chartsOfAccounts'};
 
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addCharts`, {
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
@@ -227,101 +246,87 @@ const ChartsOfAccounts = ({dbAllCharts, dbAssets, dbLiabilities, dbEquity, dbInc
                New
             </button>
           </div>
-          <div className='flex space-x-7 ml-5 mt-4 font-bold text-sm'>
-            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAllCharts(charts)}}>All Acounts</button>
-            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAllCharts(assets)}}>Assets</button>
-            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAllCharts(liabilities)}}>Liabilites</button>
-            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAllCharts(equity)}}>Equity</button>
-            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAllCharts(incomes)}}>Incomes</button>
-            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setAllCharts(expenses)}}>Expenses</button>
+          <div className='flex mt-4 space-x-7 ml-5 font-bold text-sm'>
+            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setFilterCharts('allCharts')}}>All Accounts</button>
+            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setFilterCharts('Assets')}}>Assets</button>
+            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setFilterCharts('Liabilities')}}>Liabilites</button>
+            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setFilterCharts('Equity')}}>Equity</button>
+            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setFilterCharts('Incomes')}}>Incomes</button>
+            <button className='text-indigo-600 hover:text-indigo-800' onClick={()=>{setFilterCharts('Expenses')}}>Expenses</button>
           </div>
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
+            <div className='flex justify-end -mt-3 mb-3 mr-10'>
+              <button type='button' onClick={delEntry} className="font-medium ml-52 text-red-600 dark:text-red-500 hover:underline"><AiOutlineDelete className='text-xl'/></button>
+            </div>
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
-            <div className="overflow-x-auto shadow-sm">
-              <table className="w-full text-sm text-left text-gray-500 ">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
-                  <tr>
-                      <th scope="col" className="px-6 py-3">
-                          Sr.
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Account code
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Account Name
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Account
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Sub Account
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Balance
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          <span className="">Action</span>
-                      </th>
-                  </tr>
-                </thead>
 
-                <tbody>
-                  
-                  {Object.keys(allCharts).map((item, index)=>{
-                    return <tr key={allCharts[item]._id} className="bg-white border-b hover:bg-gray-50">
-                    <td scope="row" className="px-6 py-1 font-medium text-gray-900 whitespace-nowrap">
-                        {index + 1}
-                    </td>
-                    <td scope="row" className="px-6 py-1 font-medium text-gray-900 whitespace-nowrap">
-                        {allCharts[item].accountCode}
-                    </td>
-                    <td className="px-6 py-1">
-                      <h1 className='text-base text-gray-800 font-semibold -mb-1 mt-1'>{allCharts[item].accountName}</h1>
-                      <h1 className='text-xs'>{allCharts[item].desc}</h1>
-                    </td>
-                    <td className="px-6 py-1">
-                        {allCharts[item].account}
-                    </td>
-                    <td className="px-6 py-1">
-                        {allCharts[item].subAccount}
-                    </td>
-                    <td className="px-6 py-1">
-                        {allCharts[item].balance}
-                    </td>
-                    <td className="px-6 py-1">
-                      <Menu as="div" className=" inline-block text-left">
-                        <div>
-                          <Menu.Button className="z-0">
-                            <ChevronDownIcon className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />
-                          </Menu.Button>
+              <div className="overflow-x-auto shadow-sm">
+                <table className="w-full text-sm text-left text-gray-500 ">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                      <th scope="col" className="p-4">
+                        <div className="flex items-center">
+                          <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                         </div>
-                        <Transition as={Fragment} enter="transition ease-out duration-100" enterFrom="transform opacity-0 scale-95" enterTo="transform opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="transform opacity-100 scale-100" leaveTo="transform opacity-0 scale-95">
-                          <Menu.Items className="absolute right-20 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                            <div className="py-1 z-20">
-                              
-                              <Menu.Item>{({ active }) => (
-                                  <div onClick={()=>{getData(allCharts[item]._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Edit</div>
-                                )}
-                              </Menu.Item>
-                              <Menu.Item>{({ active }) => (
-                                  <div onClick={()=>{delEntry(allCharts[item]._id)}} className={classNames(   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700 no-underline', 'w-full text-left block px-4 py-2 text-sm hover:no-underline' )}>Delete</div>
-                                )}
-                              </Menu.Item>
-                         
-                            </div>
-                          </Menu.Items>
-                        </Transition>
-                      </Menu>
-                    </td>
-                  </tr>})}
+                      </th>
+                        <th scope="col" className="px-6 py-3">
+                            Account code
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Account Name
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Account
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Sub Account
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Balance
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            <span className="">Action</span>
+                        </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    
+                    {allCharts.map((item)=>{
+                      return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
 
-                </tbody>
+                      <td className="w-4 p-4">
+                        <div className="flex items-center">
+                          <input id="checkbox-table-search-1" type="checkbox" onChange={e => handleRowCheckboxChange(e, item._id)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+                        </div>
+                      </td>
+                      <td scope="row" className="px-6 py-1 font-medium text-gray-900 whitespace-nowrap">
+                          {item.accountCode}
+                      </td>
+                      <td className="px-6 py-1">
+                        <h1 className='text-base text-gray-800 font-semibold -mb-1 mt-1'>{item.accountName}</h1>
+                        <h1 className='text-xs'>{item.desc}</h1>
+                      </td>
+                      <td className="px-6 py-1">
+                          {item.account}
+                      </td>
+                      <td className="px-6 py-1">
+                          {item.subAccount}
+                      </td>
+                      <td className="px-6 py-1">
+                          {item.balance}
+                      </td>
+                      <td className="flex items-center px-6 mr-5 py-4 space-x-4">
+                        <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
+                      </td>
+                    </tr>})}
 
-              </table>
-                {allCharts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
-            </div>
+                  </tbody>
+
+                </table>
+                  {allCharts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
+              </div>
             </div>
           </form>
         </div>
@@ -486,23 +491,12 @@ export async function getServerSideProps() {
     await mongoose.connect(process.env.MONGO_URI)
   }
   let allCharts = await Charts.find()
-  let assets = await Charts.find({account: "Assets"})
-  let liabilities = await Charts.find({account: "Liabilities"})
-  let equity = await Charts.find({account: "Equity"})
-  let expenses = await Charts.find({account: "Expenses"})
-  let incomes = await Charts.find({account: "Incomes"})
 
 
-   
   // Pass data to the page via props
   return {
      props: { 
-      dbAllCharts: JSON.parse(JSON.stringify(allCharts)),
-      dbAssets: JSON.parse(JSON.stringify(assets)),
-      dbLiabilities: JSON.parse(JSON.stringify(liabilities)),
-      dbEquity: JSON.parse(JSON.stringify(equity)),
-      dbExpenses: JSON.parse(JSON.stringify(expenses)),
-      dbIncomes: JSON.parse(JSON.stringify(incomes))
+      dbAllCharts: JSON.parse(JSON.stringify(allCharts))
     } 
     }
 }

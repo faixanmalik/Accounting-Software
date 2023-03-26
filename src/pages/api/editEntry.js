@@ -16,9 +16,9 @@ export default async function handler(req, res) {
 
     if (req.method == 'POST'){
 
-        const { editPath, path } = req.body;
+        const { path } = req.body;
         
-        if(editPath === 'chartsOfAccounts'){
+        if(path === 'chartsOfAccounts'){
 
             const { accountCode, accountName, account, balance , asof, desc, subAccount } = req.body;
 
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Cannot change Account Code!" }) 
             }
         }
-        else if (editPath === 'contactList'){
+        else if (path === 'contactList'){
 
             const { id, name, type,  email, phoneNo, country, streetAddress, city, state, zip,
                  taxRigNo, paymentMethod, terms , openingBalance, date  } = req.body;
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if (editPath === 'productAndServices'){
+        else if (path === 'productAndServices'){
             const { id, code, name, purchaseStatus, costPrice, purchaseAccount, purchaseTaxRate, purchaseDesc , salesStatus,  salesPrice, salesAccount, salesTaxRate, salesDesc } = req.body;
             let dbProduct = await Product.findById(id)
 
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if (editPath === 'bankAccount'){
+        else if (path === 'bankAccount'){
             const { id,  bankBranch, accountNo, accountType, accountDesc, accountTitle, 
                 chartsOfAccount,  borrowingLimit } = req.body;
             let dbBank = await BankAccount.findById(id)
@@ -94,7 +94,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if (editPath === 'cashPaymentVoucher'){
+        else if (path === 'cashPaymentVoucher'){
             const { id, paymentFrom, paymentTo, amount, date, journalNo, desc, account, debit, credit } = req.body;
             let dbData = await CashPayment.findById(id)
             if(dbData){
@@ -112,7 +112,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if (editPath === 'cashReceiptVoucher'){
+        else if (path === 'cashReceiptVoucher'){
             const { id, receivedIn, receivedFrom, amount, date, journalNo, desc, account, debit, credit } = req.body;
 
             let dbData = await CashReceipt.findById(id)
@@ -132,7 +132,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if (editPath === 'bankPaymentVoucher'){
+        else if (path === 'bankPaymentVoucher'){
             const { id, paymentFrom, paymentTo, amount, date, journalNo, bankBranch, bankAccountNo, desc, account, debit, credit } = req.body;
 
             let dbData = await BankPayment.findById(id)
@@ -152,7 +152,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if (editPath === 'bankReceiptVoucher'){
+        else if (path === 'bankReceiptVoucher'){
             const { id, receiptFrom, bankBranch, paymentTo, amount, date, journalNo, desc, bankAccountNo, account, debit, credit } = req.body;
 
             let dbData = await BankReceipt.findById(id)
@@ -172,8 +172,8 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if (editPath === 'journalVoucher'){
-            const { id, totalDebit, totalCredit, inputList, memo, journalDate, journalNo, attachment } = req.body;
+        else if (path === 'journalVoucher'){
+            const { id, totalDebit, totalCredit, inputList , name, desc, memo, journalDate, journalNo, attachment } = req.body;
 
             let dbData = await JournalVoucher.findById(id)
 
@@ -181,14 +181,10 @@ export default async function handler(req, res) {
 
             // check req.body input List
             var account = 0;
-            var desc = 0;
-            var name = 0;
             var credit = 0;
             var debit = 0;
             for (let index = 0; index < inputList.length; index++) {
                 account = inputList[index].account;
-                desc = inputList[index].desc;
-                name = inputList[index].name;
                 credit += parseInt(inputList[index].credit);
                 debit += parseInt(inputList[index].debit);
             }
@@ -196,14 +192,10 @@ export default async function handler(req, res) {
 
             // check database input List
             var dbAccount = 0;
-            var dbDesc = 0;
-            var dbName = 0;
             var dbCredit = 0;
             var dbDebit = 0;
             for (let index = 0; index < dbInputList.length; index++) {
                 dbAccount = dbInputList[index].account;
-                dbDesc = dbInputList[index].desc;
-                dbName = dbInputList[index].name;
                 dbCredit += parseInt(dbInputList[index].credit);
                 dbDebit += parseInt(dbInputList[index].debit);
             }
@@ -216,20 +208,20 @@ export default async function handler(req, res) {
                     
                     //Input list 
                     && account === dbAccount 
-                    && desc === dbDesc 
-                    && name === dbName 
                     && credit === dbCredit 
                     && debit === dbDebit
 
                     && journalDate === dbDate
                     && journalNo === dbData.journalNo
+                    && desc === dbData.desc 
+                    && name === dbData.name 
                     && totalDebit === dbData.totalDebit
                     && totalCredit === dbData.totalCredit
                     ){
                     res.status(400).json({ success: false, message: "Already found!" }) 
                 }
                 else{
-                    await JournalVoucher.findByIdAndUpdate(id, { totalDebit:totalDebit , totalCredit:totalCredit,  inputList:inputList, memo:memo, journalDate:journalDate, journalNo : journalNo, attachment : attachment})
+                    await JournalVoucher.findByIdAndUpdate(id, { totalDebit:totalDebit , totalCredit:totalCredit,  inputList:inputList, name:name, desc:desc,  memo:memo, journalDate:journalDate, journalNo : journalNo, attachment : attachment})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }

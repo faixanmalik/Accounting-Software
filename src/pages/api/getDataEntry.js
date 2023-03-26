@@ -8,7 +8,6 @@ import BankPayment from 'models/BankPayment';
 import BankReceipt from 'models/BankReceipt';
 import CashPayment from 'models/CashPayment';
 import CashReceipt from 'models/CashReceipt';
-import Business from 'models/Business';
 import Employees from 'models/Employees';
 
 
@@ -16,10 +15,10 @@ export default async function handler(req, res) {
 
     if (req.method == 'POST'){
 
-        const { getDataPath, path } = req.body;
+        const { path } = req.body;
 
 
-        if( getDataPath === 'chartsOfAccounts'){
+        if( path === 'chartsOfAccounts'){
             const { id } = req.body;
             let charts = await Charts.findById(id)
             if(charts){
@@ -30,7 +29,7 @@ export default async function handler(req, res) {
             }
         }
 
-        else if( getDataPath === 'contactList' ){
+        else if( path === 'contactList' ){
             const { id } = req.body;
             let contact = await Contact.findById(id)
             if(contact){
@@ -41,7 +40,7 @@ export default async function handler(req, res) {
             }
 
         }
-        else if( getDataPath === 'productAndServices' ){
+        else if( path === 'productAndServices' ){
             const { id } = req.body;
             let product = await Product.findById(id)
             if(product){
@@ -52,7 +51,7 @@ export default async function handler(req, res) {
             }
 
         }
-        else if( getDataPath === 'bankAccount' ){
+        else if( path === 'bankAccount' ){
             const { id } = req.body;
             let bankAccount = await BankAccount.findById(id)
             if(bankAccount){
@@ -64,7 +63,7 @@ export default async function handler(req, res) {
 
         }
         
-        else if( getDataPath === 'cashPaymentVoucher' ){
+        else if( path === 'cashPaymentVoucher' ){
             const { id } = req.body;
             let data = await CashPayment.findById(id)
             if(data){
@@ -75,7 +74,7 @@ export default async function handler(req, res) {
             }
         }
 
-        else if( getDataPath === 'cashReceiptVoucher' ){
+        else if( path === 'cashReceiptVoucher' ){
             const { id } = req.body;
             let data = await CashReceipt.findById(id)
             if(data){
@@ -85,7 +84,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if( getDataPath === 'bankPaymentVoucher' ){
+        else if( path === 'bankPaymentVoucher' ){
             const { id } = req.body;
             let data = await BankPayment.findById(id)
             if(data){
@@ -95,7 +94,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if( getDataPath === 'bankReceiptVoucher' ){
+        else if( path === 'bankReceiptVoucher' ){
             const { id } = req.body;
             let data = await BankReceipt.findById(id)
             if(data){
@@ -105,7 +104,7 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-        else if( getDataPath === 'journalVoucher' ){
+        else if( path === 'journalVoucher' ){
             const { id } = req.body;
             let data = await JournalVoucher.findById(id)
 
