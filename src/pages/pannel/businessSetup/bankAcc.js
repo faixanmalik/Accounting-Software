@@ -10,9 +10,16 @@ import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
-import { BiExport, BiImport } from 'react-icons/bi';
 import { DownloadTableExcel } from 'react-export-table-to-excel';
+import { BiExport, BiImport } from 'react-icons/bi';
+
 import {XLSX, read, utils} from 'xlsx';
+
+
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ')
+}
 
 
 const BankAccount = ({dbBankAccount, charts}) => {
@@ -30,14 +37,13 @@ const BankAccount = ({dbBankAccount, charts}) => {
   const [chartsOfAccount, setChartsOfAccount] = useState('')
 
 
-  
+  const tableRef = useRef(null);
+
   // id For delete contact
   const [id, setId] = useState('')
   const [selectedIds, setSelectedIds] = useState([]);
+  const [data, setData] = useState(dbBankAccount)
 
-
-  const [accounts, setAccounts] = useState(dbBankAccount)
-  
   function handleRowCheckboxChange(e, id) {
     if (e.target.checked) {
       setSelectedIds([...selectedIds, id]);
@@ -46,7 +52,6 @@ const BankAccount = ({dbBankAccount, charts}) => {
     }
   }
 
-  const tableRef = useRef(null);
   const hiddenFileInput = React.useRef(null);
   const handleClick = event => {
     hiddenFileInput.current.click();
@@ -62,12 +67,22 @@ const BankAccount = ({dbBankAccount, charts}) => {
       const worksheet = workbook.Sheets[sheetName];
       const parsedData = utils.sheet_to_json(worksheet, {header: 1});
 
-      const header = ['sr','bankBranch', 'accountTitle', 'accountNo', 'accountType' , 'chartsOfAccount']
-
+      const header = parsedData[0];
+      header.forEach(element => {
+        let newStr = element.replace(/\s+/g, '').toLowerCase();
+        newStr = newStr.charAt(0).toLowerCase() + newStr.slice(1);
+        
+        console.log(newStr)
+        console.log(element)
+      });
       const heads = header.map(head => ({title:head , entry: head}))
 
       parsedData.splice(0,1)
       convertToJson(header, parsedData)
+
+
+
+      setData(parsedData);
     };
     reader.readAsBinaryString(file);
   }
@@ -81,27 +96,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
       });
       row.push(rowData);
     });
-    importEntries(row)
-    setAccounts([...accounts, ...row])
-  }
-
-  const importEntries = async(row)=>{
-    const data = { row, path:'bankAccount', importEntries:'importEntries' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-      let response = await res.json()
-
-      if(response.success === true){
-        window.location.reload();
-      }
-      else {
-        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-      }
+    //console.log(row);
   }
   
 
@@ -204,10 +199,9 @@ const BankAccount = ({dbBankAccount, charts}) => {
     
     // fetch the data from form to makes a file in local system
     const data = { bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit, path:'bankAccount' };
-
       let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
-      headers: {
+      headers: { 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
@@ -218,10 +212,11 @@ const BankAccount = ({dbBankAccount, charts}) => {
         window.location.reload();
       }
       else {
-        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
       }
   }
 
+  
 
   return (
     <>
@@ -263,8 +258,8 @@ const BankAccount = ({dbBankAccount, charts}) => {
           <div className='flex items-center space-x-2 mb-1'>
             <div>
               <DownloadTableExcel
-                filename="Bank Account"
-                sheet="Bank Account"
+                filename="bankAccount"
+                sheet="bankAccount"
                 currentTableRef={tableRef.current}>
                 <button type="button" className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
                   Export
@@ -290,7 +285,9 @@ const BankAccount = ({dbBankAccount, charts}) => {
                 <AiOutlineDelete className='text-lg ml-2'/>
               </button>
             </div>
+
           </div>
+
 
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
@@ -307,7 +304,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
                         Sr.
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        Branh Name
+                        Branch Name
                     </th>
                     <th scope="col" className="px-6 py-3">
                         Account Title
@@ -329,7 +326,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
 
                 <tbody>
                   
-                  {accounts.map((item, index)=>{
+                  {data.map((item, index)=>{
                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                     <td className="w-4 p-4">
                       <div className="flex items-center">
@@ -362,7 +359,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
                 </tbody>
 
               </table>
-                {accounts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No Bank Account found</h1> : ''}
+                {data.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No Bank Account found</h1> : ''}
             </div>
             </div>
           </form>

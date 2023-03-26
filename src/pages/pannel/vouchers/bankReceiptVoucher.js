@@ -215,9 +215,10 @@ const BankReceiptVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
             </div>
           </div>
           <div className="mt-2 md:col-span-2 md:mt-0">
-            <div className='flex justify-end -mt-3 mb-3 mr-10'>
-              <button type='button' onClick={delEntry} className="font-medium ml-52 text-red-600 dark:text-red-500 hover:underline"><AiOutlineDelete className='text-xl'/></button>
-            </div>
+            <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+              Delete
+              <AiOutlineDelete className='text-lg ml-2'/>
+            </button>
             <form method="POST">
               <div className="overflow-hidden shadow sm:rounded-md">
               

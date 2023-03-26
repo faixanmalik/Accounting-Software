@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useEffect } from 'react'
+import React, { useState, Fragment, useEffect, useRef } from 'react'
 import { Dialog, Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -11,6 +11,10 @@ import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
+import { BiExport, BiImport } from 'react-icons/bi';
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import {XLSX, read, utils} from 'xlsx';
+
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -19,7 +23,7 @@ function classNames(...classes) {
 
 const ChartsOfAccounts = ({dbAllCharts}) => {
 
-
+  const tableRef = useRef(null);
   const [open, setOpen] = useState(false)
 
   // Filter Usestates
@@ -52,6 +56,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
   const [desc, setDesc] = useState('')
 
   const [selectedIds, setSelectedIds] = useState([]);
+  
 
   function handleRowCheckboxChange(e, id) {
     if (e.target.checked) {
@@ -59,6 +64,42 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
     } else {
       setSelectedIds(selectedIds.filter(rowId => rowId !== id));
     }
+  }
+
+  const hiddenFileInput = React.useRef(null);
+  const handleClick = event => {
+    hiddenFileInput.current.click();
+  };
+
+  const handleFileChange = (e)=>{
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const binaryData = event.target.result;
+      const workbook = read(binaryData,{type:'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const parsedData = utils.sheet_to_json(worksheet, {header: 1});
+
+      const header = ['sr','bankBranch', 'accountTitle', 'accountNo', 'accountType' , 'chartsOfAccount']
+
+      const heads = header.map(head => ({title:head , entry: head}))
+
+      parsedData.splice(0,1)
+      convertToJson(header, parsedData)
+    };
+    reader.readAsBinaryString(file);
+  }
+
+  const convertToJson = (header, data)=>{
+    const row = [];
+    data.forEach(element => {
+      const rowData = {};
+      element.forEach((element, index) => {
+        rowData[header[index]] = element;
+      });
+      row.push(rowData);
+    });
   }
 
 
@@ -256,14 +297,43 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
           </div>
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
-            <div className='flex justify-end -mt-3 mb-3 mr-10'>
-              <button type='button' onClick={delEntry} className="font-medium ml-52 text-red-600 dark:text-red-500 hover:underline"><AiOutlineDelete className='text-xl'/></button>
+        <div className='flex items-center space-x-2 mb-1'>
+            <div>
+              <DownloadTableExcel
+                filename="Charts Of Accounts"
+                sheet="Charts Of Accounts"
+                currentTableRef={tableRef.current}>
+                <button type="button" className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                  Export
+                  <BiExport className='text-lg ml-2'/>
+                </button>
+
+              </DownloadTableExcel>
             </div>
+            <div className=''>
+              <button type="button" onClick={handleClick} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                  Import
+                <BiImport className='text-lg ml-2'/>
+              </button>
+              <input type="file"
+                ref={hiddenFileInput}
+                onChange={handleFileChange}
+                style={{display:'none'}} 
+              /> 
+            </div>
+            <div className=''>
+              <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                Delete
+                <AiOutlineDelete className='text-lg ml-2'/>
+              </button>
+            </div>
+
+          </div>
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
 
               <div className="overflow-x-auto shadow-sm">
-                <table className="w-full text-sm text-left text-gray-500 ">
+                <table className="w-full text-sm text-left text-gray-500" ref={tableRef}>
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                     <tr>
                       <th scope="col" className="p-4">
@@ -305,8 +375,8 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
                           {item.accountCode}
                       </td>
                       <td className="px-6 py-1">
-                        <h1 className='text-base text-gray-800 font-semibold -mb-1 mt-1'>{item.accountName}</h1>
-                        <h1 className='text-xs'>{item.desc}</h1>
+                        <span className='text-base block text-gray-800 font-semibold -mb-1 mt-1'>{item.accountName}</span>
+                        <span className='text-xs block'>{item.desc}</span>
                       </td>
                       <td className="px-6 py-1">
                           {item.account}

@@ -1,9 +1,8 @@
-import React, {Fragment, useEffect, useState} from 'react'
+import React, {Fragment, useEffect, useState, useRef} from 'react'
 import mongoose from "mongoose";
 import moment from 'moment/moment';
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Dialog, Menu, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Dialog, Transition } from '@headlessui/react'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Contact from 'models/Contact';
@@ -11,14 +10,15 @@ import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+import { BiExport, BiImport } from 'react-icons/bi';
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import {XLSX, read, utils} from 'xlsx';
 
 
 const ContactList = ({dbContact}) => {
 
   const [open, setOpen] = useState(false)
+  const [accounts, setAccounts] = useState(dbContact)
 
   // Add States
   const [name, setName] = useState('')
@@ -54,6 +54,66 @@ const ContactList = ({dbContact}) => {
     })
     setAllContact(all)
   }, [filterCharts]);
+
+
+  const tableRef = useRef(null);
+
+  const hiddenFileInput = React.useRef(null);
+  const handleClick = event => {
+    hiddenFileInput.current.click();
+  };
+
+  const handleFileChange = (e)=>{
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const binaryData = event.target.result;
+      const workbook = read(binaryData,{type:'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const parsedData = utils.sheet_to_json(worksheet, {header: 1});
+
+      const header = ['sr','bankBranch', 'accountTitle', 'accountNo', 'accountType' , 'chartsOfAccount']
+
+      const heads = header.map(head => ({title:head , entry: head}))
+
+      parsedData.splice(0,1)
+      convertToJson(header, parsedData)
+    };
+    reader.readAsBinaryString(file);
+  }
+
+  const convertToJson = (header, data)=>{
+    const row = [];
+    data.forEach(element => {
+      const rowData = {};
+      element.forEach((element, index) => {
+        rowData[header[index]] = element;
+      });
+      row.push(rowData);
+    });
+    importEntries(row)
+    setAccounts([...accounts, ...row])
+  }
+
+  const importEntries = async(row)=>{
+    const data = { row, path:'bankAccount', importEntries:'importEntries' };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      let response = await res.json()
+
+      if(response.success === true){
+        window.location.reload();
+      }
+      else {
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+      }
+  }
 
 
 
@@ -246,13 +306,45 @@ const ContactList = ({dbContact}) => {
           </div>
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
-          <div className='flex justify-end -mt-3 mb-3 mr-10'>
-            <button type='button' onClick={delEntry} className="font-medium ml-52 text-red-600 dark:text-red-500 hover:underline"><AiOutlineDelete className='text-xl'/></button>
+
+
+          <div className='flex items-center space-x-2 mb-1'>
+            <div>
+              <DownloadTableExcel
+                filename="Contact List"
+                sheet="Contact List"
+                currentTableRef={tableRef.current}>
+                <button type="button" className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                  Export
+                  <BiExport className='text-lg ml-2'/>
+                </button>
+
+              </DownloadTableExcel>
+            </div>
+            <div className=''>
+              <button type="button" onClick={handleClick} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                  Import
+                <BiImport className='text-lg ml-2'/>
+              </button>
+              <input type="file"
+                ref={hiddenFileInput}
+                onChange={handleFileChange}
+                style={{display:'none'}} 
+              /> 
+            </div>
+            <div className=''>
+              <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                Delete
+                <AiOutlineDelete className='text-lg ml-2'/>
+              </button>
+            </div>
           </div>
+
+
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
             <div className="overflow-x-auto shadow-sm">
-              <table className="w-full text-sm text-left text-gray-500 ">
+              <table className="w-full text-sm text-left text-gray-500" ref={tableRef}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                       <th scope="col" className="p-4">
