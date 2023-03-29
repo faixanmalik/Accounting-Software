@@ -1,9 +1,8 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useRef, useState} from 'react'
 import mongoose from "mongoose";
 import moment from 'moment/moment';
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Dialog, Menu, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Dialog, Transition } from '@headlessui/react'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Employee from 'models/Employees';
@@ -11,10 +10,9 @@ import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
+import { BiExport, BiImport } from 'react-icons/bi';
+import { DownloadTableExcel } from 'react-export-table-to-excel';
+import {XLSX, read, utils} from 'xlsx';
 
 const Employees = ({dbEmployee}) => {
 
@@ -61,6 +59,63 @@ const Employees = ({dbEmployee}) => {
       setSelectedIds(selectedIds.filter(rowId => rowId !== id));
     }
   }
+
+  const tableRef = useRef(null);
+  const hiddenFileInput = React.useRef(null);
+  const handleClick = event => {
+    hiddenFileInput.current.click();
+  };
+
+  const handleFileChange = (e)=>{
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const binaryData = event.target.result;
+      const workbook = read(binaryData,{type:'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const parsedData = utils.sheet_to_json(worksheet, {header: 1});
+
+      const header = ['sr','name', 'designation', 'siteName', 'basicPay']
+
+      const heads = header.map(head => ({title:head , entry: head}))
+      parsedData.splice(0,1)
+      convertToJson(header, parsedData)
+    };
+    reader.readAsBinaryString(file);
+  }
+
+  const convertToJson = (header, data)=>{
+    const row = [];
+    data.forEach(element => {
+      const rowData = {};
+      element.forEach((element, index) => {
+        rowData[header[index]] = element;
+      });
+      row.push(rowData);
+    });
+    importEntries(row)
+  }
+
+  const importEntries = async(row)=>{
+    const data = { row, path:'employees', importEntries:'importEntries' };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      let response = await res.json()
+
+      if(response.success === true){
+        window.location.reload();
+      }
+      else {
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+      }
+  }
+
   
 
   const handleChange = (e) => {
@@ -312,24 +367,54 @@ const Employees = ({dbEmployee}) => {
               }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
                New
             </button>
-          </div>
+          </div>  
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
-          <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
-            Delete
-            <AiOutlineDelete className='text-lg ml-2'/>
-          </button>
+          
+          <div className='flex items-center space-x-2 mb-1'>
+            <div>
+              <DownloadTableExcel
+                filename="Employee"
+                sheet="Employee"
+                currentTableRef={tableRef.current}>
+                <button type="button" className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                  Export
+                  <BiExport className='text-lg ml-2'/>
+                </button>
+              </DownloadTableExcel>
+            </div>
+            <div className=''>
+              <button type="button" onClick={handleClick} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                  Import
+                <BiImport className='text-lg ml-2'/>
+              </button>
+              <input type="file"
+                ref={hiddenFileInput}
+                onChange={handleFileChange}
+                style={{display:'none'}} 
+              /> 
+            </div>
+            <div className=''>
+              <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+                Delete
+                <AiOutlineDelete className='text-lg ml-2'/>
+              </button>
+            </div>
+          </div>
 
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
             <div className="overflow-x-auto shadow-sm">
-              <table className="w-full text-sm text-left text-gray-500 ">
+              <table className="w-full text-sm text-left text-gray-500" ref={tableRef}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                       <th scope="col" className="p-4">
                         <div className="flex items-center">
                           <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                         </div>
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                          Sr.
                       </th>
                       <th scope="col" className="px-6 py-3">
                           Name
@@ -351,12 +436,15 @@ const Employees = ({dbEmployee}) => {
 
                 <tbody>
                   
-                  {dbEmployee.map((item)=>{
+                  {dbEmployee.map((item, index)=>{
                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                     <td className="w-4 p-4">
                       <div className="flex items-center">
                         <input id="checkbox-table-search-1" type="checkbox" onChange={e => handleRowCheckboxChange(e, item._id)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                       </div>
+                    </td>
+                    <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                        {index + 1}
                     </td>
                     <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                         {item.name}

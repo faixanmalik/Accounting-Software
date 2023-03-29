@@ -18,7 +18,6 @@ import {XLSX, read, utils} from 'xlsx';
 const ContactList = ({dbContact}) => {
 
   const [open, setOpen] = useState(false)
-  const [accounts, setAccounts] = useState(dbContact)
 
   // Add States
   const [name, setName] = useState('')
@@ -73,7 +72,7 @@ const ContactList = ({dbContact}) => {
       const worksheet = workbook.Sheets[sheetName];
       const parsedData = utils.sheet_to_json(worksheet, {header: 1});
 
-      const header = ['sr','bankBranch', 'accountTitle', 'accountNo', 'accountType' , 'chartsOfAccount']
+      const header = ['sr','name', 'type', 'email', 'phoneNo' , 'openingBalance']
 
       const heads = header.map(head => ({title:head , entry: head}))
 
@@ -93,11 +92,10 @@ const ContactList = ({dbContact}) => {
       row.push(rowData);
     });
     importEntries(row)
-    setAccounts([...accounts, ...row])
   }
 
   const importEntries = async(row)=>{
-    const data = { row, path:'bankAccount', importEntries:'importEntries' };
+    const data = { row, path:'contactList', importEntries:'importEntries' };
       let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
       headers: {

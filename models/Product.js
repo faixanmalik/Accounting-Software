@@ -2,19 +2,19 @@ const mongoose = require('mongoose');
 
 const ProductSchema = new mongoose.Schema({
     code:{type: String, required: true},
-    name:{type: String, required: true},
+    name:{type: String},
 
     purchaseStatus:{ type: String },
-    costPrice:{type: Number, required: true},
-    purchaseAccount: {type: String, required: true},
-    purchaseTaxRate: {type: String, required: true},
-    purchaseDesc: {type: String, required: true},
+    costPrice:{type: Number},
+    purchaseAccount: {type: String},
+    purchaseTaxRate: {type: String},
+    purchaseDesc: {type: String},
 
     salesStatus:{type: String },
-    salesPrice:{type: Number, required: true},
-    salesAccount: {type: String, required: true},
-    salesTaxRate: {type: String, required: true},
-    salesDesc: {type: String, required: true},
+    salesPrice:{type: Number},
+    salesAccount: {type: String},
+    salesTaxRate: {type: String},
+    salesDesc: {type: String},
 
 
   },{timestamps:true});

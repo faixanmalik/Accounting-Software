@@ -29,14 +29,10 @@ const BankAccount = ({dbBankAccount, charts}) => {
   const [borrowingLimit, setBorrowingLimit] = useState('')
   const [chartsOfAccount, setChartsOfAccount] = useState('')
 
-
   
   // id For delete contact
   const [id, setId] = useState('')
   const [selectedIds, setSelectedIds] = useState([]);
-
-
-  const [accounts, setAccounts] = useState(dbBankAccount)
   
   function handleRowCheckboxChange(e, id) {
     if (e.target.checked) {
@@ -82,7 +78,6 @@ const BankAccount = ({dbBankAccount, charts}) => {
       row.push(rowData);
     });
     importEntries(row)
-    setAccounts([...accounts, ...row])
   }
 
   const importEntries = async(row)=>{
@@ -104,7 +99,6 @@ const BankAccount = ({dbBankAccount, charts}) => {
       }
   }
   
-
   const handleChange = (e) => {
     if(e.target.name === 'bankBranch'){
       setBankBranch(e.target.value)
@@ -204,7 +198,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
     
     // fetch the data from form to makes a file in local system
     const data = { bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit, path:'bankAccount' };
-
+    
       let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
       headers: {
@@ -294,8 +288,8 @@ const BankAccount = ({dbBankAccount, charts}) => {
 
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
-            <div className="overflow-x-auto shadow-sm" ref={tableRef}>
-              <table className="w-full text-sm text-left text-gray-500 ">
+            <div className="overflow-x-auto shadow-sm">
+              <table className="w-full text-sm text-left text-gray-500" ref={tableRef}>
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                   <tr>
                     <th scope="col" className="p-4">
@@ -329,7 +323,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
 
                 <tbody>
                   
-                  {accounts.map((item, index)=>{
+                  {dbBankAccount.map((item, index)=>{
                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                     <td className="w-4 p-4">
                       <div className="flex items-center">
@@ -362,7 +356,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
                 </tbody>
 
               </table>
-                {accounts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No Bank Account found</h1> : ''}
+                {dbBankAccount.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No Bank Account found</h1> : ''}
             </div>
             </div>
           </form>

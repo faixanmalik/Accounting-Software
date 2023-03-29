@@ -47,7 +47,7 @@ const ProductAndServices = ({product, charts}) => {
       const worksheet = workbook.Sheets[sheetName];
       const parsedData = utils.sheet_to_json(worksheet, {header: 1});
 
-      const header = ['sr','bankBranch', 'accountTitle', 'accountNo', 'accountType' , 'chartsOfAccount']
+      const header = ['sr','code', 'name', 'costPrice', 'salesPrice' , 'qty']
 
       const heads = header.map(head => ({title:head , entry: head}))
 
@@ -67,11 +67,10 @@ const ProductAndServices = ({product, charts}) => {
       row.push(rowData);
     });
     importEntries(row)
-    setAccounts([...accounts, ...row])
   }
 
   const importEntries = async(row)=>{
-    const data = { row, path:'bankAccount', importEntries:'importEntries' };
+    const data = { row, path:'productAndServices', importEntries:'importEntries' };
       let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
       headers: {
@@ -233,7 +232,7 @@ const ProductAndServices = ({product, charts}) => {
 
   const editEntry = async(id)=>{
 
-    const data = { id, code, name, purchaseStatus, costPrice, purchaseAccount, purchaseTaxRate, purchaseDesc , salesStatus,  salesPrice, salesAccount, salesTaxRate, salesDesc , editPath: 'productAndServices' };
+    const data = { id, code, name, purchaseStatus, costPrice, purchaseAccount, purchaseTaxRate, purchaseDesc , salesStatus,  salesPrice, salesAccount, salesTaxRate, salesDesc , path: 'productAndServices' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
       headers: {
@@ -336,7 +335,7 @@ const ProductAndServices = ({product, charts}) => {
                           </div>
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            SL
+                            SR
                         </th>
                         <th scope="col" className="px-6 py-3">
                             Code

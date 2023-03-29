@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const EmployeesSchema = new mongoose.Schema({
-    name:{type: String, required: true},
+    name:{type: String},
     fatherName:{type: String},
     dob:{type: Date},
-    email:{type: String, required: true},
-    cnic:{type: Number, required: true},
-    phoneNo:{type: Number, required: true},
+    email:{type: String},
+    cnic:{type: Number},
+    phoneNo:{type: Number},
     citizenship:{type: String},
     gender:{type: String},
     maritalStatus:{type: String},

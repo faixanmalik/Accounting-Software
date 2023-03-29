@@ -81,8 +81,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
       const worksheet = workbook.Sheets[sheetName];
       const parsedData = utils.sheet_to_json(worksheet, {header: 1});
 
-      const header = ['sr','bankBranch', 'accountTitle', 'accountNo', 'accountType' , 'chartsOfAccount']
-
+      const header = ['accountCode','accountName', 'account', 'subAccount' , 'balance']
       const heads = header.map(head => ({title:head , entry: head}))
 
       parsedData.splice(0,1)
@@ -100,8 +99,28 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
       });
       row.push(rowData);
     });
+      importEntries(row);
   }
 
+
+  const importEntries = async(row)=>{
+    const data = { row, path:'chartsOfAccounts', importEntries:'importEntries' };
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      let response = await res.json()
+
+      if(response.success === true){
+        window.location.reload();
+      }
+      else {
+        toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+      }
+  }
 
   const subAcc = ()=>{
     if (account === 'Assets'){
