@@ -9,6 +9,8 @@ import BankPayment from 'models/BankPayment';
 import BankReceipt from 'models/BankReceipt';
 import JournalVoucher from 'models/JournalVoucher';
 import Employees from 'models/Employees';
+import PanelUser from 'models/PanelUser';
+import Role from 'models/Role';
 
 
 export default async function handler(req, res) {
@@ -67,11 +69,19 @@ export default async function handler(req, res) {
             await JournalVoucher.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-        
-
         else if (path === 'employees'){
             const { selectedIds } = req.body;
             await Employees.deleteMany( { _id: { $in: selectedIds } } )
+            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
+        }
+        else if (path === 'user'){
+            const { selectedIds } = req.body;
+            await PanelUser.deleteMany( { _id: { $in: selectedIds } } )
+            res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
+        }
+        else if (path === 'addRole'){
+            const { selectedIds } = req.body;
+            await Role.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
 

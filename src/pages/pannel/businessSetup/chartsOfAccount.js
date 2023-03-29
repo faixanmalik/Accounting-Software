@@ -302,7 +302,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
               setDesc('')
             }}
             
-            className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
+            className='ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg'>
                New
             </button>
           </div>

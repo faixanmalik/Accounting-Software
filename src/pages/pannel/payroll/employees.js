@@ -13,8 +13,9 @@ import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 import { BiExport, BiImport } from 'react-icons/bi';
 import { DownloadTableExcel } from 'react-export-table-to-excel';
 import {XLSX, read, utils} from 'xlsx';
+import Role from 'models/Role';
 
-const Employees = ({dbEmployee}) => {
+const Employees = ({dbEmployee, dbRole}) => {
 
   const [open, setOpen] = useState(false)
 
@@ -364,7 +365,7 @@ const Employees = ({dbEmployee}) => {
               setState('')
               setZip('')
               setGender('')
-              }} className='ml-auto bg-blue-800 text-white px-14 py-2 rounded-lg'>
+              }} className='ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg'>
                New
             </button>
           </div>  
@@ -494,7 +495,7 @@ const Employees = ({dbEmployee}) => {
                       <div className="md:grid md:grid-cols-1 md:gap-6">
                         <div className="md:col-span-1">
                           <div className="px-4 sm:px-0">
-                            <h3 className="text-lg font-medium leading-6 text-gray-900">Add Contact</h3>
+                            <h3 className="text-lg font-medium leading-6 text-gray-900">Add Employee</h3>
                           </div>
                         </div>
                         <div className="mt-2 md:col-span-2 md:mt-0 w-full">
@@ -568,9 +569,7 @@ const Employees = ({dbEmployee}) => {
                                       <label htmlFor="designation" className="block text-sm font-medium text-gray-700">Designation:</label>
                                       <select id="designation" name="designation" onChange={handleChange} value={designation} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
                                         <option>Select Designation </option>
-                                        <option value={'Admin Officer'}>Admin officer</option>
-                                        <option value={'Account Officer'}>Account officer</option>
-                                        <option value={'Store Incharge'}>Store Incharge</option>
+                                        {dbRole.map((item)=>{return <option value={item.roleName}>{item.roleName}</option>})}
                                       </select>
                                     </div>
 
@@ -738,11 +737,13 @@ export async function getServerSideProps() {
     await mongoose.connect(process.env.MONGO_URI)
   }
   let dbEmployee = await Employee.find()
+  let dbRole = await Role.find()
   
   // Pass data to the page via props
   return {
      props: {
       dbEmployee: JSON.parse(JSON.stringify(dbEmployee)),
+      dbRole: JSON.parse(JSON.stringify(dbRole)),
     }
   }
 }

@@ -10,6 +10,8 @@ import BankPayment from 'models/BankPayment';
 import BankReceipt from 'models/BankReceipt';
 import JournalVoucher from 'models/JournalVoucher';
 import Employees from 'models/Employees';
+import Role from 'models/Role';
+import PanelUser from 'models/PanelUser';
 
 
 export default async function handler(req, res) {
@@ -250,6 +252,44 @@ export default async function handler(req, res) {
                 else{
                     await Employees.findByIdAndUpdate(id, {  name: name, fatherName : fatherName, zip : zip, state : state, city : city, streetAddress : streetAddress, country : country, joiningDate : joiningDate , siteName : siteName, hireDate : hireDate, status : status, paymentMode : paymentMode, basicPay : basicPay, payPolicy : payPolicy, employmentMode : employmentMode , workHour : workHour, workShift : workShift, department : department, designation : designation, 
                         maritalStatus : maritalStatus, dob : dob, email : email, cnic : cnic, phoneNo : phoneNo, citizenship : citizenship, gender : gender})
+                    res.status(200).json({ success: true, message: "Update Successfully!" }) 
+                }
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if(path === 'user'){
+
+            const { id, name, userId, role } = req.body;
+
+            let dbData = await PanelUser.findById(id)
+
+            if(dbData){
+                if( name == dbData.name && userId == dbData.userId && role == dbData.role){
+                    res.status(400).json({ success: false, message: "Already found!" }) 
+                }
+                else{
+                    await PanelUser.findByIdAndUpdate(id, {  name: name, userId: userId, role: role, })
+                    res.status(200).json({ success: true, message: "Update Successfully!" }) 
+                }
+            }
+            else{
+                res.status(400).json({ success: false, message: "Internal server error!" }) 
+            }
+        }
+        else if(path === 'addRole'){
+
+            const { id, roleName, roleDesc } = req.body;
+
+            let dbData = await Role.findById(id)
+
+            if(dbData){
+                if( roleName == dbData.roleName && roleDesc == dbData.roleDesc){
+                        res.status(400).json({ success: false, message: "Already found!" }) 
+                    }
+                else{
+                    await Role.findByIdAndUpdate(id, {  roleName: roleName, roleDesc : roleDesc})
                     res.status(200).json({ success: true, message: "Update Successfully!" }) 
                 }
             }

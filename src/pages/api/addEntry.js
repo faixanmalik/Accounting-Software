@@ -3,7 +3,9 @@ import BankAccount from 'models/BankAccount';
 import Charts from 'models/Charts';
 import Contact from 'models/Contact';
 import Employees from 'models/Employees';
+import PanelUser from 'models/PanelUser';
 import Product from 'models/Product';
+import Role from 'models/Role';
 
 
 export default async function handler(req, res) {
@@ -85,6 +87,21 @@ export default async function handler(req, res) {
                 res.status(200).json({ success: true, message: "New Product Added !"}) 
             }
             
+        }
+
+        if( path === 'user'){
+            const { name, userId, role  } = req.body;
+            
+            let newEntry = new PanelUser( { name, userId, role } );
+            await newEntry.save();
+            res.status(200).json({ success: true, message: "Entry Added!" }) 
+        }
+        if( path === 'addRole'){
+            const { roleName, roleDesc } = req.body;
+            
+            let newEntry = new Role( { roleName, roleDesc } );
+            await newEntry.save();
+            res.status(200).json({ success: true, message: "Entry Added!" }) 
         }
 
 

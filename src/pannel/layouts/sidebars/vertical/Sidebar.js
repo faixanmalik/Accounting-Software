@@ -14,7 +14,7 @@ import {HiOutlineCash, HiOutlineDocumentReport, HiOutlineReceiptTax} from 'react
 import {HiOutlineBanknotes} from 'react-icons/hi2'
 
 import {BsBank, BsChatQuote, BsShop} from 'react-icons/bs'
-import {FiShoppingBag} from 'react-icons/fi'
+import {FiShoppingBag, FiUserPlus, FiUsers} from 'react-icons/fi'
 import {FaToriiGate} from 'react-icons/fa'
 import {TbFileInvoice} from 'react-icons/tb'
 import {RiBankCardLine, RiBankLine, RiBillLine} from 'react-icons/ri'
@@ -225,7 +225,7 @@ const Sidebar2 = ({ showMobilemenu }) => {
       <Sidebar width='255px' className='-ml-3'>
       <Menu className='bg-white'>
         <div className='justify-center flex mb-3'>
-          <button onClick={() => { setOpen(true) }} className='bg-blue-800 mb-2 font-semibold text-white px-24 py-2 rounded-lg'>New</button>
+          <button onClick={() => { setOpen(true) }} className='bg-blue-800 hover:bg-blue-900 mb-2 font-semibold text-white px-24 py-2 rounded-lg'>New</button>
         </div>
         
         <Menu>
@@ -233,6 +233,18 @@ const Sidebar2 = ({ showMobilemenu }) => {
             Dashboard
           </MenuItem>
     
+          <SubMenu label="User Managment" icon={<AiOutlineUser className='text-lg'/>}>
+            <MenuItem href="/pannel/userManagment/addRole" icon={<BiUserCheck className='text-lg'/>} className={ location === '/pannel/userManagment/addRole' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+              Add Role
+            </MenuItem>
+            <MenuItem href="/pannel/userManagment/user" icon={<BiUserCheck className='text-lg'/>} className={ location === '/pannel/userManagment/user' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+              Assign User
+            </MenuItem>
+            <MenuItem href="/pannel/userManagment/userRights" icon={<BiUserCheck className='text-lg'/>} className={ location === '/pannel/userManagment/userRights' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+              User Rights
+            </MenuItem>
+          </SubMenu>
+
           <SubMenu label="Business Setup" icon={<IoBusinessOutline className='text-lg'/>}>
             <MenuItem href="/pannel/businessSetup/chartsOfAccount" icon={<IoPieChartSharp className='text-lg'/>} className={ location === '/pannel/businessSetup/chartsOfAccount' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
               Charts of Accounts
@@ -266,8 +278,8 @@ const Sidebar2 = ({ showMobilemenu }) => {
             </MenuItem> 
           </SubMenu>
 
-          <SubMenu label="Payroll" icon={<HiOutlineDocumentReport className='text-lg'/>}>
-            <MenuItem href="/pannel/payroll/employees" icon={<HiOutlineDocumentReport className='text-lg'/>} className={ location === '/pannel/payroll/employees' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+          <SubMenu label="Payroll" icon={<FiUserPlus className='text-lg'/>}>
+            <MenuItem href="/pannel/payroll/employees" icon={<FiUsers className='text-lg'/>} className={ location === '/pannel/payroll/employees' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
               Employees
             </MenuItem>
           </SubMenu>
