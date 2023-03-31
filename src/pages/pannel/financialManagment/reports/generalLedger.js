@@ -272,7 +272,7 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             />
                         </div>
-                        <div className="col-span-6 sm:col-span-2">
+                        <div className="col-span-6 sm:col-span-3">
                             <label htmlFor="account" className="block text-sm font-medium text-gray-700">
                                 Account:
                             </label>
@@ -281,16 +281,6 @@ const GeneralLedger = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 {dbCharts.map((item) => {
                                     return <option key={item._id} value={item.accountName}>{item.accountCode} - {item.accountName}</option>
                                 })}
-                            </select>
-                        </div>
-                        <div className="col-span-6 sm:col-span-1">
-                            <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700">
-                                Sort by:
-                            </label>
-                            <select id="sortBy" name="sortBy" onChange={handleChange} value={sortBy} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                <option>select</option>
-                                <option value={'Account Name'}>Account Name</option>
-                                <option value={'Account Code'}>Account Code</option>
                             </select>
                         </div>
                         <button onClick={submit} type='button' className='bg-blue-800 hover:bg-blue-900 text-white px-10 h-10 mt-4 rounded-lg'>Update</button>

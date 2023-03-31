@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useRef} from 'react'
+import React, {useState, Fragment, useRef, useEffect} from 'react'
 import Product from 'models/Product';
 import mongoose from "mongoose";
 import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -22,6 +22,18 @@ const ProductAndServices = ({product, charts}) => {
   const [open, setOpen] = useState(false)
   const [id, setId] = useState('')
   const [selectedIds, setSelectedIds] = useState([]);
+
+  // authentications
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    const myUser = JSON.parse(localStorage.getItem('myUser'))
+    if(myUser.department === 'Admin'){
+      setIsAdmin(true)
+    }
+  }, []);
+
+
 
   function handleRowCheckboxChange(e, id) {
     if (e.target.checked) {
@@ -274,19 +286,19 @@ const ProductAndServices = ({product, charts}) => {
           <div className="px-4 sm:px-0 flex">
             <h3 className="text-lg font-medium leading-6 text-gray-900">Product and Services</h3>
             <button onClick={()=>{
-                    setOpen(true);
-                    setCode('');
-                    setName('');
-                    setCostPrice('');
-                    setPurchaseAccount('');
-                    setPurchaseTaxRate('');
-                    setPurchaseDesc('');
-                    setSalesPrice('');
-                    setSalesAccount('');
-                    setSalesTaxRate('');
-                    setSalesDesc('');
-                }} className='ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg'>
-             New
+              setOpen(true);
+              setCode('');
+              setName('');
+              setCostPrice('');
+              setPurchaseAccount('');
+              setPurchaseTaxRate('');
+              setPurchaseDesc('');
+              setSalesPrice('');
+              setSalesAccount('');
+              setSalesTaxRate('');
+              setSalesDesc('')}} 
+              className={`${isAdmin === false ? 'cursor-not-allowed': ''} ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg`} disabled={isAdmin === false}>
+              New
             </button>
           </div>
         </div>
@@ -316,11 +328,14 @@ const ProductAndServices = ({product, charts}) => {
               /> 
             </div>
             <div className=''>
-              <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+              <button type="button" onClick={delEntry}
+              className={`${isAdmin === false ? 'cursor-not-allowed': ''} text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2`} disabled={isAdmin === false}
+              >
                 Delete
                 <AiOutlineDelete className='text-lg ml-2'/>
               </button>
             </div>
+            
           </div>
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">
@@ -385,7 +400,8 @@ const ProductAndServices = ({product, charts}) => {
                       {item.qty}
                     </td>
                     <td className="flex items-center px-6 mr-5 py-4 space-x-4">
-                      <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
+                      <button type='button' onClick={()=>{getData(item._id)}} 
+                        className= {`${isAdmin === false ? 'cursor-not-allowed': ''} font-medium text-blue-600 dark:text-blue-500 hover:underline" `} disabled={isAdmin === false}><AiOutlineEdit className='text-lg'/></button>
                     </td>
                   </tr>})}
                 </tbody>

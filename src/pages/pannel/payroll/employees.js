@@ -1,4 +1,4 @@
-import React, {Fragment, useRef, useState} from 'react'
+import React, {Fragment, useEffect, useRef, useState} from 'react'
 import mongoose from "mongoose";
 import moment from 'moment/moment';
 import { XMarkIcon } from '@heroicons/react/24/outline'
@@ -12,7 +12,7 @@ import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 import { BiExport, BiImport } from 'react-icons/bi';
 import { DownloadTableExcel } from 'react-export-table-to-excel';
-import {XLSX, read, utils} from 'xlsx';
+import {read, utils} from 'xlsx';
 import Role from 'models/Role';
 
 const Employees = ({dbEmployee, dbRole}) => {
@@ -52,6 +52,17 @@ const Employees = ({dbEmployee, dbRole}) => {
   // id For delete contact
   const [id, setId] = useState('')
   const [selectedIds, setSelectedIds] = useState([]);
+
+  // authentications
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    const myUser = JSON.parse(localStorage.getItem('myUser'))
+    if(myUser.department === 'Admin'){
+      setIsAdmin(true)
+    }
+  }, []);
+
 
   function handleRowCheckboxChange(e, id) {
     if (e.target.checked) {
@@ -365,7 +376,8 @@ const Employees = ({dbEmployee, dbRole}) => {
               setState('')
               setZip('')
               setGender('')
-              }} className='ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg'>
+              }} 
+              className={`${isAdmin === false ? 'cursor-not-allowed': ''} ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg`} disabled={isAdmin === false}>
                New
             </button>
           </div>  
@@ -396,11 +408,14 @@ const Employees = ({dbEmployee, dbRole}) => {
               /> 
             </div>
             <div className=''>
-              <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+              <button type="button" onClick={delEntry}
+              className={`${isAdmin === false ? 'cursor-not-allowed': ''} text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2`} disabled={isAdmin === false}
+              >
                 Delete
                 <AiOutlineDelete className='text-lg ml-2'/>
               </button>
             </div>
+
           </div>
 
           <form method="POST">
@@ -460,7 +475,8 @@ const Employees = ({dbEmployee, dbRole}) => {
                         {item.basicPay}
                     </td>
                     <td className="flex items-center px-6 mr-5 py-4 space-x-4">
-                      <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
+                      <button type='button' onClick={()=>{getData(item._id)}} 
+                        className= {`${isAdmin === false ? 'cursor-not-allowed': ''} font-medium text-blue-600 dark:text-blue-500 hover:underline" `} disabled={isAdmin === false}><AiOutlineEdit className='text-lg'/></button>
                     </td>
                   </tr>})}
                 </tbody>
@@ -535,9 +551,6 @@ const Employees = ({dbEmployee, dbRole}) => {
                                       <input onChange={handleChange} value={phoneNo} type="number" name="phoneNo" id="phoneNo" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
                                     </div>
 
-                                    
-
-
                                     <div className="col-span-6 sm:col-span-2">
                                         <label htmlFor="citizenship" className="block text-sm font-medium text-gray-700">Citizenship:</label>
                                         <input type="text" onChange={handleChange} name="citizenship" id="citizenship" value={citizenship} className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"/>
@@ -560,11 +573,6 @@ const Employees = ({dbEmployee, dbRole}) => {
                                       </select>
                                     </div>
 
-                                    
-
-
-
-                            
                                     <div className="col-span-6 sm:col-span-2 mt-3">
                                       <label htmlFor="designation" className="block text-sm font-medium text-gray-700">Designation:</label>
                                       <select id="designation" name="designation" onChange={handleChange} value={designation} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">

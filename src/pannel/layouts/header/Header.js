@@ -25,6 +25,8 @@ const Header = ({ showMobmenu }) => {
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [user, setUser] = useState({value: null})
+  
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
   const Handletoggle = () => {
@@ -40,11 +42,11 @@ const Header = ({ showMobmenu }) => {
 
   useEffect(() => {
     const myUser = JSON.parse(localStorage.getItem('myUser'))
-    if(myUser){
+    if(myUser.businessName){
       setBusinessName(myUser.businessName)
     }
     else{
-      router.push(`${process.env.NEXT_PUBLIC_HOST}`);
+      setBusinessName(myUser.name)
     }
   }, [])
 

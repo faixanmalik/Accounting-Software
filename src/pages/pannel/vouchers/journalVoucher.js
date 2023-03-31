@@ -26,6 +26,10 @@ function classNames(...classes) {
     const [id, setId] = useState('')
     const [selectedIds, setSelectedIds] = useState([]);
 
+    // authentications
+  const [isAdmin, setIsAdmin] = useState(false)
+  
+
     function handleRowCheckboxChange(e, id) {
       if (e.target.checked) {
         setSelectedIds([...selectedIds, id]);
@@ -37,7 +41,10 @@ function classNames(...classes) {
 
     useEffect(() => {
       setContacts(dbContacts, dbEmployees)
-      console.log(contacts)
+      const myUser = JSON.parse(localStorage.getItem('myUser'))
+      if(myUser.department === 'Admin'){
+        setIsAdmin(true)
+      }
     }, [])
     
 
@@ -261,9 +268,11 @@ function classNames(...classes) {
           </div>
         </div>
         <div className="mt-2 md:col-span-2 md:mt-0">
-          <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
-            Delete
-            <AiOutlineDelete className='text-lg ml-2'/>
+          <button button type="button" onClick={delEntry}
+            className={`${isAdmin === false ? 'cursor-not-allowed': ''} text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2`} disabled={isAdmin === false}
+            >
+              Delete
+              <AiOutlineDelete className='text-lg ml-2'/>
           </button>
           <form method="POST">
             <div className="overflow-hidden shadow sm:rounded-md">

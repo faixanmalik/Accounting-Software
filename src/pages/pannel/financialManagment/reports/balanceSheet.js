@@ -425,7 +425,7 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             <div className="overflow-idden shadow sm:rounded-md">
                 <div className="bg-white px-4 sm:p-3">
                     <div className="grid grid-cols-6 gap-6">
-                        <div className="col-span-6 sm:col-span-1">
+                        <div className="col-span-5 sm:col-span-2">
                             <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700">
                                 From:
                             </label>
@@ -438,7 +438,7 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                 className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                             />
                         </div>
-                        <div className="col-span-6 sm:col-span-1">
+                        <div className="col-span-6 sm:col-span-2">
                             <label htmlFor="toDate" className="block text-sm font-medium text-gray-700">
                                 To:
                             </label>

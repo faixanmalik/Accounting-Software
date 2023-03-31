@@ -237,12 +237,9 @@ const Sidebar2 = ({ showMobilemenu }) => {
             <MenuItem href="/pannel/userManagment/addRole" icon={<BiUserCheck className='text-lg'/>} className={ location === '/pannel/userManagment/addRole' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
               Add Role
             </MenuItem>
-            <MenuItem href="/pannel/userManagment/user" icon={<BiUserCheck className='text-lg'/>} className={ location === '/pannel/userManagment/user' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
-              Assign User
-            </MenuItem>
-            <MenuItem href="/pannel/userManagment/userRights" icon={<BiUserCheck className='text-lg'/>} className={ location === '/pannel/userManagment/userRights' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
+            {/*<MenuItem href="/pannel/userManagment/userRights" icon={<BiUserCheck className='text-lg'/>} className={ location === '/pannel/userManagment/userRights' ?  'text-indigo-700 bg-zinc-50 font-semibold' : 'text-gray-600 font-semibold'}>
               User Rights
-            </MenuItem>
+            </MenuItem>*/}
           </SubMenu>
 
           <SubMenu label="Business Setup" icon={<IoBusinessOutline className='text-lg'/>}>

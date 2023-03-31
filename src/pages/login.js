@@ -37,9 +37,15 @@ function Login() {
       let response = await res.json()
       if (response.success === true) {
         toast.success(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
-        localStorage.setItem('myUser', JSON.stringify({token: response.token, email: response.email, businessName: response.businessName}))
+
+        if(response.businessName){
+          localStorage.setItem('myUser', JSON.stringify({token: response.token, email: response.email, businessName:response.businessName, department:response.department}))
+        }
+        else{
+          localStorage.setItem('myUser', JSON.stringify({token: response.token, email: response.email, name: response.name, department:response.department }))
+        }
         setTimeout(() => {
-            router.push(`${process.env.NEXT_PUBLIC_HOST}/pannel`);
+          router.push(`${process.env.NEXT_PUBLIC_HOST}/pannel`);
         }, 1500);
       }
       if (!response.success == true){
@@ -56,7 +62,6 @@ function Login() {
   }
 
   const handleChange = (e) => {
-
     if ( e.target.name === 'email') {
       setEmail(e.target.value)
     }

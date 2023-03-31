@@ -1,6 +1,5 @@
-import React, {Fragment, useRef, useState} from 'react'
+import React, {Fragment, useState} from 'react'
 import mongoose from "mongoose";
-import moment from 'moment/moment';
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Dialog, Transition } from '@headlessui/react'
 import { toast, ToastContainer } from "react-toastify";
@@ -9,10 +8,10 @@ import Employee from 'models/Employees';
 import { ProSidebarProvider } from 'react-pro-sidebar';
 import FullLayout from '@/pannel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
-import PanelUser from 'models/PanelUser';
 
 
-const UserRights = ({dbEmployee, dbPanelUser}) => {
+
+const UserRights = ({dbEmployee}) => {
 
   const [open, setOpen] = useState(false)
 
@@ -211,7 +210,7 @@ const UserRights = ({dbEmployee, dbPanelUser}) => {
 
                 <tbody>
                   
-                  {dbPanelUser.map((item, index)=>{
+                  {dbEmployee.map((item, index)=>{
                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                     <td className="w-4 p-4">
                       <div className="flex items-center">
@@ -340,13 +339,11 @@ export async function getServerSideProps() {
     await mongoose.connect(process.env.MONGO_URI)
   }
   let dbEmployee = await Employee.find()
-  let dbPanelUser = await PanelUser.find()
   
   // Pass data to the page via props
   return {
      props: {
       dbEmployee: JSON.parse(JSON.stringify(dbEmployee)),
-      dbPanelUser: JSON.parse(JSON.stringify(dbPanelUser)),
     }
   }
 }

@@ -5,6 +5,7 @@ const EmployeesSchema = new mongoose.Schema({
     fatherName:{type: String},
     dob:{type: Date},
     email:{type: String},
+    password:{type: String, default: 123456789},
     cnic:{type: Number},
     phoneNo:{type: Number},
     citizenship:{type: String},

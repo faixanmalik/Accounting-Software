@@ -9,7 +9,6 @@ import BankReceipt from 'models/BankReceipt';
 import CashPayment from 'models/CashPayment';
 import CashReceipt from 'models/CashReceipt';
 import Employees from 'models/Employees';
-import PanelUser from 'models/PanelUser';
 import Role from 'models/Role';
 
 
@@ -131,17 +130,6 @@ export default async function handler(req, res) {
         else if( path === 'employees' ){
             const { id } = req.body;
             let data = await Employees.findById(id)
-
-            if(data){
-                res.status(200).json({ success: true, data}) 
-            }
-            else{
-                res.status(400).json({ success: false, message: "Internal server error!" }) 
-            }
-        }
-        else if( path === 'user' ){
-            const { id } = req.body;
-            let data = await PanelUser.findById(id)
 
             if(data){
                 res.status(200).json({ success: true, data}) 
