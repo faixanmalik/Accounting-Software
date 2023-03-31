@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { Col, Row } from "reactstrap";
-import SalesChart from "@/pannel/components/dashboard/SalesChart";
-import TopCards from "@/pannel/components/dashboard/TopCards";
+import SalesChart from "@/panel/components/dashboard/SalesChart";
+import TopCards from "@/panel/components/dashboard/TopCards";
 import mongoose from "mongoose";
 import Product from 'models/Product';
 import Contact from "models/Contact";
@@ -11,9 +11,9 @@ import CashPayment from "models/CashPayment";
 import BankReceipt from "models/BankReceipt";
 import BankPayment from "models/BankPayment";
 import JournalVoucher from "models/JournalVoucher";
-import AssetsChart from "@/pannel/components/dashboard/AssetsChart";
+import AssetsChart from "@/panel/components/dashboard/AssetsChart";
 import { ProSidebarProvider } from "react-pro-sidebar";
-import FullLayout from "@/pannel/layouts/FullLayout";
+import FullLayout from "@/panel/layouts/FullLayout";
 import Employees from "models/Employees";
 
 
@@ -49,7 +49,7 @@ export default function Home({customer, product, supplier, employees, dbCharts, 
           <Col sm="6" lg="3">
             <TopCards
               bg="bg-light-danger text-danger"
-              href='/pannel/businessSetup/productAndServices'
+              href='/panel/businessSetup/productAndServices'
               title="Products"
               subtitle="Total Products"
               amount={noOfProducts}
@@ -59,7 +59,7 @@ export default function Home({customer, product, supplier, employees, dbCharts, 
           <Col sm="6" lg="3">
             <TopCards
               bg="bg-light-success text-success"
-              href='/pannel/businessSetup/contactList'
+              href='/panel/businessSetup/contactList'
               title="Customer"
               subtitle="Total Customer"
               amount={noOfCustomers}
@@ -69,7 +69,7 @@ export default function Home({customer, product, supplier, employees, dbCharts, 
           <Col sm="6" lg="3">
             <TopCards
               bg="bg-light-warning text-warning"
-              href='/pannel/businessSetup/contactList'
+              href='/panel/businessSetup/contactList'
               title="Supplier"
               subtitle="Total Supplier"
               amount={noOfSuppliers}
@@ -79,7 +79,7 @@ export default function Home({customer, product, supplier, employees, dbCharts, 
           <Col sm="6" lg="3">
             <TopCards
               bg="bg-light-info text-into"
-              href='/pannel/payroll/employees'
+              href='/panel/payroll/employees'
               title="Employees"
               subtitle="Total employee"
               amount={noOfEmployees}

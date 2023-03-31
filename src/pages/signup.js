@@ -14,7 +14,7 @@ function Signup() {
 
   useEffect(() => {
     if(localStorage.getItem("token")){
-      router.push('/pannel')
+      router.push('/panel')
     }
   }, [])
 

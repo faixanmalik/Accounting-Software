@@ -11,7 +11,7 @@ import Voucher from 'models/JournalVoucher';
 import Contact from 'models/Contact';
 import Charts from 'models/Charts';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 import Employees from 'models/Employees';
 
 

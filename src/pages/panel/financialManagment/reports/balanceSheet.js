@@ -10,74 +10,36 @@ import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
 import moment from 'moment';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 
 
-const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts  }) => {
+const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts, name }) => {
+
 
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
     const [newBalance, setNewBalance] = useState([])
+    const [charts, setCharts] = useState([])
 
-    const [grossProfit, setGrossProfit] = useState(0);
-    const [profitFromOperations, setProfitFromOperations] = useState(0)
+    const [totalAssets, setTotalAssets] = useState(0);
+    const [totalEquity, setTotalEquity] = useState(0)
+    const [totalLiabilities, setTotalLiabilities] = useState(0)
+    const [totalEquityAndLiabilities, setTotalEquityAndLiabilities] = useState(0)
+
     const [profitBeforeTax, setProfitBeforeTax] = useState(0)
     
     const [fDate, setFDate] = useState('')
     const [tDate, setTDate] = useState('')
-
-    const [newCharts, setNewCharts] = useState([])
     
 
     useEffect(() => {
-      
-
-
-      dbCharts.sort((a, b) => {
-        const priorities = {
-          'Revenue': 1,
-          'Cost of sales': 2,
-          'Administration Expenses': 3,
-          'Distribution Expenses': 4,
-          'Finance Cost': 5,
-        };
-        
-        const nameA = a.subAccount;
-        const nameB = b.subAccount;
-      
-        if (priorities[nameA] && priorities[nameB]) {
-          return priorities[nameA] - priorities[nameB];
-        } else if (priorities[nameA]) {
-          return -1;
-        } else if (priorities[nameB]) {
-          return 1;
-        }
-        else {
-          return nameA.localeCompare(nameB);
-        }
-    });
-    setNewCharts(dbCharts)
-
-
-    submit()
-
-
-
-
-
-
-
-        
-      
-
-
-    
+      submit()
     }, [])
     
 
+
     let balance = [];
     const submit = ()=>{
-        console.log(fromDate)
         if(fromDate && toDate){
             setFDate(moment(fromDate).format('D MMM YYYY'))
             setTDate(moment(toDate).format('D MMM YYYY'))
@@ -161,16 +123,25 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         item.debit = item.amount;
                         item.credit = 0;
                     }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.credit = item.amount;
+                        item.debit = 0;
+                    }
                 }
                 else{
                     if(item.type === 'CPV' || item.type === 'BPV'){
                         item.credit = item.amount;
                         item.debit = 0;
                     }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.debit = item.amount;
+                        item.credit = 0;
+                    }
                 }
             });
 
 
+       
             // Balance
             let result = [];
             if(dbAllEntries.length > 0){
@@ -191,6 +162,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         else{ 
                             totalBalance = currentDebitEntry - currentCreditEntry;
                         }
+
                         initialBalance = totalBalance;
                         result.push(totalBalance)
                     }
@@ -211,8 +183,11 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             balance.push(result);
         });
         setNewBalance(balance)
+        setCharts(dbCharts)
         ProfitLossBalance()
     }
+
+
 
     const handleChange = (e) => {
         if (e.target.name === 'fromDate') {
@@ -222,17 +197,79 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             setToDate(e.target.value)
         }
     }
+
+    
     
     const ProfitLossBalance = async()=>{
-        
+
+        // thats for balance sheet balance entries
+        let fixedAssetsArray = [];
+        let currentAssetsArray = [];
+        let equityArray = [];
+        let nonCurrentLiabilitiesArray = [];
+        let currentLiabilitiesArray = [];
+
+
+        // thats for profit from profit and loss statement
         let administrationArray = [];
         let salesArray = [];
         let costOfGoodsSoldArray = [];
         let distributionExpensesArray = [];
         let financeCostArray = [];
 
+
+
         {dbCharts.map((item,index) => {
-            if(item.subAccount === 'Revenue'){
+            // thats for calculating cureent balance sheet balance
+            if(item.subAccount === 'Fixed Assets'){
+                let fixedAssets = balance[index] && balance[index][balance[index].length-1]
+                if(fixedAssets){
+                    fixedAssetsArray.push(fixedAssets)
+                }
+                else{
+                    fixedAssetsArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Current Assets'){
+                let currentAssets = balance[index] && balance[index][balance[index].length-1]
+                if(currentAssets){
+                    currentAssetsArray.push(currentAssets)
+                }
+                else{
+                    currentAssetsArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Equity'){
+                let equity = balance[index] && balance[index][balance[index].length-1]
+                if(equity){
+                    equityArray.push(equity)
+                }
+                else{
+                    equityArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Non-Current Liability'){
+                let nonCurrentLiabilities = balance[index] && balance[index][balance[index].length-1]
+                if(nonCurrentLiabilities){
+                    nonCurrentLiabilitiesArray.push(nonCurrentLiabilities)
+                }
+                else{
+                    nonCurrentLiabilitiesArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Current Liability'){
+                let currentLiabilities = balance[index] && balance[index][balance[index].length-1]
+                if(currentLiabilities){
+                    currentLiabilitiesArray.push(currentLiabilities)
+                }
+                else{
+                    currentLiabilitiesArray.push(0)
+                }
+            }
+
+
+            // thats for calculating previous balance
+            else if(item.subAccount === 'Revenue'){
                 let sales = balance[index] && balance[index][balance[index].length-1]
                 if(sales){
                     salesArray.push(sales)
@@ -277,11 +314,42 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                     financeCostArray.push(0)
                 }
             }
-        })
-    
-        
 
-        // individual Calculate
+
+        })
+
+
+        // thats for calculating current balancesheet balance
+        let fixedAssetsSum = 0;
+        fixedAssetsArray.forEach(element => {
+            fixedAssetsSum += parseInt(element)
+        });
+
+        let currentAssetsSum = 0;
+        currentAssetsArray.forEach(element => {
+            currentAssetsSum += parseInt(element)
+        });
+
+        let equitySum = 0;
+        equityArray.forEach(element => {
+            equitySum += parseInt(element)
+        });
+
+
+        let nonCurrentLiabilitiesSum = 0;
+        nonCurrentLiabilitiesArray.forEach(element => {
+            nonCurrentLiabilitiesSum += parseInt(element)
+        });
+
+
+        let currentLiabilities = 0;
+        currentLiabilitiesArray.forEach(element => {
+            currentLiabilities += parseInt(element)
+        });
+
+
+
+        // thats for calculating previous balance
         let salesSum = 0;
         salesArray.forEach(element => {
             salesSum += parseInt(element)
@@ -309,15 +377,32 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             financeCostSum += parseInt(element)
         });
 
-        // Total calculate
-        setGrossProfit(parseInt(salesSum) - parseInt(costOfGoodsSoldSum))
 
-        let expenses =  parseInt(administrationSum) + parseInt(distributionSum)
-        setProfitFromOperations( (parseInt(salesSum) - parseInt(costOfGoodsSoldSum)) - expenses)
+        // calculate Total profit 
         
-        setProfitBeforeTax( (parseInt(salesSum) - parseInt(costOfGoodsSoldSum)) -
-        expenses - parseInt(financeCostSum))
+        let next = (parseInt(salesSum) - parseInt(costOfGoodsSoldSum)) -
+        (parseInt(administrationSum) + parseInt(distributionSum)) - parseInt(financeCostSum)
+        setProfitBeforeTax(next)
+
+
+        // calculate current Total entries 
+        setTotalAssets(parseInt(fixedAssetsSum) + parseInt(currentAssetsSum))
+
+        let totalEquity = next + parseInt(Math.abs(equitySum));
+        setTotalEquity(totalEquity);
+        setTotalLiabilities( parseInt(Math.abs(nonCurrentLiabilitiesSum)) + parseInt(Math.abs(currentLiabilities)) )
+
+        setTotalEquityAndLiabilities( parseInt(Math.abs(totalEquity)) + (parseInt(Math.abs(nonCurrentLiabilitiesSum)) + parseInt(Math.abs(currentLiabilities)) ) )
+
+
+
+
+        
     }}
+
+
+    
+
 
 
     return (
@@ -340,7 +425,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
             <div className="overflow-idden shadow sm:rounded-md">
                 <div className="bg-white px-4 sm:p-3">
                     <div className="grid grid-cols-6 gap-6">
-                        <div className="col-span-6 sm:col-span-2">
+                        <div className="col-span-5 sm:col-span-2">
                             <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700">
                                 From:
                             </label>
@@ -377,7 +462,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
                 <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">
-                    Profit & Loss Summary
+                    Balance Sheet Summary
                     {fDate && tDate &&
                         <span className='text-sm ml-1'>({fDate} to {tDate})</span>
                     }
@@ -407,21 +492,43 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                             
                             {/* All Vouchers */}
-                            {newCharts.map((item,index) => {
+                            {/*{newBalance.length != 0 &&  dbCharts.map((item,index) => {*/}
+                            {dbCharts.map((item,index) => {
+                                // Array sorting with nameOrder order
+                                let nameOrder = ['Fixed Assets', 'Current Assets', 'Equity', 'Non-Current Liability', 'Current Liability']; 
 
-                                const administrationIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Administration Expenses');
-                                const financeIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Finance Cost');
-                                let lastIndex = -1;
+                                dbCharts.sort((a, b) => {
+                                    const aIndex = nameOrder.indexOf(a.subAccount);
+                                    const bIndex = nameOrder.indexOf(b.subAccount);
+                                    if (aIndex === -1 || bIndex === -1) {
+                                      return 0; // fallback to no sorting
+                                    }
+                                    return aIndex - bIndex;
+                                  });
 
-                                for (let i = dbCharts.length - 1; i >= 0; i--) {
-                                    if (dbCharts[i].subAccount === 'Finance Cost') {
+                                  
+
+
+                                  const equityIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Equity');
+                                  const nonCurrentLiabilitiesIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Non-Current Liability');
+                                  
+
+                                  let lastIndex = -1;
+
+                                    for (let i = dbCharts.length - 1; i >= 0; i--) {
+                                    if (dbCharts[i].subAccount === 'Current Liability') {
                                         lastIndex = i;
                                         break;
                                     }
-                                }
+                                    }
 
-                                  
-                            if(item.subAccount === 'Revenue' || item.subAccount === 'Cost of sales' ||item.subAccount === 'Administration Expenses' ||item.subAccount === 'Distribution Expenses' ||item.subAccount === 'Finance Cost' ){
+
+                                
+                            if(item.subAccount === 'Fixed Assets' 
+                            || item.subAccount === 'Current Assets' 
+                            ||item.subAccount === 'Equity' 
+                            ||item.subAccount === 'Non-Current Liability' 
+                            ||item.subAccount === 'Current Liability' ){
                             return <tbody key={index}>
                                 <tr className="bg-white border-b hover:bg-gray-50">
                                     <td className="px-6 py-3 font-semibold">
@@ -430,41 +537,52 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                     <td className="px-6 py-3 text-black font-semibold">
                                         {item.subAccount}
                                     </td>
+                                    {item.accountName === 'Profit for the year' ? <td className="px-6 py-3 text-blue-700 font-bold">
+                                        {profitBeforeTax.toLocaleString()}
+                                    </td>:
                                     <td className="px-6 py-3 text-blue-700 font-bold">
-                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
-                                    </td>
+                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && newBalance[index][newBalance[index].length-1].toLocaleString()}
+                                    </td>}
+
                                 </tr>
 
                             
-                                {index === administrationIndex - 1
+                                {index === equityIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
-                                    <td className={`text-sm ${grossProfit > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Gross {grossProfit > 0 ? 'Profit' : 'loss'};
-                                        <span className='font-bold ml-1'>${ grossProfit }</span>
+                                    <td className={`text-sm ${totalAssets > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Total Assets:
+                                        <span className='font-bold ml-1'>${ totalAssets.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
 
 
-                                {index === financeIndex - 1
+                                {index === nonCurrentLiabilitiesIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
-                                    <td className={`text-sm ${profitFromOperations > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitFromOperations > 0 ? 'Profit' : 'loss'} From Operations:
-                                        <span className='font-bold ml-1'>${ profitFromOperations }</span>
+                                    <td className={`text-sm ${totalEquity > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Total Equity:
+                                        <span className='font-bold ml-1'>${ totalEquity.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
 
 
                                 {index === lastIndex
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
-                                    <td className={`text-sm ${profitBeforeTax > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitBeforeTax > 0 ? 'Profit' : 'loss'} Before Tax:
-                                        <span className='font-bold ml-1'>${ profitBeforeTax }</span>
+                                    <td className={`text-sm ${totalLiabilities > 0 ? 'text-red-700' : 'text-green-700' } -mr-32`}>Total Liabilities:
+                                        <span className='font-bold ml-1'>${ totalLiabilities.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
-
                             </tbody>
-                            }
-                            })}
+                            }})}
                         </table>
 
-                        { newBalance.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+
+                            {charts.length != 0 ? <div className="flex justify-around border-t-2 border-slate-200 pt-5 bg-slate-100 p-4 text-right sm:px-6">
+                                <h1 className={`text-sm ${totalAssets === totalEquityAndLiabilities ? 'text-green-700' : 'text-red-700'} ml-auto mr-32`}>Total Assets: 
+                                    <span className={`font-bold ml-1 `}>${totalAssets.toLocaleString()}</span>
+                                </h1>
+                                <h1 className={`text-sm ${totalAssets === totalEquityAndLiabilities ? 'text-green-700' : 'text-red-700'} mr-10`}>Total Equity & Liabilities: 
+                                    <span className='font-bold ml-1'>${totalEquityAndLiabilities.toLocaleString()}</span>
+                                </h1>
+                            </div>: ''}
+                        { charts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
 
                 </div>
@@ -474,7 +592,6 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
     </FullLayout>
     </ProSidebarProvider>
-
     </>
     )
 }
@@ -505,4 +622,4 @@ export async function getServerSideProps() {
     }
 }
 
-export default ProfitAndLoss
+export default BalanceSheet

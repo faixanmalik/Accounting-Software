@@ -10,7 +10,7 @@ import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
 import moment from 'moment';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 
 
 const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts  }) => {

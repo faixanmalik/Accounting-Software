@@ -10,7 +10,7 @@ import Vouchers from 'models/CashReceipt';
 import Contact from 'models/Contact';
 import Charts from 'models/Charts';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 

@@ -1,30 +1,40 @@
-import React, {Fragment, useState} from 'react'
+import React, {Fragment, useEffect, useState} from 'react'
 import mongoose from "mongoose";
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { Dialog, Transition } from '@headlessui/react'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Employee from 'models/Employees';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
+import Role from 'models/Role';
 
 
-
-const UserRights = ({dbEmployee}) => {
+const AddRole = ({dbRole}) => {
 
   const [open, setOpen] = useState(false)
 
   // Add States
-  const [name, setName] = useState('')
-  const [userId, setUserId] = useState('')
-  const [role, setRole] = useState('')
-
+  const [roleName, setRoleName] = useState('')
+  const [roleDesc, setRoleDesc] = useState('')
 
 
   // id For delete contact
   const [id, setId] = useState('')
   const [selectedIds, setSelectedIds] = useState([]);
+
+  // authentications
+  const [isAdmin, setIsAdmin] = useState(false)
+
+
+  useEffect(() => {
+    const myUser = JSON.parse(localStorage.getItem('myUser'))
+    if(myUser.department === 'Admin'){
+      setIsAdmin(true)
+    }
+  }, []);
+
+
 
   function handleRowCheckboxChange(e, id) {
     if (e.target.checked) {
@@ -38,21 +48,18 @@ const UserRights = ({dbEmployee}) => {
 
   const handleChange = (e) => {
   
-    if(e.target.name === 'name'){
-      setName(e.target.value)
+    if(e.target.name === 'roleName'){
+        setRoleName(e.target.value)
     }
-    else if(e.target.name === 'role'){
-      setRole(e.target.value)
-    }
-    else if(e.target.name === 'userId'){
-      setUserId(e.target.value)
+    else if(e.target.name === 'roleDesc'){
+      setRoleDesc(e.target.value)
     }
   }
 
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, name, userId, role, path:'user' }
+    const data = { id, roleName, roleDesc, path:'addRole' }
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -75,7 +82,7 @@ const UserRights = ({dbEmployee}) => {
 
   const delEntry = async()=>{
 
-    const data = { selectedIds , path: 'user' };
+    const data = { selectedIds , path: 'addRole' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
       method: 'POST',
       headers: { 
@@ -96,7 +103,7 @@ const UserRights = ({dbEmployee}) => {
   const getData = async (id) =>{
     setOpen(true)
 
-    const data = { id, path: 'user' };
+    const data = { id, path: 'addRole' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
       method: 'POST',
       headers: {
@@ -109,9 +116,8 @@ const UserRights = ({dbEmployee}) => {
       
       if (response.success === true){
         setId(response.data._id)
-        setName(response.data.name)
-        setRole(response.data.role)
-        setUserId(response.data.userId)
+        setRoleName(response.data.roleName)
+        setRoleDesc(response.data.roleDesc)
       }
   }
 
@@ -119,7 +125,7 @@ const UserRights = ({dbEmployee}) => {
     e.preventDefault()
     
     // fetch the data from form to makes a file in local system
-    const data = { name, userId, role, path:'user' };
+    const data = { roleName, roleDesc, path:'addRole' };
       let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
       method: 'POST',
       headers: { 
@@ -158,11 +164,11 @@ const UserRights = ({dbEmployee}) => {
           <div className="px-4 sm:px-0 flex">
             <h3 className="text-lg font-medium leading-6 text-gray-900">Manage Users</h3>
             <button onClick={()=>{
-              setOpen(true), 
-              setName('')
-              setRole('')
-              setUserId('')
-              }} className='ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg'>
+              setOpen(true),
+              setRoleDesc('')
+              setRoleName('')
+              }} 
+              className={`${isAdmin === false ? 'cursor-not-allowed': ''} ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg`} disabled={isAdmin === false}>
                New
             </button>
           </div>  
@@ -172,7 +178,9 @@ const UserRights = ({dbEmployee}) => {
           <div className='flex items-center space-x-2 mb-1'>
            
             <div className=''>
-              <button type="button" onClick={delEntry} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+              <button type="button" onClick={delEntry}
+              className={`${isAdmin === false ? 'cursor-not-allowed': ''} text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2`} disabled={isAdmin === false}
+              >
                 Delete
                 <AiOutlineDelete className='text-lg ml-2'/>
               </button>
@@ -194,13 +202,10 @@ const UserRights = ({dbEmployee}) => {
                           Sr.
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          Name
+                          Role Name
                       </th>
                       <th scope="col" className="px-6 py-3">
-                          User Id:
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                          Role
+                          Description
                       </th>
                       <th scope="col" className="px-6 py-3">
                           <span className="">Action</span>
@@ -210,7 +215,7 @@ const UserRights = ({dbEmployee}) => {
 
                 <tbody>
                   
-                  {dbEmployee.map((item, index)=>{
+                  {dbRole.map((item, index)=>{
                     return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                     <td className="w-4 p-4">
                       <div className="flex items-center">
@@ -221,22 +226,20 @@ const UserRights = ({dbEmployee}) => {
                         {index + 1}
                     </td>
                     <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                        {item.name}
+                        {item.roleName}
                     </td>
                     <td className="px-6 py-4">
-                        {item.userId}
-                    </td>
-                    <td className="px-6 py-4">
-                        {item.role}
+                        {item.roleDesc}
                     </td>
                     <td className="flex items-center px-6 mr-5 py-4 space-x-4">
-                      <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
+                      <button type='button' onClick={()=>{getData(item._id)}} 
+                        className= {`${isAdmin === false ? 'cursor-not-allowed': ''} font-medium text-blue-600 dark:text-blue-500 hover:underline" `} disabled={isAdmin === false}><AiOutlineEdit className='text-lg'/></button>
                     </td>
                   </tr>})}
                 </tbody>
 
               </table>
-                {dbEmployee.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
+                {dbRole.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found</h1> : ''}
             </div>
             </div>
           </form>
@@ -276,26 +279,13 @@ const UserRights = ({dbEmployee}) => {
 
 
                                     <div className="col-span-6 sm:col-span-2">
-                                      <label htmlFor="userId" className="block text-sm font-medium text-gray-700">User Id:</label>
-                                      <input onChange={handleChange} value={userId} type="number" name="userId" id="userId" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
+                                      <label htmlFor="roleName" className="block text-sm font-medium text-gray-700">Role Name:</label>
+                                      <input onChange={handleChange} value={roleName} type="text" name="roleName" id="roleName" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
                                     </div>
 
                                     <div className="col-span-6 sm:col-span-2">
-                                      <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name:</label>
-                                      <select id="name" name="name" onChange={handleChange} value={name} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                        <option>Select Employee</option>
-                                        {dbEmployee.map((item)=>{ return <option value={item.name}>{item.name}</option>})}
-                                      </select>
-                                    </div>
-
-                                    <div className="col-span-6 sm:col-span-2">
-                                      <label htmlFor="role" className="block text-sm font-medium text-gray-700">Assign Role:</label>
-                                      <select id="role" name="role" onChange={handleChange} value={role} className="mt-1 py-2 block w-full rounded-md border border-gray-300 bg-white px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                        <option>Select Role</option>
-                                        <option value={'Admin'}>Admin</option>
-                                        <option value={'Accountant'}>Accountant</option>
-                                        <option value={'Store Incharge'}>Store Incharge</option>
-                                      </select>
+                                      <label htmlFor="roleDesc" className="block text-sm font-medium text-gray-700">Role Description:</label>
+                                      <input onChange={handleChange} value={roleDesc} type="text" name="roleDesc" id="roleDesc" className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required/>
                                     </div>
 
                                 </div>
@@ -338,14 +328,14 @@ export async function getServerSideProps() {
     mongoose.set("strictQuery", false);
     await mongoose.connect(process.env.MONGO_URI)
   }
-  let dbEmployee = await Employee.find()
+  let dbRole = await Role.find()
   
   // Pass data to the page via props
   return {
      props: {
-      dbEmployee: JSON.parse(JSON.stringify(dbEmployee)),
+        dbRole: JSON.parse(JSON.stringify(dbRole)),
     }
   }
 }
 
-export default UserRights
+export default AddRole

@@ -10,31 +10,79 @@ import JournalVoucher from 'models/JournalVoucher';
 import Charts from 'models/Charts';
 import moment from 'moment';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 
 
-const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts }) => {
+const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPayment, dbBankReceipt, dbCharts  }) => {
 
     const [fromDate, setFromDate] = useState('')
     const [toDate, setToDate] = useState('')
-    const [charts, setCharts] = useState([])
-
     const [newBalance, setNewBalance] = useState([])
-    const [debitSum, setDebitSum] = useState(0)
-    const [creditSum, setCreditSum] = useState(0)
 
+    const [grossProfit, setGrossProfit] = useState(0);
+    const [profitFromOperations, setProfitFromOperations] = useState(0)
+    const [profitBeforeTax, setProfitBeforeTax] = useState(0)
+    
     const [fDate, setFDate] = useState('')
     const [tDate, setTDate] = useState('')
 
+    const [newCharts, setNewCharts] = useState([])
+    
+
+    useEffect(() => {
+      
+
+
+      dbCharts.sort((a, b) => {
+        const priorities = {
+          'Revenue': 1,
+          'Cost of sales': 2,
+          'Administration Expenses': 3,
+          'Distribution Expenses': 4,
+          'Finance Cost': 5,
+        };
+        
+        const nameA = a.subAccount;
+        const nameB = b.subAccount;
+      
+        if (priorities[nameA] && priorities[nameB]) {
+          return priorities[nameA] - priorities[nameB];
+        } else if (priorities[nameA]) {
+          return -1;
+        } else if (priorities[nameB]) {
+          return 1;
+        }
+        else {
+          return nameA.localeCompare(nameB);
+        }
+    });
+    setNewCharts(dbCharts)
+
+
+    submit()
+
+
+
+
+
+
+
+        
+      
+
+
+    
+    }, [])
+    
 
     let balance = [];
-    
     const submit = ()=>{
-
+        console.log(fromDate)
         if(fromDate && toDate){
             setFDate(moment(fromDate).format('D MMM YYYY'))
             setTDate(moment(toDate).format('D MMM YYYY'))
         }
+
 
         dbCharts.forEach(element => {
 
@@ -113,24 +161,14 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         item.debit = item.amount;
                         item.credit = 0;
                     }
-                    else if(item.type === 'CRV' || item.type === 'BRV'){
-                        item.credit = item.amount;
-                        item.debit = 0;
-                    }
                 }
                 else{
                     if(item.type === 'CPV' || item.type === 'BPV'){
                         item.credit = item.amount;
                         item.debit = 0;
                     }
-                    else if(item.type === 'CRV' || item.type === 'BRV'){
-                        item.debit = item.amount;
-                        item.credit = 0;
-                    }
                 }
             });
-
-
 
 
             // Balance
@@ -150,10 +188,9 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                         if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
                             totalBalance = currentCreditEntry - currentDebitEntry;
                         }
-                        else{
+                        else{ 
                             totalBalance = currentDebitEntry - currentCreditEntry;
                         }
-
                         initialBalance = totalBalance;
                         result.push(totalBalance)
                     }
@@ -172,68 +209,10 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                 }
             }
             balance.push(result);
-            setCharts(dbCharts)
         });
-        
-        
-
-        let dbAccount = [];
-        dbCharts.forEach(element => {
-            if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                dbAccount.push(true)
-            }
-            else{
-                dbAccount.push(false)
-            }
-        });
-
-        let debitEntry = [];
-        let creditEntry = [];
-        for (let index = 0; index < dbAccount.length; index++) {
-            const element = dbAccount[index];
-            if(element === false){
-                let debitSide = balance[index][balance[index].length-1]
-                if(debitSide){
-                    if(debitSide > 0){
-                        debitEntry.push(debitSide);
-                    }
-                    else{
-                        creditEntry.push(debitSide);
-                    }
-                }
-            }
-            else{
-                let creditSide = balance[index][balance[index].length-1]
-                if(creditSide){
-                    if(creditSide > 0){
-                        creditEntry.push(creditSide);
-                    }
-                    else{
-                        debitEntry.push(creditSide);
-                    }
-                }
-            }
-        }
-
-        let totalDebit = 0;
-        debitEntry.forEach(element => {
-            totalDebit += Math.abs(element);
-        });
-        setDebitSum(totalDebit)
-        
-
-        let totalCredit = 0;
-        creditEntry.forEach(element => {
-            totalCredit += Math.abs(element);
-        });
-        setCreditSum(totalCredit)
-        
         setNewBalance(balance)
+        ProfitLossBalance()
     }
-    
-
-
-
 
     const handleChange = (e) => {
         if (e.target.name === 'fromDate') {
@@ -243,8 +222,102 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
             setToDate(e.target.value)
         }
     }
-
     
+    const ProfitLossBalance = async()=>{
+        
+        let administrationArray = [];
+        let salesArray = [];
+        let costOfGoodsSoldArray = [];
+        let distributionExpensesArray = [];
+        let financeCostArray = [];
+
+        {dbCharts.map((item,index) => {
+            if(item.subAccount === 'Revenue'){
+                let sales = balance[index] && balance[index][balance[index].length-1]
+                if(sales){
+                    salesArray.push(sales)
+                }
+                else{
+                    salesArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Cost of sales'){
+                let costOfGoodsSold = balance[index] && balance[index][balance[index].length-1]
+                if(costOfGoodsSold){
+                    costOfGoodsSoldArray.push(costOfGoodsSold)
+                }
+                else{
+                    costOfGoodsSoldArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Administration Expenses'){
+                let administrationExpenses = balance[index] && balance[index][balance[index].length-1]
+                if(administrationExpenses){
+                    administrationArray.push(administrationExpenses)
+                }
+                else{
+                    administrationArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Distribution Expenses'){
+                let distributionExpenses = balance[index] && balance[index][balance[index].length-1]
+                if(distributionExpenses){
+                    distributionExpensesArray.push(distributionExpenses)
+                }
+                else{
+                    distributionExpensesArray.push(0)
+                }
+            }
+            else if(item.subAccount === 'Finance Cost'){
+                let financeCost = balance[index] && balance[index][balance[index].length-1]
+                if(financeCost){
+                    financeCostArray.push(financeCost)
+                }
+                else{
+                    financeCostArray.push(0)
+                }
+            }
+        })
+    
+        
+
+        // individual Calculate
+        let salesSum = 0;
+        salesArray.forEach(element => {
+            salesSum += parseInt(element)
+        });
+
+        let costOfGoodsSoldSum = 0;
+        costOfGoodsSoldArray.forEach(element => {
+            costOfGoodsSoldSum += parseInt(element)
+        });
+
+        let administrationSum = 0;
+        administrationArray.forEach(element => {
+            administrationSum += parseInt(element)
+        });
+
+
+        let distributionSum = 0;
+        distributionExpensesArray.forEach(element => {
+            distributionSum += parseInt(element)
+        });
+
+
+        let financeCostSum = 0;
+        financeCostArray.forEach(element => {
+            financeCostSum += parseInt(element)
+        });
+
+        // Total calculate
+        setGrossProfit(parseInt(salesSum) - parseInt(costOfGoodsSoldSum))
+
+        let expenses =  parseInt(administrationSum) + parseInt(distributionSum)
+        setProfitFromOperations( (parseInt(salesSum) - parseInt(costOfGoodsSoldSum)) - expenses)
+        
+        setProfitBeforeTax( (parseInt(salesSum) - parseInt(costOfGoodsSoldSum)) -
+        expenses - parseInt(financeCostSum))
+    }}
 
 
     return (
@@ -259,7 +332,6 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
         }
       `}</style>
     <FullLayout>
-
     {/* React tostify */}
     <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light" />
 
@@ -305,7 +377,7 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
         <div className="md:col-span-1">
             <div className="px-4 mt-4 sm:px-0 flex">
                 <h3 className="text-lg mx-auto font-black tracking-wide leading-6 text-blue-800">
-                    Trial Balance Summary  
+                    Profit & Loss Summary
                     {fDate && tDate &&
                         <span className='text-sm ml-1'>({fDate} to {tDate})</span>
                     }
@@ -324,76 +396,76 @@ const TrialBalance = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                         Account Name
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Sub-Account
+                                        Account
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        Debit
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        Credit
+                                        Amount
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
 
-                                {/* All Vouchers */}
-                                {charts.map((item,index) => {
 
-                                    let dbAccount = [];
-                                    dbCharts.forEach(element => {
-                                        if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                                            if(newBalance[index][newBalance[index].length-1] > 0){
-                                                dbAccount.push(true)
-                                            }
-                                            else{
-                                                dbAccount.push(false)
-                                            }
-                                        }
-                                        else{
-                                            if(newBalance[index][newBalance[index].length-1] > 0){
-                                                dbAccount.push(false)
-                                            }
-                                            else{
-                                                dbAccount.push(true)
-                                            }
-                                        }
-                                    });
+                            
+                            {/* All Vouchers */}
+                            {newCharts.map((item,index) => {
 
-                                    if(item.accountName != 'Profit for the year'){
+                                const administrationIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Administration Expenses');
+                                const financeIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Finance Cost');
+                                let lastIndex = -1;
 
-                                    return <tr key={index} className="bg-white border-b hover:bg-gray-50">
-                                        <td className="px-6 py-3">
-                                            <div className='font-semibold'>{item.accountName}</div>
-                                        </td>
-                                        <td className="px-6 py-3">
-                                            <div className='text-black font-semibold'>{item.subAccount}</div>
-                                        </td>
-                                        <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === false &&  newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
-                                        </td>
-                                        <td className="px-6 py-3 text-blue-700 font-bold">
-                                            {dbAccount[index] === true && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
-                                        </td>
-                                    </tr>
+                                for (let i = dbCharts.length - 1; i >= 0; i--) {
+                                    if (dbCharts[i].subAccount === 'Finance Cost') {
+                                        lastIndex = i;
+                                        break;
                                     }
-                                })}
+                                }
+
+                                  
+                            if(item.subAccount === 'Revenue' || item.subAccount === 'Cost of sales' ||item.subAccount === 'Administration Expenses' ||item.subAccount === 'Distribution Expenses' ||item.subAccount === 'Finance Cost' ){
+                            return <tbody key={index}>
+                                <tr className="bg-white border-b hover:bg-gray-50">
+                                    <td className="px-6 py-3 font-semibold">
+                                        {item.accountName}
+                                    </td>
+                                    <td className="px-6 py-3 text-black font-semibold">
+                                        {item.subAccount}
+                                    </td>
+                                    <td className="px-6 py-3 text-blue-700 font-bold">
+                                        {newBalance[index] && newBalance[index][newBalance[index].length-1] && Math.abs(newBalance[index][newBalance[index].length-1]).toLocaleString()}
+                                    </td>
+                                </tr>
+
+                            
+                                {index === administrationIndex - 1
+                                ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
+                                    <td className={`text-sm ${grossProfit > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Gross {grossProfit > 0 ? 'Profit' : 'loss'};
+                                        <span className='font-bold ml-1'>${ grossProfit }</span>
+                                    </td>
+                                </tr>: ''}
+
+
+                                {index === financeIndex - 1
+                                ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
+                                    <td className={`text-sm ${profitFromOperations > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitFromOperations > 0 ? 'Profit' : 'loss'} From Operations:
+                                        <span className='font-bold ml-1'>${ profitFromOperations }</span>
+                                    </td>
+                                </tr>: ''}
+
+
+                                {index === lastIndex
+                                ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
+                                    <td className={`text-sm ${profitBeforeTax > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitBeforeTax > 0 ? 'Profit' : 'loss'} Before Tax:
+                                        <span className='font-bold ml-1'>${ profitBeforeTax }</span>
+                                    </td>
+                                </tr>: ''}
 
                             </tbody>
-
+                            }
+                            })}
                         </table>
-                        { charts.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
+
+                        { newBalance.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                     </div>
-
-                
-                    {charts.length != 0  ? <div className="flex justify-around bg-slate-100 px-4 py-3 text-right sm:px-6">
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} ml-auto mr-10`}>Total Debit: 
-                            <span className={`font-bold ml-1 `}>${debitSum.toLocaleString()}</span>
-                        </h1>
-                        <h1 className={`text-sm ${debitSum === creditSum ? 'text-green-700' : 'text-red-700'} mr-10`}>Total Credit: 
-                            <span className='font-bold ml-1'>${creditSum.toLocaleString()}</span>
-                        </h1>
-                    </div> : ''}
-
 
                 </div>
             </form>
@@ -433,4 +505,4 @@ export async function getServerSideProps() {
     }
 }
 
-export default TrialBalance
+export default ProfitAndLoss

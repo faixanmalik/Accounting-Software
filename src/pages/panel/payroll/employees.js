@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import Employee from 'models/Employees';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 import { BiExport, BiImport } from 'react-icons/bi';
@@ -397,7 +397,8 @@ const Employees = ({dbEmployee, dbRole}) => {
               </DownloadTableExcel>
             </div>
             <div className=''>
-              <button type="button" onClick={handleClick} className="text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2">
+              <button type="button" onClick={handleClick} 
+                className={`${isAdmin === false ? 'cursor-not-allowed': ''} text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2`} disabled={isAdmin === false}>
                   Import
                 <BiImport className='text-lg ml-2'/>
               </button>
@@ -589,6 +590,7 @@ const Employees = ({dbEmployee, dbRole}) => {
                                         <option value={'Finance'}>Finance</option>
                                         <option value={'Sales'}>Sales</option>
                                         <option value={'Ops'}>Ops</option>
+                                        <option value={'Other'}>Other</option>
                                       </select>
                                     </div>
 

@@ -13,7 +13,7 @@ function Login() {
 
   useEffect(() => {
     if(localStorage.getItem("myUser")){
-      router.push('/pannel')
+      router.push('/panel')
     }
   }, [])
 
@@ -45,7 +45,7 @@ function Login() {
           localStorage.setItem('myUser', JSON.stringify({token: response.token, email: response.email, name: response.name, department:response.department }))
         }
         setTimeout(() => {
-          router.push(`${process.env.NEXT_PUBLIC_HOST}/pannel`);
+          router.push(`${process.env.NEXT_PUBLIC_HOST}/panel`);
         }, 1500);
       }
       if (!response.success == true){

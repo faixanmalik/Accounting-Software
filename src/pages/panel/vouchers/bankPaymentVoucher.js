@@ -2,27 +2,24 @@ import React, {Fragment, useEffect, useState} from 'react'
 import mongoose from "mongoose";
 import moment from 'moment/moment';
 import { XMarkIcon } from '@heroicons/react/24/outline'
-import { Menu, Dialog, Transition } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Dialog, Transition } from '@headlessui/react'
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
-import Vouchers from 'models/CashPayment';
+import Vouchers from 'models/BankPayment';
 import Contact from 'models/Contact';
+import BankAccount from 'models/BankAccount';
 import Charts from 'models/Charts';
 import { ProSidebarProvider } from 'react-pro-sidebar';
-import FullLayout from '@/pannel/layouts/FullLayout';
+import FullLayout from '@/panel/layouts/FullLayout';
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai';
 
 
-function classNames(...classes) {
-    return classes.filter(Boolean).join(' ')
-}
-
-
-const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
+const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }) => {
 
 
   const [open, setOpen] = useState(false)
+
+  // id For delete contact
   const [id, setId] = useState('')
   const [selectedIds, setSelectedIds] = useState([]);
 
@@ -36,7 +33,6 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
       setIsAdmin(true)
     }
   }, []);
-
 
 
   function handleRowCheckboxChange(e, id) {
@@ -54,7 +50,10 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
   const [paymentTo, setPaymentTo] = useState('')
   const [desc, setDesc] = useState('')
   const [amount, setAmount] = useState('')
+  const [bankBranch, setBankBranch] = useState('')
+  const [bankAccountNo, setBankAccountNo] = useState('')
   const [account, setAccount] = useState('')
+
 
 
   const handleChange = (e) => {
@@ -77,17 +76,22 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
     else if(e.target.name === 'desc'){
       setDesc(e.target.value)
     }
+    else if(e.target.name === 'bankBranch'){
+      setBankBranch(e.target.value)
+    }
+    else if(e.target.name === 'bankAccountNo'){
+      setBankAccountNo(e.target.value)
+    }
     else if(e.target.name === 'account'){
       setAccount(e.target.value)
     }
   }
 
-
   const submit = async(e)=>{
     e.preventDefault()
 
     // fetch the data from form to makes a file in local system
-    const data = { paymentFrom, paymentTo, amount, date, journalNo, desc, account, type:'CPV', debit: 0, credit: amount };
+    const data = { paymentFrom, paymentTo, amount, date, journalNo, bankBranch, bankAccountNo, desc, account, type:'BPV', debit: 0, credit: amount };
 
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
       method: 'POST',                                       
@@ -109,7 +113,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
   const getData = async (id) =>{
     setOpen(true)
 
-    const data = { id, path: 'cashPaymentVoucher' };
+    const data = { id, path: 'bankPaymentVoucher' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
       method: 'POST',
       headers: {
@@ -120,8 +124,8 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
       let response = await res.json()
 
       if (response.success === true){
-        const dbDate = moment(response.data.date).utc().format('YYYY-MM-DD')
-        
+        const dbDate = moment(response.data.date).utc().format('YYYY-MM-DD')        
+
         setId(response.data._id)
         setDate(dbDate)
         setJournalNo(response.data.journalNo)
@@ -129,14 +133,16 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
         setPaymentTo(response.data.paymentTo)
         setDesc(response.data.desc)
         setAmount(response.data.amount)
+        setBankBranch(response.data.bankBranch)
+        setBankAccountNo(response.data.bankAccountNo)
         setAccount(response.data.account)
       }
   }
-  
+
   const editEntry = async(id)=>{
     setOpen(true)
 
-    const data = { id, paymentFrom, paymentTo, amount, date, journalNo, desc , account,  path: 'cashPaymentVoucher'};
+    const data = { id, paymentFrom, paymentTo, amount, date, journalNo, bankBranch, bankAccountNo, desc , account,  path: 'bankPaymentVoucher'};
     
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
       method: 'POST',
@@ -159,7 +165,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
   const delEntry = async()=>{
 
-    const data = { selectedIds , path: 'cashPaymentVoucher' };
+    const data = { selectedIds , path: 'bankPaymentVoucher' };
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
       method: 'POST',
       headers: { 
@@ -175,7 +181,6 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
       else {
         toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
       }
-    
   }
 
   return (
@@ -190,7 +195,6 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
         }
       `}</style>
       <FullLayout>
-
       {/* React tostify */}
       <ToastContainer position="bottom-center" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="light"/>
   
@@ -198,12 +202,12 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
         <div className="md:grid md:grid-cols-1 md:gap-6">
           <div className="md:col-span-1">
             <div className="px-4 sm:px-0 flex">
-              <h3 className="text-lg font-medium leading-6 text-gray-900">Cash Payment Vouchers</h3>
+              <h3 className="text-lg font-medium leading-6 text-gray-900">Bank Payment Vouchers</h3>
               <button onClick={()=>{
                 setOpen(true)
                 setId('')
                 setDate('')
-                setJournalNo(`CPV-${dbVouchers.length + 1}`)
+                setJournalNo(`BPV-${dbVouchers.length + 1}`)
                 setPaymentFrom('')
                 setPaymentTo('')
                 setDesc('')
@@ -215,14 +219,12 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
             </div>
           </div>
           <div className="mt-2 md:col-span-2 md:mt-0">
-            
-            <button button type="button" onClick={delEntry}
+            <button type="button" onClick={delEntry}
               className={`${isAdmin === false ? 'cursor-not-allowed': ''} text-blue-800 flex hover:text-white border-2 border-blue-800 hover:bg-blue-800 font-semibold rounded-lg text-sm px-4 py-2 text-center mr-2 mb-2`} disabled={isAdmin === false}
               >
                 Delete
                 <AiOutlineDelete className='text-lg ml-2'/>
             </button>
-
             <form method="POST">
               <div className="overflow-hidden shadow sm:rounded-md">
                 
@@ -235,47 +237,55 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                             <input id="checkbox-all-search" type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                           </div>
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            Cash Payment No
+                        <th scope="col" className="px-3 py-3">
+                            Bank Payment No
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            Voucher Date
+                        <th scope="col" className="px-3 py-3">
+                            Date
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-3 py-3">
                             Account
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            Payment To
+                        <th scope="col" className="px-3 py-3">
+                            Payment To &
+                            Bank Branch
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-3 py-3">
+                            Account No
+                        </th>
+                        <th scope="col" className="px-3 py-3">
                             Amount
                         </th>
-                        <th scope="col" className="px-6 py-3">
+                        <th scope="col" className="px-3 py-3">
                           Action
                         </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {dbVouchers.map((item, index)=>{ 
+                      {dbVouchers.map((item)=>{ 
                       return <tr key={item._id} className="bg-white border-b hover:bg-gray-50">
                         <td className="w-4 p-4">
                           <div className="flex items-center">
                             <input id="checkbox-table-search-1" type="checkbox" onChange={e => handleRowCheckboxChange(e, item._id)} className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                           </div>
                         </td>
-                        <td className="px-6 py-3">
+                        <td className="px-3 py-3">
                           <div className='text-sm text-black font-semibold'>{item.journalNo}</div>
                         </td>
-                        <td className="px-6 py-3">
+                        <td className="px-3 py-3">
                           <div className='text-sm'>{moment(item.date).utc().format('DD-MM-YYYY')}</div>
                         </td>
-                        <td className="px-6 py-3">
+                        <td className="px-3 py-3">
                           <div className='text-sm'>{item.account}</div>
                         </td>
-                        <td className="px-6 py-3">
-                          <div className='text-sm'>{item.paymentTo}</div>
+                        <td className="px-3 py-3">
+                          <div className='font-semibold'>{item.paymentTo}</div>
+                          <div className='text-xs'>{item.bankBranch}</div>
                         </td>
-                        <td className="px-6 py-3">
+                        <td className="px-3 py-3">
+                          <div className='text-sm'>{item.bankAccountNo}</div>
+                        </td>
+                        <td className="px-3 py-3">
                           <div className='text-sm text-black font-semibold'>{parseInt(item.amount).toLocaleString()}</div>
                         </td>
                         <td className="flex items-center px-6 mr-5 py-4 space-x-4">
@@ -288,10 +298,6 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                   </table>
                   {dbVouchers.length === 0  ? <h1 className='text-red-600 text-center text-base my-3'>No data found!</h1> : ''}
                 </div>
-                {/*{!dbVouchers.length === 0  ? <div className="bg-slate-100 px-4 py-3 text-right sm:px-6">
-                  <h1 className='text-sm text-indigo-700 mr-48'>Total Amount: $100</h1>
-                </div>: ''}*/}
-                
               </div>
             </form>
           </div>
@@ -321,7 +327,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
                               <div className="col-span-6 sm:col-span-3">
                                   <label htmlFor="journalNo" className="block text-sm font-medium text-gray-700">
-                                    Cash Payment No:
+                                   Bank Payment No:
                                   </label>
                                   <input
                                   type="text"
@@ -329,7 +335,6 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                                   name="journalNo"
                                   value={journalNo}
                                   id="journalNo"
-                                  autoComplete="journalNo"
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                   readOnly
                                   />
@@ -362,17 +367,16 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                                 </select>
                               </div>
 
-
-
                               <div className="col-span-6 sm:col-span-2">
-                                  <label htmlFor="paymentFrom" className="block text-sm font-medium text-gray-700">
-                                    Payment From:
-                                  </label>
-                                  <select id="paymentFrom" name="paymentFrom" onChange={handleChange} value={paymentFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                  <option>select payment from</option>
-                                  <option value={'Cash'}>Cash</option>
-                                  <option value={'Petty Cash'}>Petty Cash</option>
-                                  </select>
+                                <label htmlFor="paymentFrom" className="block text-sm font-medium text-gray-700">
+                                  Payment From:
+                                </label>
+                                <select id="paymentFrom" name="paymentFrom" onChange={handleChange} value={paymentFrom} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                <option>select payment from</option>
+                                <option value={'Bank'}>Bank</option>
+                                <option value={'Debit Card'}>Debit Card</option>
+                                <option value={'Credit Card'}>Credit Card</option>
+                                </select>
                               </div>
 
                               
@@ -381,49 +385,74 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
                               
 
                               <div className="col-span-6 sm:col-span-4">
-                                  <label htmlFor="paymentTo" className="block text-sm font-medium text-gray-700">
-                                  Payment To:
-                                  </label>
-                                  <select id="paymentTo" name="paymentTo" onChange={handleChange} value={paymentTo} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
-                                  <option>select contacts</option>
+                                <label htmlFor="paymentTo" className="block text-sm font-medium text-gray-700">
+                                Payment To:
+                                </label>
+                                <select id="paymentTo" name="paymentTo" onChange={handleChange} value={paymentTo} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>Select Contacts</option>
                                   {dbContacts.map((item)=>{
                                       return <option key={item._id} value={item.name}>{item.name}</option>
                                   })}
-                                  </select>
+                                </select>
                               </div>
 
-                              
-
                               <div className="col-span-6 sm:col-span-2">
-                                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
                                   Amount:
-                                  </label>
-                                  <input
-                                  type="number"
-                                  onChange={handleChange}
-                                  name="amount"
-                                  id="amount"
-                                  value={amount}
-                                  className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                                  />
+                                </label>
+                                <input
+                                type="number"
+                                onChange={handleChange}
+                                name="amount"
+                                id="amount"
+                                value={amount}
+                                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                />
+                              </div>
+
+
+                              <div className="col-span-6 sm:col-span-3">
+                                <label htmlFor="bankBranch" className="block text-sm font-medium text-gray-700">
+                                Bank Branch:
+                                </label>
+                                <select id="bankBranch" name="bankBranch" onChange={handleChange} value={bankBranch} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>select bank</option>
+                                  {dbbankAccounts.map((item)=>{
+                                     if( paymentTo == item.accountTitle){
+                                      return <option key={item._id} value={item.bankBranch}>{item.bankBranch}</option>
+                                    }
+                                  })}
+                                </select>
+                              </div>
+
+                              <div className="col-span-6 sm:col-span-3">
+                                <label htmlFor="bankAccountNo" className="block text-sm font-medium text-gray-700">
+                                Bank Account No:
+                                </label>
+                                <select id="bankAccountNo" name="bankAccountNo" onChange={handleChange} value={bankAccountNo} className="mt-1 p-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm">
+                                  <option>select account no</option>
+                                  {dbbankAccounts.map((item)=>{
+                                     if( paymentTo == item.accountTitle){
+                                      return <option key={item._id} value={item.accountNo}>{item.accountNo}</option>
+                                    }
+                                  })}
+                                </select>
                               </div>
 
                               <div className="col-span-6 sm:col-span-3 lg:col-span-6">
-                                  <label htmlFor="desc" className="block text-sm font-medium text-gray-700">
-                                  Description
-                                  </label>
-                                  <textarea cols="30" rows="1" type="text"
+                                <label htmlFor="desc" className="block text-sm font-medium text-gray-700">
+                                Description:
+                                </label>
+                                <textarea cols="30" rows="1" type="text"
                                   name="desc"
                                   id="desc"
                                   onChange={handleChange}
                                   value={desc}
                                   className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                  </textarea>
+                                </textarea>
                               </div>
-
-
-
-                              </div>
+                              
+                            </div>
                           </div>
 
                           <div className="bg-gray-50 space-x-3 px-4 py-3 text-right sm:px-6">
@@ -444,11 +473,10 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
       </FullLayout>
       </ProSidebarProvider>
-                                  
-
+  
       </>
-  )
-}
+    )
+  }
 
 export async function getServerSideProps() {
   if (!mongoose.connections[0].readyState){
@@ -457,17 +485,19 @@ export async function getServerSideProps() {
   }
   let dbVouchers = await Vouchers.find()
   let dbContacts = await Contact.find()
-  let dbCharts = await Charts.find()
+  let dbbankAccounts = await BankAccount.find()
+  let dbCharts= await Charts.find()
   
       
   // Pass data to the page via props
   return {
-    props: { 
+      props: { 
       dbVouchers: JSON.parse(JSON.stringify(dbVouchers)),
       dbContacts: JSON.parse(JSON.stringify(dbContacts)),
+      dbbankAccounts: JSON.parse(JSON.stringify(dbbankAccounts)),
       dbCharts: JSON.parse(JSON.stringify(dbCharts)),
-    } 
+      } 
+      }
   }
-}
     
-export default CashPaymentVoucher
+export default BankPaymentVoucher
