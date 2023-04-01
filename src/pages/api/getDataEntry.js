@@ -17,8 +17,6 @@ export default async function handler(req, res) {
     if (req.method == 'POST'){
 
         const { path } = req.body;
-
-
         if( path === 'chartsOfAccounts'){
             const { id } = req.body;
             let charts = await Charts.findById(id)
@@ -154,7 +152,6 @@ export default async function handler(req, res) {
         
         
     }
-
     else{
         res.status(400).json({ success: false, message: "Some Error Occured !" }) 
     }

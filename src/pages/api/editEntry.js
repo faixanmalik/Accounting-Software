@@ -277,21 +277,13 @@ export default async function handler(req, res) {
                 res.status(400).json({ success: false, message: "Internal server error!" }) 
             }
         }
-
-
-
-
         else{
             res.status(400).json({ success: false, message: "Internal server error !" }) 
-        }
-
-        
-        
+        }  
     }
     else{
         res.status(400).json({ success: false, message: "Internal server error !" }) 
     }
-    
 }
 
 

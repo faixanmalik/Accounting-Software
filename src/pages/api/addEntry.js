@@ -94,14 +94,11 @@ export default async function handler(req, res) {
             await newEntry.save();
             res.status(200).json({ success: true, message: "Entry Added!" }) 
         }
-
-
-
-        
         else{
             res.status(400).json({ success: false, message: "Internal Server Error !" }) 
         }
-
-
+    }
+    else{
+        res.status(400).json({ success: false, message: "Internal Server Error !" }) 
     }
 }

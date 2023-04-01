@@ -17,8 +17,5 @@ const handler = async (req,res)=>{
     else{
         res.status(400).json({ success: false , message: "No user Found!" })
     }
-
-  
-
 }
 export default connectDb(handler);

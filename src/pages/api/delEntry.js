@@ -78,13 +78,11 @@ export default async function handler(req, res) {
             await Role.deleteMany( { _id: { $in: selectedIds } } )
             res.status(200).json({ success: true, message: "Deleted Successfully !" }) 
         }
-
-
-
         else{
-            res.status(400).json({ success: false, message: "Some Error Occured !" }) 
+            res.status(400).json({ success: false, message: "Internal Server Error!" }) 
         }
     }
     else{
-        res.status(400).json({ success: false, message: "Some Error Occured !" }) 
-    }}
+        res.status(400).json({ success: false, message: "Internal Server Error!" }) 
+    }
+}

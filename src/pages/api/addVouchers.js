@@ -89,14 +89,12 @@ export default async function handler(req, res) {
             }
             
         }
-
-
-        
         else{
             
             res.status(400).json({ success: false, message: "Internal Server Error !" }) 
         }
-
-
+    }
+    else{
+        res.status(400).json({ success: false, message: "Internal Server Error !" }) 
     }
 }
