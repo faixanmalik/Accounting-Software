@@ -495,7 +495,6 @@ const BankAccount = ({dbBankAccount, charts}) => {
     </>
   )
 }
-export default BankAccount
 
 
 export async function getServerSideProps() {
@@ -515,3 +514,5 @@ export async function getServerSideProps() {
       }
   }
 }
+
+export default BankAccount
