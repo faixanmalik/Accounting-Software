@@ -275,10 +275,6 @@ function Myaccount() {
 
   </div>
 </section>
-
-
-
-    
     </>
   )
 }
