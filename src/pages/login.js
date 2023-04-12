@@ -15,6 +15,9 @@ function Login() {
     if(localStorage.getItem("myUser")){
       router.push('/panel')
     }
+    else{
+      
+    }
   }, [])
 
   const [email, setEmail] = useState('')
