@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { Col, Row } from "reactstrap";
 import mongoose from "mongoose";
 import Product from '../../models/Product';
 import Contact from "../../models/Contact";
