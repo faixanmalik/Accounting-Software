@@ -332,8 +332,8 @@ export async function getServerSideProps() {
   
   // Pass data to the page via props
   return {
-     props: {
-        dbRole: JSON.parse(JSON.stringify(dbRole)),
+    props: {
+      dbRole: JSON.parse(JSON.stringify(dbRole)),
     }
   }
 }
