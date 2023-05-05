@@ -93,7 +93,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
 
   const importEntries = async(row)=>{
     const data = { row, path:'bankAccount', importEntries:'importEntries' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
 
     const data = { id,  bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit,  path: 'bankAccount'};
     
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
   const delEntry = async()=>{
 
     const data = { selectedIds , path: 'bankAccount' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
     setOpen(true)
 
     const data = { id, path: 'bankAccount' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -210,7 +210,7 @@ const BankAccount = ({dbBankAccount, charts}) => {
     // fetch the data from form to makes a file in local system
     const data = { bankBranch, accountNo, accountType, accountDesc, accountTitle, chartsOfAccount,  borrowingLimit, path:'bankAccount' };
     
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

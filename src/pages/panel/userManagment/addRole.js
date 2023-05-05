@@ -61,7 +61,7 @@ const AddRole = ({dbRole}) => {
 
     const data = { id, roleName, roleDesc, path:'addRole' }
     
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const AddRole = ({dbRole}) => {
   const delEntry = async()=>{
 
     const data = { selectedIds , path: 'addRole' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const AddRole = ({dbRole}) => {
     setOpen(true)
 
     const data = { id, path: 'addRole' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ const AddRole = ({dbRole}) => {
     
     // fetch the data from form to makes a file in local system
     const data = { roleName, roleDesc, path:'addRole' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

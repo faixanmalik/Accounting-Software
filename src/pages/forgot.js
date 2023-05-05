@@ -40,7 +40,7 @@ function ForgotPage({dbuser}) {
         
         // fetch the data from form to makes a file in local system
         const data = { email };
-          let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/sendemail`, {
+          let res = await fetch(`/api/sendemail`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ function ForgotPage({dbuser}) {
             document.getElementById('checkPassword').innerHTML = ""
             // fetch the data from form to makes a file in local system
             const data = { npassword, cnpassword , token };
-              let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/setpassword`, {
+              let res = await fetch(`/api/setpassword`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

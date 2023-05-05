@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }) {
     localStorage.removeItem("myUser");
     setUser({value:null});
     setKey(Math.random());
-    router.push(`${process.env.NEXT_PUBLIC_HOST}/login`);
+    router.push(`/login`);
   }
 
 

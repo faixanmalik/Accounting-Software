@@ -83,7 +83,7 @@ const ProductAndServices = ({product, charts}) => {
 
   const importEntries = async(row)=>{
     const data = { row, path:'productAndServices', importEntries:'importEntries' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ const ProductAndServices = ({product, charts}) => {
     // fetch the data from form to makes a file in local system
     const data = { code, name, purchaseStatus, costPrice, purchaseAccount, purchaseTaxRate, purchaseDesc , salesStatus,  salesPrice, salesAccount, salesTaxRate, salesDesc, path: 'productAndServices'  };
 
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ const ProductAndServices = ({product, charts}) => {
     setOpen(true)
 
     const data = { id, path: 'productAndServices' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ const ProductAndServices = ({product, charts}) => {
 
     const data = { selectedIds, path: 'productAndServices' };
 
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -245,7 +245,7 @@ const ProductAndServices = ({product, charts}) => {
   const editEntry = async(id)=>{
 
     const data = { id, code, name, purchaseStatus, costPrice, purchaseAccount, purchaseTaxRate, purchaseDesc , salesStatus,  salesPrice, salesAccount, salesTaxRate, salesDesc , path: 'productAndServices' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

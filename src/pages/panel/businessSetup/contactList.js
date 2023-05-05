@@ -105,7 +105,7 @@ const ContactList = ({dbContact}) => {
 
   const importEntries = async(row)=>{
     const data = { row, path:'contactList', importEntries:'importEntries' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ const ContactList = ({dbContact}) => {
 
     const data = { id, name, type,  email, phoneNo, country, streetAddress, city, state, zip, taxRigNo, paymentMethod, terms , openingBalance, date ,  path: 'contactList'};
     
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -211,7 +211,7 @@ const ContactList = ({dbContact}) => {
   const delEntry = async()=>{
 
     const data = { selectedIds , path: 'contactList' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ const ContactList = ({dbContact}) => {
     setOpen(true)
 
     const data = { id, path: 'contactList' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -265,7 +265,7 @@ const ContactList = ({dbContact}) => {
     
     // fetch the data from form to makes a file in local system
     const data = { name, type,  email, phoneNo, country, streetAddress, city, state, zip, taxRigNo, paymentMethod, terms , openingBalance, date, path:'contactList' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

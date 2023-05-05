@@ -38,7 +38,7 @@ function Myaccount() {
   const fetchUser = async(token) =>{
     // fetch the data from form to makes a file in local system
     const data = { token: token  };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getuser`, {
+      let res = await fetch(`/api/getuser`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ function Myaccount() {
     }
     else{
       document.getElementById('checkPassword').innerHTML = ""
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/updatepassword`, {
+      let res = await fetch(`/api/updatepassword`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ function Myaccount() {
     // fetch the data from form to makes a file in local system
     const data = { token: user.token, firstname, lastname, phoneno, streetAddress, state, zip  };
    
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/updateuser`, {
+      let res = await fetch(`/api/updateuser`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

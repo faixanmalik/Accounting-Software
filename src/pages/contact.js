@@ -35,7 +35,7 @@ function Contact() {
 
     // fetch the data from form to makes a file in local system
     const data = { name, email, message };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/messages`, {
+      let res = await fetch(`/api/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -111,7 +111,7 @@ const Employees = ({dbEmployee, dbRole}) => {
 
   const importEntries = async(row)=>{
     const data = { row, path:'employees', importEntries:'importEntries' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -217,7 +217,7 @@ const Employees = ({dbEmployee, dbRole}) => {
 
     const data = { id, name, fatherName, dob, email, cnic,  phoneNo, citizenship, gender, maritalStatus, designation, department, workShift, workHour, employmentMode, payPolicy, basicPay, paymentMode, status, hireDate, siteName, joiningDate, country, streetAddress, city, state, zip, path:'employees' }
     
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -239,7 +239,7 @@ const Employees = ({dbEmployee, dbRole}) => {
   const delEntry = async()=>{
 
     const data = { selectedIds , path: 'employees' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -260,7 +260,7 @@ const Employees = ({dbEmployee, dbRole}) => {
     setOpen(true)
 
     const data = { id, path: 'employees' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ const Employees = ({dbEmployee, dbRole}) => {
     
     // fetch the data from form to makes a file in local system
     const data = { name, fatherName, dob, email, cnic,  phoneNo, citizenship, gender, maritalStatus, designation, department, workShift, workHour, employmentMode, payPolicy, basicPay, paymentMode, status, hireDate, siteName, joiningDate, country, streetAddress, city, state, zip, path:'employees' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

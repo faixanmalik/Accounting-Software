@@ -54,7 +54,7 @@ const UserRights = ({dbEmployee}) => {
 
     const data = { id, name, userId, role, path:'user' }
     
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const UserRights = ({dbEmployee}) => {
   const delEntry = async()=>{
 
     const data = { selectedIds , path: 'user' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ const UserRights = ({dbEmployee}) => {
     setOpen(true)
 
     const data = { id, path: 'user' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const UserRights = ({dbEmployee}) => {
     
     // fetch the data from form to makes a file in local system
     const data = { name, userId, role, path:'user' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

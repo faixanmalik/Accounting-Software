@@ -89,7 +89,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
     // fetch the data from form to makes a file in local system
     const data = { paymentFrom, paymentTo, amount, date, journalNo, desc, account, type:'CPV', debit: 0, credit: amount };
 
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
+    let res = await fetch(`/api/addVouchers`, {
       method: 'POST',                                       
       headers: { 
         'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
     setOpen(true)
 
     const data = { id, path: 'cashPaymentVoucher' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
 
     const data = { id, paymentFrom, paymentTo, amount, date, journalNo, desc , account,  path: 'cashPaymentVoucher'};
     
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ const CashPaymentVoucher = ({ dbVouchers, dbContacts, dbCharts }) => {
   const delEntry = async()=>{
 
     const data = { selectedIds , path: 'cashPaymentVoucher' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

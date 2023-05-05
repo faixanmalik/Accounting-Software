@@ -86,7 +86,7 @@ function Signup() {
     }
     else{
       document.getElementById('checkPassword').innerHTML = ""
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, {
+      let res = await fetch(`/api/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,13 +97,13 @@ function Signup() {
         if (response.success === true) {
           toast.success(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
           setTimeout(() => {
-            router.push(`${process.env.NEXT_PUBLIC_HOST}/login`);
+            router.push(`/login`);
           }, 1500);
         }
         else{
           toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
           setTimeout(() => {
-            router.push(`${process.env.NEXT_PUBLIC_HOST}/login`);
+            router.push(`/login`);
           }, 1500);
         }
 

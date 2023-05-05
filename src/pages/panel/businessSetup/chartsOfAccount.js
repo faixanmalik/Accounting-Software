@@ -110,7 +110,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
 
   const importEntries = async(row)=>{
     const data = { row, path:'chartsOfAccounts', importEntries:'importEntries' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
     setOpen(true)
 
     const data = { id, path: 'chartsOfAccounts' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+    let res = await fetch(`/api/getDataEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -209,7 +209,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
 
     const data = { selectedIds, path: 'chartsOfAccounts' };
 
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+    let res = await fetch(`/api/delEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -230,7 +230,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
     e.preventDefault();
 
     const data = { accountCode, account, accountName, balance , asof,  desc, subAccount , path:'chartsOfAccounts' };
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+    let res = await fetch(`/api/editEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -256,7 +256,7 @@ const ChartsOfAccounts = ({dbAllCharts}) => {
     // fetch the data from form to makes a file in local system
     const data = { account, accountCode, accountName, balance , asof,  desc, subAccount, path:'chartsOfAccounts'};
 
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addEntry`, {
+      let res = await fetch(`/api/addEntry`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

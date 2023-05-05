@@ -105,7 +105,7 @@ function classNames(...classes) {
         toast.error("Debit Credit values must be equal" , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
       }
       else{
-        let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/addVouchers`, {
+        let res = await fetch(`/api/addVouchers`, {
           method: 'POST',
           headers:{
             'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ function classNames(...classes) {
 
       const data = { id, totalDebit, totalCredit, inputList, name, desc, memo, journalDate, journalNo, attachment ,  path: 'journalVoucher'};
       
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editEntry`, {
+      let res = await fetch(`/api/editEntry`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ function classNames(...classes) {
     const delEntry = async()=>{
 
       const data = { selectedIds , path: 'journalVoucher' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/delEntry`, {
+      let res = await fetch(`/api/delEntry`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -203,7 +203,7 @@ function classNames(...classes) {
       setOpen(true)
 
       const data = { id, path: 'journalVoucher' };
-      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/getDataEntry`, {
+      let res = await fetch(`/api/getDataEntry`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
