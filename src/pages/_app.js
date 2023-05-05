@@ -7,8 +7,7 @@ import LoadingBar from 'react-top-loading-bar'
 import { useRouter } from 'next/router';
 import Footer from '../../components/Footer'
 import Navbar from '../../components/Navbar'
-const cors = require("cors");
-app.use(cors());
+
 
 
 export default function App({ Component, pageProps }) {
