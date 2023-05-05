@@ -10,9 +10,6 @@ import BankPayment from "models/BankPayment";
 import JournalVoucher from "models/JournalVoucher";
 import Login from "./login";
 
-const cors = require("cors");
-app.use(cors());
-
 
 export default function Home({}) {
 
