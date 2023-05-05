@@ -11,7 +11,6 @@ const cors = require("cors");
 app.use(cors());
 
 
-
 export default function App({ Component, pageProps }) {
   
 
