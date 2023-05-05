@@ -100,142 +100,131 @@ const SalesChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, d
     let balance = [];
     
     dbCharts.forEach(element => {
-
-      let dbAllEntries = [];
-      let allVouchers = [];
       
-      if(element.accountName != 'Cash' && element.accountName != 'Bank'){
-          allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
-      
-          const dbAll = allVouchers.filter((data) => {
+        let dbAllEntries = [];
+        let allVouchers = [];
+        if(element.accountName != 'Cash' && element.accountName != 'Bank'){
+            allVouchers = allVouchers.concat(dbJournalVoucher, dbBankPayment, dbBankReceipt, dbCashPayment, dbCashReceipt);
+        
+            const dbAll = allVouchers.filter((data) => {
 
 
-              if(data.type === 'CPV' || data.type === 'CRV' || data.type === 'BPV' || data.type === 'BRV'){
+                if(data.type === 'CPV' || data.type === 'CRV' || data.type === 'BPV' || data.type === 'BRV'){
                   if (data.account === `${element.accountName}`) {
+                    if(fromDate && toDate){
+                      const dbDate = moment(data.date).format('YYYY-MM-DD')
+                      return dbDate >= fromDate && dbDate <= toDate;
+                    }
+                    else{
+                      return data.account;
+                    }
+                  }
+                }
+                else {
+                  const journal = data.inputList.filter((data)=>{
+                    if (data.account === `${element.accountName}`) {
                       if(fromDate && toDate){
-                          const dbDate = moment(data.date).format('YYYY-MM-DD')
-                          return dbDate >= fromDate && dbDate <= toDate;
+                        const dbDate = moment(data.date).format('YYYY-MM-DD')
+                        return dbDate >= fromDate && dbDate <= toDate;
                       }
                       else{
-                          return data.account;
+                        return data.account;
                       }
-                  }
-              }
-              else {
-                  const journal = data.inputList.filter((data)=>{
-                      if (data.account === `${element.accountName}`) {
-                          if(fromDate && toDate){
-                              const dbDate = moment(data.date).format('YYYY-MM-DD')
-                              return dbDate >= fromDate && dbDate <= toDate;
-                          }
-                          else{
-                              return data.account;
-                          }
-                      }
+                    }
                   })
                   dbAllEntries = dbAllEntries.concat(journal);
-              }
-          })
-          dbAllEntries = dbAllEntries.concat(dbAll);
-      }
-      else if(element.accountName === 'Cash'){
-          allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
-          const newCash = allVouchers.filter((data)=>{
+                }
+            })
+            dbAllEntries = dbAllEntries.concat(dbAll);
+        }
+        else if(element.accountName === 'Cash'){
+            allVouchers = allVouchers.concat( dbCashPayment, dbCashReceipt );
+            const newCash = allVouchers.filter((data)=>{
 
-              if(fromDate && toDate){
-                  const dbDate = moment(data.date).format('YYYY-MM-DD')
-                  return dbDate >= fromDate && dbDate <= toDate;
-              }
-              else{
-                  return data.account;
-              }
-          })
-          dbAllEntries = dbAllEntries.concat(newCash);
-      }
-      else if(element.accountName === 'Bank'){
-          allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
-          const newBank = allVouchers.filter((data)=>{
-              if(fromDate && toDate){
-                  const dbDate = moment(data.date).format('YYYY-MM-DD')
-                  return dbDate >= fromDate && dbDate <= toDate;
-              }
-              else{
-                  return data.account;
-              }
-          })
-          dbAllEntries = dbAllEntries.concat(newBank);
-      }
+                if(fromDate && toDate){
+                    const dbDate = moment(data.date).format('YYYY-MM-DD')
+                    return dbDate >= fromDate && dbDate <= toDate;
+                }
+                else{
+                    return data.account;
+                }
+            })
+            dbAllEntries = dbAllEntries.concat(newCash);
+        }
+        else if(element.accountName === 'Bank'){
+            allVouchers = allVouchers.concat( dbBankPayment, dbBankReceipt );
+            const newBank = allVouchers.filter((data)=>{
+                if(fromDate && toDate){
+                    const dbDate = moment(data.date).format('YYYY-MM-DD')
+                    return dbDate >= fromDate && dbDate <= toDate;
+                }
+                else{
+                    return data.account;
+                }
+            })
+            dbAllEntries = dbAllEntries.concat(newBank);
+        }
 
-      // Date filter
-      dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-
-      dbAllEntries.forEach(item => {
-          if(element.accountName != 'Cash' && element.accountName != 'Bank'){
-              if(item.type === 'CPV' || item.type === 'BPV'){
-                  item.debit = item.amount;
-                  item.credit = 0;
-              }
-              else if(item.type === 'CRV' || item.type === 'BRV'){
-                  item.credit = item.amount;
-                  item.debit = 0;
-              }
-          }
-          else{
-              if(item.type === 'CPV' || item.type === 'BPV'){
-                  item.credit = item.amount;
-                  item.debit = 0;
-              }
-              else if(item.type === 'CRV' || item.type === 'BRV'){
-                  item.debit = item.amount;
-                  item.credit = 0;
-              }
-          }
-      });
+        // Date filter
+        dbAllEntries.sort((a, b) => new Date(a.date) - new Date(b.date));
 
 
+        dbAllEntries.forEach(item => {
+            if(element.accountName != 'Cash' && element.accountName != 'Bank'){
+                if(item.type === 'CPV' || item.type === 'BPV'){
+                    item.debit = item.amount;
+                    item.credit = 0;
+                }
+            }
+            else{
+                if(item.type === 'CPV' || item.type === 'BPV'){
+                    item.credit = item.amount;
+                    item.debit = 0;
+                }
+            }
+        });
 
 
-      // Balance
-      let result = [];
-      if(dbAllEntries.length > 0){
-          const initalCreditEntry = parseInt(dbAllEntries[0].credit);
-          let initialBalance = initalCreditEntry;
-          
-          for (let index = 0; index < dbAllEntries.length; index++) {
+        // Balance
+        let result = [];
+        if(dbAllEntries.length > 0){
+            const initalCreditEntry = parseInt(dbAllEntries[0].credit);
+            let initialBalance = initalCreditEntry;
+            
+            for (let index = 0; index < dbAllEntries.length; index++) {
 
-              const currentCreditEntry = parseInt(dbAllEntries[index].credit);
-              const currentDebitEntry = parseInt(dbAllEntries[index].debit);
-              
-              if(index <= 0){
-                  let totalBalance;
+                const currentCreditEntry = parseInt(dbAllEntries[index].credit);
+                const currentDebitEntry = parseInt(dbAllEntries[index].debit);
+                
+                if(index <= 0){
+                    let totalBalance = 0;
 
-                  if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
+                    if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
                       totalBalance = currentCreditEntry - currentDebitEntry;
-                  }
-                  else{
+                    }
+                    else{ 
                       totalBalance = currentDebitEntry - currentCreditEntry;
-                  }
-
-                  initialBalance = totalBalance;
-                  result.push(totalBalance)
-              }
-              else{
-                  let totalBalance;
-                  if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
-                      totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
-                  }
-                  else{
-                      totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
-                  }
-                  
-                  initialBalance = totalBalance;
-                  result.push(totalBalance);
-              }
-          }
-      }
-      balance.push(result);
-  });
+                    }
+                    initialBalance = totalBalance;
+                    result.push(totalBalance)
+                }
+                else{
+                    let totalBalance;
+                    if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
+                        totalBalance = initialBalance + currentCreditEntry - currentDebitEntry;
+                    }
+                    else{
+                        totalBalance = initialBalance + currentDebitEntry - currentCreditEntry;
+                    }
+                    
+                    initialBalance = totalBalance;
+                    
+                    result.push(totalBalance);
+                }
+            }
+        }
+        balance.push(result);
+    });
 
     
     let salesArray = [];
@@ -282,12 +271,12 @@ const SalesChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, d
     }
     monthlyGp.push(gp)
     monthlySale.push(sale)
-  }
+    }
 
-  const monthly = (monthlyGp)=>{
-    setMonthlyGrossProfit(monthlyGp)
-    setMonthlySales(monthlySale)
-  }
+    const monthly = (monthlyGp)=>{
+      setMonthlyGrossProfit(monthlyGp)
+      setMonthlySales(monthlySale)
+    }
 
   const chartoptions = {
     series: [

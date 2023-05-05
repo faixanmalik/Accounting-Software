@@ -25,64 +25,20 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     
     const [fDate, setFDate] = useState('')
     const [tDate, setTDate] = useState('')
-
-    const [newCharts, setNewCharts] = useState([])
     
 
     useEffect(() => {
-      
-
-
-      dbCharts.sort((a, b) => {
-        const priorities = {
-          'Revenue': 1,
-          'Cost of sales': 2,
-          'Administration Expenses': 3,
-          'Distribution Expenses': 4,
-          'Finance Cost': 5,
-        };
-        
-        const nameA = a.subAccount;
-        const nameB = b.subAccount;
-      
-        if (priorities[nameA] && priorities[nameB]) {
-          return priorities[nameA] - priorities[nameB];
-        } else if (priorities[nameA]) {
-          return -1;
-        } else if (priorities[nameB]) {
-          return 1;
-        }
-        else {
-          return nameA.localeCompare(nameB);
-        }
-    });
-    setNewCharts(dbCharts)
-
-
-    submit()
-
-
-
-
-
-
-
-        
-      
-
-
-    
+      submit()
     }, [])
     
 
     let balance = [];
     const submit = ()=>{
-        console.log(fromDate)
+
         if(fromDate && toDate){
             setFDate(moment(fromDate).format('D MMM YYYY'))
             setTDate(moment(toDate).format('D MMM YYYY'))
         }
-
 
         dbCharts.forEach(element => {
 
@@ -161,14 +117,24 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         item.debit = item.amount;
                         item.credit = 0;
                     }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.credit = item.amount;
+                        item.debit = 0;
+                    }
                 }
                 else{
                     if(item.type === 'CPV' || item.type === 'BPV'){
                         item.credit = item.amount;
                         item.debit = 0;
                     }
+                    else if(item.type === 'CRV' || item.type === 'BRV'){
+                        item.debit = item.amount;
+                        item.credit = 0;
+                    }
                 }
             });
+
+
 
 
             // Balance
@@ -188,9 +154,10 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                         if(element.account === 'Incomes' || element.account === 'Equity' || element.account === 'Liabilities'){
                             totalBalance = currentCreditEntry - currentDebitEntry;
                         }
-                        else{ 
+                        else{
                             totalBalance = currentDebitEntry - currentCreditEntry;
                         }
+
                         initialBalance = totalBalance;
                         result.push(totalBalance)
                     }
@@ -209,22 +176,15 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                 }
             }
             balance.push(result);
+            setNewBalance(balance)
+            ProfitLossBalance()
         });
-        setNewBalance(balance)
-        ProfitLossBalance()
+
     }
 
-    const handleChange = (e) => {
-        if (e.target.name === 'fromDate') {
-            setFromDate(e.target.value)
-        }
-        else if (e.target.name === 'toDate') {
-            setToDate(e.target.value)
-        }
-    }
     
     const ProfitLossBalance = async()=>{
-        
+            
         let administrationArray = [];
         let salesArray = [];
         let costOfGoodsSoldArray = [];
@@ -320,6 +280,17 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
     }}
 
 
+
+    const handleChange = (e) => {
+        if (e.target.name === 'fromDate') {
+            setFromDate(e.target.value)
+        }
+        else if (e.target.name === 'toDate') {
+            setToDate(e.target.value)
+        }
+    }
+
+
     return (
     <>
     <ProSidebarProvider>
@@ -407,7 +378,21 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
 
                             
                             {/* All Vouchers */}
-                            {newCharts.map((item,index) => {
+                            {dbCharts.map((item,index) => {
+                                
+                                // Array sorting with nameOrder order
+                                let nameOrder = ['Revenue', 'Cost of sales', 'Administration Expenses', 'Distribution Expenses', 'Finance Cost']; 
+
+                                dbCharts.sort((a, b) => {
+                                    const aIndex = nameOrder.indexOf(a.subAccount);
+                                    const bIndex = nameOrder.indexOf(b.subAccount);
+                                    if (aIndex === -1 || bIndex === -1) {
+                                      return 0; // fallback to no sorting
+                                    }
+                                    return aIndex - bIndex;
+                                  });
+
+
 
                                 const administrationIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Administration Expenses');
                                 const financeIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Finance Cost');
@@ -421,6 +406,8 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 }
 
                                   
+
+                                
                             if(item.subAccount === 'Revenue' || item.subAccount === 'Cost of sales' ||item.subAccount === 'Administration Expenses' ||item.subAccount === 'Distribution Expenses' ||item.subAccount === 'Finance Cost' ){
                             return <tbody key={index}>
                                 <tr className="bg-white border-b hover:bg-gray-50">

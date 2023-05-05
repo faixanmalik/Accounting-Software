@@ -34,21 +34,22 @@ const AssetsChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, 
     let toDate = '2023-01-31';
     submit(fromDate, toDate)
   }
+
+  const febFunction = async()=>{
+    let fromDate = '2023-02-01';
+    let toDate = '2023-02-28';
+    submit(fromDate, toDate)
+  }
+
   const marFunction = async()=>{
     let fromDate = '2023-03-01';
     let toDate = '2023-03-31';
     submit(fromDate, toDate)
   }
   
-  const febFunction = async()=>{
-    let fromDate = '2023-02-01';
-    let toDate = '2023-02-31';
-    submit(fromDate, toDate)
-  }
-  
   const aprilFunction = async()=>{
     let fromDate = '2023-04-01';
-    let toDate = '2023-04-31';
+    let toDate = '2023-04-30';
     submit(fromDate, toDate)
   }
   const mayFunction = async()=>{
@@ -58,7 +59,7 @@ const AssetsChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, 
   }
   const juneFunction = async()=>{
     let fromDate = '2023-06-01';
-    let toDate = '2023-06-31';
+    let toDate = '2023-06-30';
     submit(fromDate, toDate)
   }
   const julyFunction = async()=>{
@@ -68,7 +69,7 @@ const AssetsChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, 
   }
   const augFunction = async()=>{
     let fromDate = '2023-08-01';
-    let toDate = '2023-08-31';
+    let toDate = '2023-08-30';
     submit(fromDate, toDate)
   }
   const sepFunction = async()=>{
@@ -78,7 +79,7 @@ const AssetsChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, 
   }
   const octFunction = async()=>{
     let fromDate = '2023-10-01';
-    let toDate = '2023-10-31';
+    let toDate = '2023-10-30';
     submit(fromDate, toDate)
   }
   const novFunction = async()=>{
@@ -92,6 +93,8 @@ const AssetsChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, 
     submit(fromDate, toDate);
     monthly(monthlyAssts);
   }
+  
+
 
   let monthlyAssts = [];
   let monthlyLiabilits = []
@@ -231,22 +234,22 @@ const AssetsChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, 
     
     {dbCharts.map((item,index) => {
         if(item.subAccount === 'Current Assets'){
-            let currentAssets = balance[index] && balance[index][balance[index].length-1]
-            if(currentAssets){
-                currentAssetsArray.push(currentAssets)
-            }
-            else{
-                currentAssetsArray.push(0)
-            }
+          let currentAssets = balance[index] && balance[index][balance[index].length-1]
+          if(currentAssets){
+            currentAssetsArray.push(currentAssets)
+          }
+          else{
+            currentAssetsArray.push(0)
+          }
         }
         else if(item.subAccount === 'Current Liability'){
-            let currentLiabilities = balance[index] && balance[index][balance[index].length-1]
-            if(currentLiabilities){
-                currentLiabilitiesArray.push(currentLiabilities)
-            }
-            else{
-                currentLiabilitiesArray.push(0)
-            }
+          let currentLiabilities = balance[index] && balance[index][balance[index].length-1]
+          if(currentLiabilities){
+            currentLiabilitiesArray.push(currentLiabilities)
+          }
+          else{
+            currentLiabilitiesArray.push(0)
+          }
         }
     })
 
