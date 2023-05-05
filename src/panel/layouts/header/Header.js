@@ -55,7 +55,7 @@ const Header = ({ showMobmenu }) => {
   const logout = ()=>{
     localStorage.removeItem("myUser");
     setUser({value:null});
-    router.push(`${process.env.NEXT_PUBLIC_HOST}`);
+    router.push(`/login`);
   }
 
   return (
