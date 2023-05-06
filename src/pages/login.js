@@ -11,12 +11,6 @@ import 'react-toastify/dist/ReactToastify.css';
 function Login() {
   const router = useRouter()  
 
-  useEffect(() => {
-    if(localStorage.getItem("myUser")){
-      router.push('/panel')
-    }
-  }, [])
-
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
