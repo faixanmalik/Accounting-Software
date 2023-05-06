@@ -337,8 +337,8 @@ const SalesChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, d
   return (
     <Card>
       <CardBody>
-        <CardTitle tag="h5" className='font-semibold'>Sales Summary</CardTitle>
-        <CardSubtitle className="text-muted font-medium" tag="h6">
+        <CardTitle tag="h5" className='font-medium'>Sales Summary</CardTitle>
+        <CardSubtitle className="text-muted font-normal" tag="h6">
           Yearly Sales Report
         </CardSubtitle>
         <Chart

@@ -328,8 +328,8 @@ const AssetsChart = ({dbCharts, dbJournalVoucher, dbBankPayment, dbBankReceipt, 
     <>
     <Card>
       <CardBody>
-        <CardTitle tag="h5" className='font-semibold'>Assets Summary</CardTitle>
-        <CardSubtitle className="text-muted font-medium" tag="h6">
+        <CardTitle tag="h5" className='font-medium'>Assets Summary</CardTitle>
+        <CardSubtitle className="text-muted font-normal" tag="h6">
           Yearly Assets Report
         </CardSubtitle>
         <Chart
