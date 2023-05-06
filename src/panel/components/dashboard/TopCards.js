@@ -12,7 +12,7 @@ const TopCards = ({ bg, href, icon,  amount, subtitle }) => {
             <i className={icon} />
           </div>
           <div className="ms-3">
-            <h3 className="mb-0 font-semibold text-blue-800">
+            <h3 className="mb-0 font-medium text-blue-800">
                {amount}
             </h3>
             <small className="text-muted">{subtitle}</small>
