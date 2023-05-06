@@ -88,7 +88,11 @@ const Header = ({ showMobmenu }) => {
 
           <UncontrolledDropdown inNavbar nav>
             <DropdownToggle nav>
-              <h1 className="text-white text-lg my-auto">Hey! {businessName}</h1>
+              <h1 className="text-white font-normal text-lg my-auto">Hey! 
+                <span className="font-medium">
+                  {businessName}
+                </span>
+              </h1>
             </DropdownToggle>
           </UncontrolledDropdown>
         </Nav>
