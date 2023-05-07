@@ -426,15 +426,15 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 {index === administrationIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${grossProfit > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Gross {grossProfit > 0 ? 'Profit' : 'loss'};
-                                        <span className='font-bold ml-1'>${ grossProfit }</span>
+                                        <span className='font-bold ml-1'>${ grossProfit.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
 
 
-                                {index === financeIndex - 1
+                                {index === financeIndex - 8
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${profitFromOperations > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitFromOperations > 0 ? 'Profit' : 'loss'} From Operations:
-                                        <span className='font-bold ml-1'>${ profitFromOperations }</span>
+                                        <span className='font-bold ml-1'>${ profitFromOperations.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
 
@@ -442,7 +442,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 {index === lastIndex
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${profitBeforeTax > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitBeforeTax > 0 ? 'Profit' : 'loss'} Before Tax:
-                                        <span className='font-bold ml-1'>${ profitBeforeTax }</span>
+                                        <span className='font-bold ml-1'>${ profitBeforeTax.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
 
