@@ -540,7 +540,7 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
 
 
-                                    {item.accountName === 'Profit for the year' ? <td className="px-6 py-3 text-blue-700 font-bold">
+                                    {item.accountName === 'Retained Earnings' ? <td className="px-6 py-3 text-blue-700 font-bold">
                                         {profitBeforeTax.toLocaleString()}
                                     </td>:
                                     <td className="px-6 py-3 text-blue-700 font-bold">
@@ -558,13 +558,17 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                                 </tr>: ''}
 
 
+                                
+
+
+
+
                                 {index === nonCurrentLiabilitiesIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${totalEquity > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Total Equity + Profit:
                                         <span className='font-bold ml-1'>${ totalEquity.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
-
 
                                 {index === lastIndex
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
