@@ -381,17 +381,22 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                             {dbCharts.map((item,index) => {
                                 
                                 // Array sorting with nameOrder order
-                                let nameOrder = ['Revenue', 'Cost of sales', 'Administration Expenses', 'Distribution Expenses', 'Finance Cost']; 
+                                // let nameOrder = ['Revenue', 'Cost of sales', 'Administration Expenses', 'Distribution Expenses', 'Finance Cost']; 
+                                // return nameOrder.indexOf(a.subAccount) - nameOrder.indexOf(b.subAccount);
 
                                 dbCharts.sort((a, b) => {
-                                    const aIndex = nameOrder.indexOf(a.subAccount);
-                                    const bIndex = nameOrder.indexOf(b.subAccount);
-                                    if (aIndex === -1 || bIndex === -1) {
-                                      return 0; // fallback to no sorting
-                                    }
-                                    return aIndex - bIndex;
-                                  });
+                                    let nameOrder = ['Revenue', 'Cost of sales', 'Administration Expenses', 'Distribution Expenses', 'Finance Cost']; 
+                                    return nameOrder.indexOf(a.subAccount) - nameOrder.indexOf(b.subAccount);
+                                });
 
+                                // dbCharts.sort((a, b) => {
+                                //     const aIndex = nameOrder.indexOf(a.subAccount);
+                                //     const bIndex = nameOrder.indexOf(b.subAccount);
+                                //     if (aIndex === -1 || bIndex === -1) {
+                                //       return 0; // fallback to no sorting
+                                //     }
+                                //     return aIndex - bIndex;
+                                // });
 
 
                                 const administrationIndex = dbCharts.findIndex((obj) => obj.subAccount === 'Administration Expenses');
@@ -431,7 +436,7 @@ const ProfitAndLoss = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankP
                                 </tr>: ''}
 
 
-                                {index === financeIndex - 8
+                                {index === financeIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
                                     <td className={`text-sm ${profitFromOperations > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>{profitFromOperations > 0 ? 'Profit' : 'loss'} From Operations:
                                         <span className='font-bold ml-1'>${ profitFromOperations.toLocaleString() }</span>
