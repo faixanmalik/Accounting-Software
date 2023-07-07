@@ -495,16 +495,20 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
                             {/*{newBalance.length != 0 &&  dbCharts.map((item,index) => {*/}
                             {dbCharts.map((item,index) => {
                                 // Array sorting with nameOrder order
-                                let nameOrder = ['Fixed Assets', 'Current Assets', 'Equity', 'Non-Current Liability', 'Current Liability']; 
-
+                                
                                 dbCharts.sort((a, b) => {
-                                    const aIndex = nameOrder.indexOf(a.subAccount);
-                                    const bIndex = nameOrder.indexOf(b.subAccount);
-                                    if (aIndex === -1 || bIndex === -1) {
-                                      return 0; // fallback to no sorting
-                                    }
-                                    return aIndex - bIndex;
-                                  });
+                                    let nameOrder = ['Fixed Assets', 'Current Assets', 'Equity', 'Non-Current Liability', 'Current Liability']; 
+                                    return nameOrder.indexOf(a.subAccount) - nameOrder.indexOf(b.subAccount);
+                                });
+
+                                // dbCharts.sort((a, b) => {
+                                //     const aIndex = nameOrder.indexOf(a.subAccount);
+                                //     const bIndex = nameOrder.indexOf(b.subAccount);
+                                //     if (aIndex === -1 || bIndex === -1) {
+                                //       return 0; // fallback to no sorting
+                                //     }
+                                //     return aIndex - bIndex;
+                                //   });
 
                                   
 
@@ -565,7 +569,7 @@ const BalanceSheet = ({ dbJournalVoucher, dbCashPayment, dbCashReceipt, dbBankPa
 
                                 {index === nonCurrentLiabilitiesIndex - 1
                                 ? <tr className="flex float-right -mr-96 bg-slate-100 px-4 py-3 sm:px-6">
-                                    <td className={`text-sm ${totalEquity > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Total Equity + Profit:
+                                    <td className={`text-sm ${totalEquity > 0 ? 'text-green-700' : 'text-red-700' } -mr-32`}>Total Equity:
                                         <span className='font-bold ml-1'>${ totalEquity.toLocaleString() }</span>
                                     </td>
                                 </tr>: ''}
