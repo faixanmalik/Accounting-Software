@@ -213,7 +213,8 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                 setDesc('')
                 setAmount('')
                 setAccount('')
-                }} className='ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg'>
+                }} 
+                className={`${isAdmin === false ? 'cursor-not-allowed': ''} ml-auto bg-blue-800 hover:bg-blue-900 text-white px-14 py-2 rounded-lg`} disabled={isAdmin === false}>
                   New
               </button>
             </div>
@@ -289,7 +290,10 @@ const BankPaymentVoucher = ({ dbVouchers, dbContacts, dbbankAccounts, dbCharts }
                           <div className='text-sm text-black font-semibold'>{parseInt(item.amount).toLocaleString()}</div>
                         </td>
                         <td className="flex items-center px-6 mr-5 py-4 space-x-4">
-                          <button type='button' onClick={()=>{getData(item._id)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline"><AiOutlineEdit className='text-lg'/></button>
+                          <button type='button' onClick={()=>{getData(item._id)}} 
+                            className={`${isAdmin === false ? 'cursor-not-allowed': ''} font-medium text-blue-600 dark:text-blue-500 hover:underline`} disabled={isAdmin === false}>
+                            <AiOutlineEdit className='text-lg'/>
+                          </button>
                         </td>
                             
                       </tr>})}
