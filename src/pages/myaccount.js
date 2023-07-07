@@ -13,7 +13,7 @@ function Myaccount() {
   useEffect(() => {
     const myUser = JSON.parse(localStorage.getItem('myUser'))
     if(!myUser){
-        router.push('/')
+      router.push('/')
     }
     if(myUser && myUser.token){
       setUser(myUser)
@@ -77,14 +77,15 @@ function Myaccount() {
       })
         let response = await res.json()  
         if (response.success === true) {
-            toast.success(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+          toast.success(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+          setCpassword('')
+          setNpassword('')
+          setCnpassword('')
         }
         else {
-            toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
+          toast.error(response.message , { position: "bottom-center", autoClose: 1000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, theme: "light", });
         }
-        setCpassword('')
-        setNpassword('')
-        setCnpassword('')
+        
     }
       
     

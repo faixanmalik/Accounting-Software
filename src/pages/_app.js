@@ -10,7 +10,6 @@ import Navbar from '../../components/Navbar'
 
 
 export default function App({ Component, pageProps }) {
-  
 
   const router = useRouter();
 
@@ -21,6 +20,7 @@ export default function App({ Component, pageProps }) {
 
   //  Use Effect for routerChange
   useEffect(() => {
+
     router.events.on('routeChangeStart', ()=>{
       setProgress(75);
     });
@@ -30,11 +30,12 @@ export default function App({ Component, pageProps }) {
 
     let myUser = JSON.parse(localStorage.getItem("myUser"));
     if( myUser ){
-      setUser({value: myUser.token , email: myUser.email, name: myUser.name });
+      setUser({value: myUser.token , email: myUser.email, name: myUser.name, department: myUser.department });
       setKey(Math.random());
     }
-
+    
   }, [router.query])
+
 
 
   // Logout function
